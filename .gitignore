@@ -35,3 +35,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Application.yaml ###
+**/*.yaml
+
+### REST Docs Html ###
+**/*.html
+
+### QueryDSL ###
+src/main/generated/
