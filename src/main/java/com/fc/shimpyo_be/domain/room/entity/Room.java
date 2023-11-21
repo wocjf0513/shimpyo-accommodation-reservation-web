@@ -33,7 +33,7 @@ public class Room {
     @Column(columnDefinition = "TINYINT")
     private int standard;
     @Column(columnDefinition = "TINYINT")
-    private int max;
+    private int capacity;
     @Column(nullable = false)
     private int price;
     @Column(nullable = false)
@@ -42,14 +42,14 @@ public class Room {
     private LocalDateTime checkOut;
 
     @Builder
-    public Room(Long id, Product product, String name, String description, int standard, int max,
+    public Room(Long id, Product product, String name, String description, int standard, int capacity,
         int price, LocalDateTime checkIn, LocalDateTime checkOut) {
         this.id = id;
         this.product = product;
         this.name = name;
         this.description = description;
         this.standard = standard;
-        this.max = max;
+        this.capacity = capacity;
         this.price = price;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
