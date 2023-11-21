@@ -1,11 +1,9 @@
-package com.fc.shimpyo_be.domain.order.entity;
+package com.fc.shimpyo_be.domain.reservationproduct.entity;
 
-import com.fc.shimpyo_be.domain.member.entity.Member;
-import com.fc.shimpyo_be.global.common.BaseTimeEntity;
+import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
+import com.fc.shimpyo_be.domain.room.entity.Room;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,25 +18,25 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Order extends BaseTimeEntity {
+public class ReservationProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Room room;
     @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private PayMethod payMethod;
-    @Column(nullable = false)
-    private int totalPrice;
+    private int price;
 
     @Builder
-    public Order(Long id, Member member, PayMethod payMethod, int totalPrice) {
+    public ReservationProduct(Long id, Reservation reservation, Room room, int price) {
         this.id = id;
-        this.member = member;
-        this.payMethod = payMethod;
-        this.totalPrice = totalPrice;
+        this.reservation = reservation;
+        this.room = room;
+        this.price = price;
     }
 }
