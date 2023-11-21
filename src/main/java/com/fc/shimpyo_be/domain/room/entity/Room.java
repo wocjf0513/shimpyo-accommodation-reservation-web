@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,14 +37,13 @@ public class Room {
     private int capacity;
     @Column(nullable = false)
     private int price;
-    @Column(nullable = false)
-    private LocalDateTime checkIn;
-    @Column(nullable = false)
-    private LocalDateTime checkOut;
+    @Column(nullable = false, columnDefinition = "TINYINT")
+    @ColumnDefault("1")
+    private int amount;
 
     @Builder
     public Room(Long id, Product product, String name, String description, int standard, int capacity,
-        int price, LocalDateTime checkIn, LocalDateTime checkOut) {
+        int price, int amount) {
         this.id = id;
         this.product = product;
         this.name = name;
@@ -51,7 +51,6 @@ public class Room {
         this.standard = standard;
         this.capacity = capacity;
         this.price = price;
-        this.checkIn = checkIn;
-        this.checkOut = checkOut;
+        this.amount = amount;
     }
 }

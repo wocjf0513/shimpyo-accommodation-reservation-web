@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatusCode;
 public class ProductNotFoundException extends ApplicationException {
 
     private static final ErrorCode errorCode = ErrorCode.PRODUCT_NOT_FOUND;
-    ProductNotFoundException () {
+    public ProductNotFoundException () {
         super(errorCode);
     }
 }

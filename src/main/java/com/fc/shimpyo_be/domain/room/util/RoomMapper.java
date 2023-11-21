@@ -15,8 +15,7 @@ public class RoomMapper {
             .standard((long)(room.getStandard()))
             .capacity((long) room.getCapacity())
             .desc(room.getDescription())
-            .checkIn(LocalDateTimeUtil.toString(room.getCheckIn()))
-            .checkOut(LocalDateTimeUtil.toString(room.getCheckOut()))
+            .amount((long)room.getAmount())
             .build();
     }
 }

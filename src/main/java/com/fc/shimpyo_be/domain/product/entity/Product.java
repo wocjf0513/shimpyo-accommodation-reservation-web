@@ -11,10 +11,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,11 +35,12 @@ public class Product {
     private Category category;
     @Column(nullable = false)
     private String description;
+    @ColumnDefault("0")
     private float starAvg;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String photoUrl;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private ArrayList<Room> rooms;
+    @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE, orphanRemoval = true)
+    private List<Room> rooms = new ArrayList<>();
 
     @Builder
     public Product(Long id, String name, String address, Category category, String description, float starAvg,

@@ -1,37 +1,35 @@
 package com.fc.shimpyo_be.domain.product.controller;
 
-import com.fc.shimpyo_be.domain.product.dto.request.PagenationRequest;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.global.common.ResponseDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/products")
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseDto<List<ProductResponse>> getAllProducts(
-        @RequestBody PagenationRequest pagenationRequest) {
-        Pageable pageable = PageRequest.of(pagenationRequest.getPageNo().intValue(),
-            pagenationRequest.getPageSize().intValue());
+        @RequestParam(required = false, defaultValue = "") String keyword,
+        @PageableDefault(size = 10, page = 0) Pageable pageable ) {
 
-        return ResponseDto.res(HttpStatus.OK, productService.getAllProducts(pageable),
+        return ResponseDto.res(HttpStatus.OK, productService.getAllProducts(keyword, pageable),
             "상품 목록을 성공적으로 조회했습니다.");
     }
 
-//    ResponseDto<List<ProductDetailsResponse>> getProductDetails() {
-//
-//    }
+    /*ResponseDto<List<ProductDetailsResponse>> getProductDetails() {
+
+    }*/
 }
