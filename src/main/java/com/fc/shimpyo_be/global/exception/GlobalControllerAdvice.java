@@ -16,4 +16,12 @@ public class GlobalControllerAdvice {
             ResponseDto.res(HttpStatus.BAD_REQUEST,
                 e.getBindingResult().getAllErrors().get(0).getDefaultMessage()));
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ResponseDto<Void>> ApplicationException(ApplicationException e) {
+        return ResponseEntity.status(e.getErrorCode().getHttpStatus()).body(
+            ResponseDto.res(e.getErrorCode().getHttpStatus(),
+                e.getErrorCode().getSimpleMessage()));
+    }
+
 }
