@@ -1,4 +1,4 @@
-package com.fc.shimpyo_be.domain.order.entity;
+package com.fc.shimpyo_be.domain.reservation.entity;
 
 public enum PayMethod {
 

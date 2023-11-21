@@ -44,3 +44,9 @@ out/
 
 ### QueryDSL ###
 src/main/generated/
+
+### .env File ###
+.env
+
+### maridadb/data Directory ###
+mariadb/data/
