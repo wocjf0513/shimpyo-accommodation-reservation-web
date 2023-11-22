@@ -47,15 +47,9 @@ class ProductControllerTest {
             productRepository.save(ProductFactory.createTestProduct());
         }
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-
-
         // when
         ResultActions getProductAction = mockMvc.perform(
-            get("/api/products")
-                .param("page","0")
-                .param("size","1"));
-
+            get("/api/products?page=0&size=3"));
 
         // then
         getProductAction

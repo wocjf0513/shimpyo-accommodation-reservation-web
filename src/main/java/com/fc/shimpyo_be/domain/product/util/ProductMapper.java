@@ -10,16 +10,17 @@ import java.util.stream.Collectors;
 
 public class ProductMapper {
 
-    public static ProductResponse from(Product product) {
+    public static ProductResponse toProductResponse(Product product) {
         return ProductResponse.builder().productId(product.getId()).productName(product.getName())
             .address(product.getAddress()).category(product.getCategory().toString())
             .image(ImageUrlParser.pareseThumbnail(product.getPhotoUrl())).star(product.getStarAvg())
             .price(product.getRooms().isEmpty()
                 ?0:Long.valueOf(product.getRooms().stream().map(Room::getPrice).min((o1, o2) -> o1-o2).orElseThrow()))
+            .favorites(false)
             .build();
     }
 
-    public static ProductDetailsResponse form(Product product) {
+    public static ProductDetailsResponse toProductDetailsResponse(Product product) {
         return ProductDetailsResponse.builder()
             .productId(product.getId())
             .category(product.getCategory().toString())

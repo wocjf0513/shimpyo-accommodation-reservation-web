@@ -5,6 +5,6 @@ import lombok.Builder;
 
 @Builder
 public record ProductResponse(Long productId, String category, String address, String productName, Float star,
-                              String image, Long price) {
+                              String image, Long price, Boolean favorites) {
 
 }

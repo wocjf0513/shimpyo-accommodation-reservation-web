@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.sql.Time;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,6 +36,10 @@ public class Room {
     private int standard;
     @Column(columnDefinition = "TINYINT")
     private int capacity;
+    @Column
+    private Time checkIn;
+    @Column
+    private Time checkOut;
     @Column(nullable = false)
     private int price;
     @Column(nullable = false, columnDefinition = "TINYINT")
@@ -43,13 +48,15 @@ public class Room {
 
     @Builder
     public Room(Long id, Product product, String name, String description, int standard, int capacity,
-        int price, int amount) {
+        int price, Time checkIn, Time checkOut, int amount) {
         this.id = id;
         this.product = product;
         this.name = name;
         this.description = description;
         this.standard = standard;
         this.capacity = capacity;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
         this.price = price;
         this.amount = amount;
     }

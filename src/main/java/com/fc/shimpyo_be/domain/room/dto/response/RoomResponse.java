@@ -4,6 +4,6 @@ import lombok.Builder;
 
 @Builder
 public record RoomResponse(Long roomId, String roomName, Long price, String desc, Long standard,
-                           Long capacity, Long amount) {
+                           Long capacity, Long amount, String checkIn, String checkOut) {
 
 }

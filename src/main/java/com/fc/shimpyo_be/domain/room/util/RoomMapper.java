@@ -2,8 +2,6 @@ package com.fc.shimpyo_be.domain.room.util;
 
 import com.fc.shimpyo_be.domain.room.dto.response.RoomResponse;
 import com.fc.shimpyo_be.domain.room.entity.Room;
-import com.fc.shimpyo_be.global.util.LocalDateTimeUtil;
-import java.time.LocalDate;
 
 public class RoomMapper {
 
@@ -16,6 +14,8 @@ public class RoomMapper {
             .capacity((long) room.getCapacity())
             .desc(room.getDescription())
             .amount((long)room.getAmount())
+            .checkIn(room.getCheckIn().toString())
+            .checkOut(room.getCheckOut().toString())
             .build();
     }
 }

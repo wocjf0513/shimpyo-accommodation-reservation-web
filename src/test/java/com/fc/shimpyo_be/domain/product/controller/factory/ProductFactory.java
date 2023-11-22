@@ -12,6 +12,7 @@ public class ProductFactory {
             .address("서울시 강남구 38-"+ThreadLocalRandom.current().nextInt(1000))
             .photoUrl("wjcojaodfjoadsfj,djaofjofjods,fadjofjodsafj")
             .category(Category.HOTEL)
+            .starAvg(ThreadLocalRandom.current().nextFloat(5))
             .description("좋아요")
             .build();
     }
