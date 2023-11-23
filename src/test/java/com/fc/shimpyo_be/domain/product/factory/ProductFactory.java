@@ -10,6 +10,7 @@ import com.fc.shimpyo_be.domain.reservationproduct.entity.ReservationProduct;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ProductFactory {
@@ -34,8 +35,8 @@ public class ProductFactory {
             .price(ThreadLocalRandom.current().nextInt(100000))
             .description("아주 좁은 방입니다.")
             .product(product)
-            .checkIn(Time.valueOf("11:00:00"))
-            .checkOut(Time.valueOf("15:00:00"))
+            .checkIn(LocalTime.of(11,0,0))
+            .checkOut(LocalTime.of(15,0,0))
             .name(product.getCategory()+" 방")
             .standard(stadard)
             .capacity(stadard+ThreadLocalRandom.current().nextInt(10))

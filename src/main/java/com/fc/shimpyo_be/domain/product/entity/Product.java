@@ -1,8 +1,10 @@
 package com.fc.shimpyo_be.domain.product.entity;
 
+import com.fc.shimpyo_be.domain.product.util.CategoryConverter;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -32,7 +34,8 @@ public class Product {
     @Column(nullable = false)
     private String address;
     @Column(nullable = false, length = 30)
-    private String category;
+    @Convert(converter = CategoryConverter.class)
+    private Category category;
     @Column(nullable = false)
     private String description;
     @ColumnDefault("0")
@@ -48,7 +51,7 @@ public class Product {
         this.id = id;
         this.name = name;
         this.address = address;
-        this.category = category.toString();
+        this.category = category;
         this.description = description;
         this.starAvg = starAvg;
         this.photoUrl = photoUrl;

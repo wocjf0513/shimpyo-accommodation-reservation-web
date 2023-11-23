@@ -4,7 +4,6 @@ import com.fc.shimpyo_be.domain.product.util.model.PageableConstraint;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Product;
-import com.fc.shimpyo_be.domain.product.exception.RoomNotReserveException;
 import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.global.common.ResponseDto;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
@@ -25,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 @Validated
-public class ProductController {
+public class ProductRestController {
 
     private final ProductService productService;
 

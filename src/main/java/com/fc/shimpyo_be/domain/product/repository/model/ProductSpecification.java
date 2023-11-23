@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.product.repository.model;
 
+import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import org.springframework.data.jpa.domain.Specification;
 

@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.sql.Time;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,16 +38,16 @@ public class Room {
     private int standard;
     @Column(columnDefinition = "TINYINT")
     private int capacity;
-    @Column
-    private Time checkIn;
-    @Column
-    private Time checkOut;
+    @Column(columnDefinition = "TIME")
+    private LocalTime checkIn;
+    @Column(columnDefinition = "TIME")
+    private LocalTime checkOut;
     @Column(nullable = false)
     private int price;
 
     @Builder
     public Room(Long id, Product product, String name, String description, int standard, int capacity,
-        int price, Time checkIn, Time checkOut) {
+        int price, LocalTime checkIn, LocalTime checkOut) {
         this.id = id;
         this.product = product;
         this.name = name;

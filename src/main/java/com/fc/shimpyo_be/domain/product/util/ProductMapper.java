@@ -12,7 +12,7 @@ public class ProductMapper {
 
     public static ProductResponse toProductResponse(Product product) {
         return ProductResponse.builder().productId(product.getId()).productName(product.getName())
-            .address(product.getAddress()).category(product.getCategory().toString())
+            .address(product.getAddress()).category(product.getCategory().getName())
             .image(ImageUrlParser.pareseThumbnail(product.getPhotoUrl())).starAvg(product.getStarAvg())
             .price(product.getRooms().isEmpty()
                 ?0:Long.valueOf(product.getRooms().stream().map(Room::getPrice).min((o1, o2) -> o1-o2).orElseThrow()))
@@ -23,7 +23,7 @@ public class ProductMapper {
     public static ProductDetailsResponse toProductDetailsResponse(Product product) {
         return ProductDetailsResponse.builder()
             .productId(product.getId())
-            .category(product.getCategory().toString())
+            .category(product.getCategory().getName())
             .address(product.getAddress())
             .productName(product.getName())
             .description(product.getDescription())

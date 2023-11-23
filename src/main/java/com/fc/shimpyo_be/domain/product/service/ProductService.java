@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.product.service;
 
+import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.repository.model.ProductSpecification;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
