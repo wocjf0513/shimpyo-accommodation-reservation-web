@@ -16,13 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class AuthRestControllerAdvice {
 
     @ExceptionHandler
-    public ResponseEntity<ResponseDto<Void>> MemberNotFoundException(
-        MemberNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ResponseDto.res(HttpStatus.NOT_FOUND, e.getMessage()));
-    }
-
-    @ExceptionHandler
     public ResponseEntity<ResponseDto<Void>> alreadySignUpException(
         AlreadyExistsMemberException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -46,13 +39,6 @@ public class AuthRestControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<ResponseDto<Void>> unmatchedMemberException(
         UnmatchedMemberException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ResponseDto.res(HttpStatus.BAD_REQUEST, e.getMessage()));
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<ResponseDto<Void>> unmatchedPasswordException(
-        UnmatchedPasswordException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ResponseDto.res(HttpStatus.BAD_REQUEST, e.getMessage()));
     }
