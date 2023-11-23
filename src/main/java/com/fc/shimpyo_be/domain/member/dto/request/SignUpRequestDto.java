@@ -21,12 +21,8 @@ public class SignUpRequestDto {
     @Size(min = 2, max = 30, message = "이름은 최소 2자 이상 최대 30자 이내로 입력하세요.")
     private String name;
     @NotBlank(message = "비밀번호를 입력하세요.")
-    @Size(min = 8, max = 30, message = "비밀번호는 최소 9자 이상, 최대 30자 이내로 입력하세요.")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,30}$", message = "비밀번호는 문자, 숫자, 특수문자를 포함하여 입력해주세요.")
     private String password;
-    @NotBlank(message = "비밀번호를 입력하세요.")
-    @Size(min = 8, max = 30, message = "비밀번호 확인은 최소 9자 이상, 최대 30자 이내로 입력하세요.")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,30}$", message = "비밀번호 확인은 문자, 숫자, 특수문자를 포함하여 입력해주세요.")
+    @NotBlank(message = "비밀번호 확인을 입력하세요.")
     private String passwordConfirm;
 
     @Builder

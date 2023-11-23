@@ -16,8 +16,6 @@ public class SignInRequestDto {
     @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "이메일 형식에 맞게 입력해주세요.")
     private String email;
     @NotBlank(message = "비밀번호를 입력하세요.")
-    @Size(min = 8, max = 30, message = "비밀번호는 최소 8자 이상, 최대 30자 이내로 입력하세요.")
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,30}$", message = "비밀번호 확인은 문자, 숫자, 특수문자를 포함하여 입력해주세요.")
     private String password;
 
     @Builder
