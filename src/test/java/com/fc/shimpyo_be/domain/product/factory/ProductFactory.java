@@ -41,35 +41,35 @@ public class ProductFactory {
             .capacity(stadard+ThreadLocalRandom.current().nextInt(10))
             .build();
     }
-
-    public static ReservationProduct createTestReservationProduct(Room room,Reservation reservation) {
-
-        return ReservationProduct.builder()
-            .room(room)
-            .reservation(reservation)
-            .price(ThreadLocalRandom.current().nextInt(100000))
-            .accommodationDate(LocalDate.of(2023,11,22))
-            .build();
-    }
-
-    public static Reservation createTestReservation(Member member) {
-
-        int stadard = ThreadLocalRandom.current().nextInt(10);
-
-        return Reservation.builder()
-            .member(member)
-            .payMethod(PayMethod.CASH)
-            .build();
-    }
-
-    public static Member createTestMember() {
-        return Member.builder()
-            .name("심재철")
-            .email("wocjf0513@naver.com")
-            .password("1234")
-            .photoUrl("dsklaffjdlsajldfjs")
-            .build();
-    }
+//
+//    public static ReservationProduct createTestReservationProduct(Room room,Reservation reservation) {
+//
+//        return ReservationProduct.builder()
+//            .room(room)
+//            .reservation(reservation)
+//            .price(ThreadLocalRandom.current().nextInt(100000))
+//            .accommodationDate(LocalDate.of(2023,11,22))
+//            .build();
+//    }
+//
+//    public static Reservation createTestReservation(Member member) {
+//
+//        int stadard = ThreadLocalRandom.current().nextInt(10);
+//
+//        return Reservation.builder()
+//            .member(member)
+//            .payMethod(PayMethod.CASH)
+//            .build();
+//    }
+//
+//    public static Member createTestMember() {
+//        return Member.builder()
+//            .name("심재철")
+//            .email("wocjf0513@naver.com")
+//            .password("1234")
+//            .photoUrl("dsklaffjdlsajldfjs")
+//            .build();
+//    }
 
 
 

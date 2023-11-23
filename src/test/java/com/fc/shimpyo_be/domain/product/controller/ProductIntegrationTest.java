@@ -10,14 +10,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fc.shimpyo_be.config.RestDocsSupport;
-import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.factory.ProductFactory;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.product.util.ProductMapper;
-import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
 import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
@@ -28,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
@@ -126,16 +123,15 @@ class ProductIntegrationTest extends RestDocsSupport {
     @WithMockUser
     void shouldSuccessToGetDetailsProduct() throws Exception {
         // given
-        Member member = memberRepository.save(ProductFactory.createTestMember());
+//        Member member = memberRepository.save(ProductFactory.createTestMember());
         Product product = productRepository.save(ProductFactory.createTestProduct());
-        Reservation reservation = reservationRepository.save(
-            ProductFactory.createTestReservation(member));
+//        Reservation reservation = reservationRepository.save(
+//            ProductFactory.createTestReservation(member));
         for (int i = 0; i < 5; i++) {
             Room room = roomRepository.save(ProductFactory.createTestRoom(product));
             product.getRooms().add(room);
-            if(i%2==0)
-            reservationProductRepository.save(
-                ProductFactory.createTestReservationProduct(room, reservation));
+//            if(i%2==0)
+//            reservationProductRepository.save(ProductFactory.createTestReservationProduct(room, reservation));
         }
 
         // when
