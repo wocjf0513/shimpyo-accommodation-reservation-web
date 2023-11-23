@@ -181,39 +181,39 @@ class ProductIntegrationTest extends RestDocsSupport {
             ));
 
     }
-
-    @Test
-    @DisplayName("예약 가능 여부를 확인할 수 있다.")
-    @WithMockUser
-    void isAvailableForReservation() throws Exception {
-        // given
-        Product product = productRepository.save(ProductFactory.createTestProduct());
-        Room room = roomRepository.save(ProductFactory.createTestRoom(product));
-        product.getRooms().add(room);
-
-        // when
-        ResultActions getProductAction = mockMvc.perform(
-            get("/api/products/amounts/{roomId}?startDate=2023-11-22&endDate=2023-11-23",room.getId()));
-
-        // then
-        getProductAction
-            .andExpect(status().isOk())
-            .andDo(MockMvcResultHandlers.print())
-            .andDo(restDoc.document(
-                pathParameters(
-                    parameterWithName("roomId").description("방 아이디")
-                ),
-                queryParameters(
-                    parameterWithName("startDate").description("상세 검색, 체크인 일"),
-                    parameterWithName("endDate").description("상세 검색, 체크아웃 일")
-                ),
-                responseFields(
-                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
-                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 NULL")
-                )
-            ));
-    }
+//
+//    @Test
+//    @DisplayName("예약 가능 여부를 확인할 수 있다.")
+//    @WithMockUser
+//    void isAvailableForReservation() throws Exception {
+//        // given
+//        Product product = productRepository.save(ProductFactory.createTestProduct());
+//        Room room = roomRepository.save(ProductFactory.createTestRoom(product));
+//        product.getRooms().add(room);
+//
+//        // when
+//        ResultActions getProductAction = mockMvc.perform(
+//            get("/api/products/amounts/{roomId}?startDate=2023-11-22&endDate=2023-11-23",room.getId()));
+//
+//        // then
+//        getProductAction
+//            .andExpect(status().isOk())
+//            .andDo(MockMvcResultHandlers.print())
+//            .andDo(restDoc.document(
+//                pathParameters(
+//                    parameterWithName("roomId").description("방 아이디")
+//                ),
+//                queryParameters(
+//                    parameterWithName("startDate").description("상세 검색, 체크인 일"),
+//                    parameterWithName("endDate").description("상세 검색, 체크아웃 일")
+//                ),
+//                responseFields(
+//                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+//                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+//                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 NULL")
+//                )
+//            ));
+//    }
 
 
 }

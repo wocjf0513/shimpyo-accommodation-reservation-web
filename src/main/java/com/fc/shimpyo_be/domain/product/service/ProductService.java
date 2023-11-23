@@ -59,28 +59,27 @@ public class ProductService {
         final String endDate) {
         Product product = productRepository.findById(productId)
             .orElseThrow(ProductNotFoundException::new);
-        ProductDetailsResponse productDetailsResponse = ProductMapper.toProductDetailsResponse(
-            product);
-        productDetailsResponse.rooms().stream().filter(
-                roomResponse -> !isAvailableForReservation(roomResponse.getRoomId(), startDate, endDate))
-            .forEach(
-                RoomResponse::setReserved);
+        ProductDetailsResponse productDetailsResponse = ProductMapper.toProductDetailsResponse(product);
+//        productDetailsResponse.rooms().stream().filter(
+//                roomResponse -> !isAvailableForReservation(roomResponse.getRoomId(), startDate, endDate))
+//            .forEach(
+//                RoomResponse::setReserved);
         return productDetailsResponse;
     }
 
 
-    public boolean isAvailableForReservation(final Long roomId, final String startDate,
-        final String endDate) {
-        Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
-        Long countReservedRooms = reservationRepository.countReservedRooms(roomId,
-            DateTimeUtil.toLocalDateTime(startDate),
-            DateTimeUtil.toLocalDateTime(endDate).minusDays(1));
-
-        if (countReservedRooms == null || countReservedRooms == 0L) {
-            return true;
-        }
-        return false;
-    }
+//    public boolean isAvailableForReservation(final Long roomId, final String startDate,
+//        final String endDate) {
+//        Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
+//        Long countReservedRooms = reservationRepository.countReservedRooms(roomId,
+//            DateTimeUtil.toLocalDateTime(startDate),
+//            DateTimeUtil.toLocalDateTime(endDate).minusDays(1));
+//
+//        if (countReservedRooms == null || countReservedRooms == 0L) {
+//            return true;
+//        }
+//        return false;
+//    }
 
 
 }

@@ -49,13 +49,13 @@ public class ProductController {
         return ResponseDto.res(HttpStatus.OK, productService.getProductDetails(productId, startDate, endDate),"상품을 성공적으로 죄회했습니다.");
     }
 
-    @GetMapping("/amounts/{roomId}")
-    ResponseDto<Void> isAvailableForReservation (@PathVariable("roomId") Long roomId,
-        @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
-        @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
-        if(productService.isAvailableForReservation(roomId, startDate, endDate)){
-            return ResponseDto.res(HttpStatus.OK,"예약 가능한 방입니다.");
-        }
-        throw new RoomNotReserveException();
-    }
+//    @GetMapping("/amounts/{roomId}")
+//    ResponseDto<Void> isAvailableForReservation (@PathVariable("roomId") Long roomId,
+//        @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
+//        @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
+//        if(productService.isAvailableForReservation(roomId, startDate, endDate)){
+//            return ResponseDto.res(HttpStatus.OK,"예약 가능한 방입니다.");
+//        }
+//        throw new RoomNotReserveException();
+//    }
 }
