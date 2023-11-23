@@ -40,7 +40,15 @@ public class ProductService {
             spec = spec.and(ProductSpecification.likeProductName(productName));
         }
         if (category != null) {
-            spec = spec.and(ProductSpecification.equalCategory(category));
+            if (category.contains(",")) {
+                String[] categories = category.split(",");
+                for (int i = 0; i < categories.length; i++) {
+                    spec = spec.or(ProductSpecification.equalCategory(categories[i]));
+                }
+            }
+            else{
+                spec = spec.and(ProductSpecification.equalCategory(category));
+            }
         }
         if (address != null) {
             spec = spec.and(ProductSpecification.likeAddress(address));

@@ -76,7 +76,7 @@ class ProductIntegrationTest extends RestDocsSupport {
     @WithMockUser
     void shouldSuccessToGetAllProducts() throws Exception {
         // given
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 20; i++) {
             Product product = productRepository.save(ProductFactory.createTestProduct());
             Room room = roomRepository.save(ProductFactory.createTestRoom(product));
             product.getRooms().add(room);
@@ -84,7 +84,7 @@ class ProductIntegrationTest extends RestDocsSupport {
 
         // when
         ResultActions getProductAction = mockMvc.perform(
-            get("/api/products?page=0&size=3&address=서울시"));
+            get("/api/products?page=0&size=20&address=서울시&category=호텔,모텔,펜션"));
 
         // then
         getProductAction
