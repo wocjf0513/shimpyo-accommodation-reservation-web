@@ -29,8 +29,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-;
-
 
 @AutoConfigureMockMvc
 class ProductIntegrationTest extends RestDocsSupport {
@@ -86,7 +84,7 @@ class ProductIntegrationTest extends RestDocsSupport {
 
         // when
         ResultActions getProductAction = mockMvc.perform(
-            get("/api/products?page=0&size=3&address=서울시"));
+            get("/api/products?page=0&size=3&address=서울시&category=모텔"));
 
         // then
         getProductAction

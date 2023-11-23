@@ -33,7 +33,7 @@ public class Product {
     private String name;
     @Column(nullable = false)
     private String address;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     @Convert(converter = CategoryConverter.class)
     private Category category;
     @Column(nullable = false)

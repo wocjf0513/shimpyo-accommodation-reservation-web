@@ -10,17 +10,11 @@ public class CategoryConverter implements
 
     @Override
     public String convertToDatabaseColumn(Category attribute) {
-        if(attribute == null){
-            return Category.MOTEL.getName();
-        }
         return attribute.getName();
     }
 
     @Override
     public Category convertToEntityAttribute(String dbData) {
-        if(dbData == null || dbData.isEmpty()){
-            return Category.MOTEL;
-        }
-        return Category.getByName(dbData);
+        return dbData==null?Category.HOTEL:Category.getByName(dbData);
     }
 }

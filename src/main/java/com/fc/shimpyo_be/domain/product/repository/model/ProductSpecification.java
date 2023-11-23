@@ -8,8 +8,8 @@ public class ProductSpecification {
     public static Specification<Product> likeProductName(String productName) {
         return (root, query, CriteriaBuilder) -> CriteriaBuilder.like(root.get("productName"), "%"+productName+"%");
     }
-    public static Specification<Product> likeCategroy(String category) {
-        return (root, query, CriteriaBuilder) -> CriteriaBuilder.like(root.get("category"),"%"+category+"%");
+    public static Specification<Product> equalCategory(String category) {
+        return (root, query, CriteriaBuilder) -> CriteriaBuilder.equal(root.get("category"),Category.getByName(category));
     }
     public static Specification<Product> likeAddress(String address) {
         return (root, query, CriteriaBuilder) -> CriteriaBuilder.like(root.get("address"),"%"+address+"%");

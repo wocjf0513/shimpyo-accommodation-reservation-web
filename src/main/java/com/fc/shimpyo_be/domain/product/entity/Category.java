@@ -14,7 +14,7 @@ public enum Category {
         return name;
     }
 
-    private Category(String name) {
+    Category(String name) {
         this.name = name;
     }
 

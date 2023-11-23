@@ -40,7 +40,7 @@ public class ProductService {
             spec = spec.and(ProductSpecification.likeProductName(productName));
         }
         if (category != null) {
-            spec = spec.and(ProductSpecification.likeCategroy(category));
+            spec = spec.and(ProductSpecification.equalCategory(category));
         }
         if (address != null) {
             spec = spec.and(ProductSpecification.likeAddress(address));
