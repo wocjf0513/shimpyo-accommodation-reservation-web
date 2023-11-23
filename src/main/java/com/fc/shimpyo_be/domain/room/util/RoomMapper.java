@@ -12,8 +12,8 @@ public class RoomMapper {
             .price((long)(room.getPrice()))
             .standard((long)(room.getStandard()))
             .capacity((long) room.getCapacity())
-            .desc(room.getDescription())
-            .amount((long)room.getAmount())
+            .description(room.getDescription())
+            .reserved(false)
             .checkIn(room.getCheckIn().toString())
             .checkOut(room.getCheckOut().toString())
             .build();

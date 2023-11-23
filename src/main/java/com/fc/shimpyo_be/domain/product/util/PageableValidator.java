@@ -1,5 +1,6 @@
-package com.fc.shimpyo_be.domain.product;
+package com.fc.shimpyo_be.domain.product.util;
 
+import com.fc.shimpyo_be.domain.product.util.model.PageableConstraint;
 import jakarta.persistence.Entity;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

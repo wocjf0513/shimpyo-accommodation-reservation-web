@@ -13,7 +13,7 @@ public class ProductMapper {
     public static ProductResponse toProductResponse(Product product) {
         return ProductResponse.builder().productId(product.getId()).productName(product.getName())
             .address(product.getAddress()).category(product.getCategory().toString())
-            .image(ImageUrlParser.pareseThumbnail(product.getPhotoUrl())).star(product.getStarAvg())
+            .image(ImageUrlParser.pareseThumbnail(product.getPhotoUrl())).starAvg(product.getStarAvg())
             .price(product.getRooms().isEmpty()
                 ?0:Long.valueOf(product.getRooms().stream().map(Room::getPrice).min((o1, o2) -> o1-o2).orElseThrow()))
             .favorites(false)
@@ -26,8 +26,9 @@ public class ProductMapper {
             .category(product.getCategory().toString())
             .address(product.getAddress())
             .productName(product.getName())
-            .desc(product.getDescription())
+            .description(product.getDescription())
             .starAvg(product.getStarAvg())
+            .favorites(false)
             .images(ImageUrlParser.parse(product.getPhotoUrl()))
             .rooms(product.getRooms().stream().map(RoomMapper::from).toList())
             .build();

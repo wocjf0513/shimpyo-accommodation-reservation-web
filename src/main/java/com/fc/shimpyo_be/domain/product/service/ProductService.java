@@ -1,16 +1,23 @@
 package com.fc.shimpyo_be.domain.product.service;
 
+import com.fc.shimpyo_be.domain.product.repository.model.ProductSpecification;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.exception.ProductNotFoundException;
+import com.fc.shimpyo_be.domain.product.exception.RoomNotFoundException;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.product.util.ProductMapper;
+import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
+import com.fc.shimpyo_be.domain.room.dto.response.RoomResponse;
+import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,13 +26,27 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    private final ReservationRepository reservationRepository;
+
     private final RoomRepository roomRepository;
 
-    //예약 상품 목록을 조회해야 될듯.
+    public List<ProductResponse> getAllProducts(final String productName, final String address,
+        final String category, final Pageable pageable) {
 
-    public List<ProductResponse> getAllProducts(final String keyword, final Pageable pageable) {
+        Specification<Product> spec = (root, query, criteriaBuilder) -> null;
+
+        if (productName != null) {
+            spec = spec.and(ProductSpecification.likeProductName(productName));
+        }
+        if (category != null) {
+            spec = spec.and(ProductSpecification.likeCategroy(category));
+        }
+        if (address != null) {
+            spec = spec.and(ProductSpecification.likeAddress(address));
+        }
+
         List<ProductResponse> allProducts = Optional.of(
-                productRepository.findAllContainingKeyword(keyword, pageable)).orElseThrow()
+                productRepository.findAll(spec, pageable)).orElseThrow().getContent()
             .stream().map(ProductMapper::toProductResponse).toList();
 
         if (allProducts.isEmpty()) {
@@ -34,23 +55,32 @@ public class ProductService {
         return allProducts;
     }
 
-//    public ProductDetailsResponse getProductDetails(final Long productId, final String startDate,
-//        final String endDate) {
-//        Product product = productRepository.findById(productId)
-//            .orElseThrow(ProductNotFoundException::new);
-//        ProductDetailsResponse productDetailsResponse = ProductMapper.toProductDetailsResponse(
-//            product);
-//        productDetailsResponse.rooms()
-//            .removeIf(room -> isAvailableForReservation(room.roomId(), startDate, endDate));
-//        return productDetailsResponse;
-//    }
+    public ProductDetailsResponse getProductDetails(final Long productId, final String startDate,
+        final String endDate) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(ProductNotFoundException::new);
+        ProductDetailsResponse productDetailsResponse = ProductMapper.toProductDetailsResponse(
+            product);
+        productDetailsResponse.rooms().stream().filter(
+                roomResponse -> !isAvailableForReservation(roomResponse.getRoomId(), startDate, endDate))
+            .forEach(
+                RoomResponse::setReserved);
+        return productDetailsResponse;
+    }
 
 
-//    public boolean isAvailableForReservation(final Long roomId, final String startDate,
-//        final String endDate) {
-//        //여행 기간에 포함된 주문들을 다 보면서 날짜 하나라도 수량을 넘지는 않는지 확인
-//
-//    }
+    public boolean isAvailableForReservation(final Long roomId, final String startDate,
+        final String endDate) {
+        Room room = roomRepository.findById(roomId).orElseThrow(RoomNotFoundException::new);
+        Long countReservedRooms = reservationRepository.countReservedRooms(roomId,
+            DateTimeUtil.toLocalDateTime(startDate),
+            DateTimeUtil.toLocalDateTime(endDate).minusDays(1));
+
+        if (countReservedRooms == null || countReservedRooms == 0L) {
+            return true;
+        }
+        return false;
+    }
 
 
 }

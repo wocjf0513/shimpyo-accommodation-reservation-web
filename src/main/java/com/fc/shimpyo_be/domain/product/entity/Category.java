@@ -2,8 +2,8 @@ package com.fc.shimpyo_be.domain.product.entity;
 
 public enum Category {
 
-    HOTEL,
-    MOTEL,
-    VACATION_COTTAGE,
-    POOL_VILLA
+    호텔,
+    모텔,
+    풀빌라,
+    펜션
 }

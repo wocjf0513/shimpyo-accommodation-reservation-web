@@ -9,7 +9,8 @@ public enum ErrorCode {
 
     // 상품
     PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "상품 정보를 찾을 수 없습니다."),
-    ROOM_NOT_RESERVE(HttpStatus.NOT_FOUND, "예약이 불가능한 방입니다."),
+    ROOM_NOT_RESERVE(HttpStatus.FORBIDDEN, "예약 불가능한 방입니다."),
+    ROON_NOT_FOUND(HttpStatus.NOT_FOUND,"방 정보를 찾을 수 없습니다."),
 
     // Open API
     HTTP_CLIENT_CONNECTION_ERROR(HttpStatus.UNAUTHORIZED, "외부 API 연결에 실패했습니다.");

@@ -1,5 +1,6 @@
-package com.fc.shimpyo_be.domain.product;
+package com.fc.shimpyo_be.domain.product.util.model;
 
+import com.fc.shimpyo_be.domain.product.util.PageableValidator;
 import jakarta.validation.Constraint;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

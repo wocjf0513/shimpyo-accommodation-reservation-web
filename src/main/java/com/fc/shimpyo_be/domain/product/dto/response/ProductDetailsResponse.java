@@ -6,12 +6,11 @@ import lombok.Builder;
 
 @Builder
 public record ProductDetailsResponse(Long productId, String category, String address,
-                                     String productName, String desc, Float starAvg,
+                                     String productName, String description, Boolean favorites, Float starAvg,
 
                                      List<String> images,
 
                                      List<RoomResponse> rooms
-
 ) {
 
 }
