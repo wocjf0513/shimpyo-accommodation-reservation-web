@@ -40,15 +40,6 @@ class ProductIntegrationTest extends RestDocsSupport {
     @Autowired
     private RoomRepository roomRepository;
 
-    @Autowired
-    private ReservationProductRepository reservationProductRepository;
-
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private ReservationRepository reservationRepository;
-
 
     private void assertProductDetailsResponse(Product expectedProduct, ResultActions resultActions)
         throws Exception {
