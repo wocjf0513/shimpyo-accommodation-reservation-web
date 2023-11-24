@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.product.service;
 
+import com.fc.shimpyo_be.domain.product.dto.request.SearchKeywordRequest;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Product;
@@ -26,26 +27,28 @@ public class ProductService {
 
     private final RoomRepository roomRepository;
 
-    public List<ProductResponse> getProducts(final String productName, final String address,
-        final String category, final Pageable pageable) {
+    public List<ProductResponse> getProducts(final SearchKeywordRequest searchKeywordRequest,
+        final Pageable pageable) {
 
         Specification<Product> spec = (root, query, criteriaBuilder) -> null;
 
-        if (productName != null) {
-            spec = spec.and(ProductSpecification.likeProductName(productName));
+        if (searchKeywordRequest.productName() != null) {
+            spec = spec.and(
+                ProductSpecification.likeProductName(searchKeywordRequest.productName()));
         }
-        if (category != null) {
-            if (category.contains(",")) {
-                String[] categories = category.split(",");
+        if (searchKeywordRequest.category() != null) {
+            if (searchKeywordRequest.category().contains(",")) {
+                String[] categories = searchKeywordRequest.category().split(",");
                 for (int i = 0; i < categories.length; i++) {
                     spec = spec.or(ProductSpecification.equalCategory(categories[i]));
                 }
             } else {
-                spec = spec.and(ProductSpecification.equalCategory(category));
+                spec = spec.and(
+                    ProductSpecification.equalCategory(searchKeywordRequest.category()));
             }
         }
-        if (address != null) {
-            spec = spec.and(ProductSpecification.likeAddress(address));
+        if (searchKeywordRequest.address() != null) {
+            spec = spec.and(ProductSpecification.likeAddress(searchKeywordRequest.address()));
         }
 
         return Optional.of(productRepository.findAll(spec, pageable)).orElseThrow().getContent()

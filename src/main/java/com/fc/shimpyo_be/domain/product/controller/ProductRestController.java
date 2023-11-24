@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.product.controller;
 
+import com.fc.shimpyo_be.domain.product.dto.request.SearchKeywordRequest;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Product;
@@ -9,7 +10,6 @@ import com.fc.shimpyo_be.global.common.ResponseDto;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import jakarta.validation.constraints.Pattern;
 import java.util.List;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -37,9 +37,16 @@ public class ProductRestController {
         @RequestParam(required = false) String address,
         @RequestParam(required = false) String category,
         @PageableConstraint(Product.class) @PageableDefault(size = 10, page = 0) Pageable pageable) {
+
+        SearchKeywordRequest searchKeywordRequest = SearchKeywordRequest.builder()
+            .productName(productName)
+            .address(address)
+            .category(category)
+            .build();
+
         //pageable에 잘못된 값이 왔을 때의 처리가 필요함.
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.OK,
-            productService.getProducts(productName, address, category, pageable),
+            productService.getProducts(searchKeywordRequest, pageable),
             "상품 목록을 성공적으로 조회했습니다."));
     }
 
