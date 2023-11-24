@@ -1,11 +1,8 @@
 package com.fc.shimpyo_be.domain.room.dto.response;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@Builder
 @Getter
 public class RoomResponse {
 
@@ -19,8 +16,22 @@ public class RoomResponse {
     private final String checkOut;
     private Boolean reserved;
 
+    @Builder
+    public RoomResponse(Long roomId, String roomName, Long price, String description, Long standard,
+        Long capacity, String checkIn, String checkOut, Boolean reserved) {
+        this.roomId = roomId;
+        this.roomName = roomName;
+        this.price = price;
+        this.reserved = reserved;
+        this.description = description;
+        this.standard = standard;
+        this.capacity = capacity;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+    }
+
     public void setReserved() {
-        reserved=true;
+        reserved = true;
     }
 
 }

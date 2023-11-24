@@ -37,7 +37,7 @@ public class ProductFactory {
             .product(product)
             .checkIn(LocalTime.of(11,0,0))
             .checkOut(LocalTime.of(15,0,0))
-            .name(product.getCategory()+" 방")
+            .name(product.getCategory().getName()+" 방")
             .standard(stadard)
             .capacity(stadard+ThreadLocalRandom.current().nextInt(10))
             .build();

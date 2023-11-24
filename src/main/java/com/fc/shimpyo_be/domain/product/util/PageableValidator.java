@@ -45,10 +45,7 @@ public class PageableValidator implements ConstraintValidator<PageableConstraint
     private boolean isInvalidClass(Class<?> entityClass, String field) {
         try {
             Class<?> clazz = entityClass.getDeclaredField(field).getType();
-            if (clazz.getAnnotation(Entity.class) != null) {
-                return true;
-            }
-            return false;
+            return clazz.getAnnotation(Entity.class) != null;
         } catch (Exception e) {
             return true;
         }

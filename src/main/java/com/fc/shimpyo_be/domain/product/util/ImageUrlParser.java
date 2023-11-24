@@ -1,6 +1,5 @@
 package com.fc.shimpyo_be.domain.product.util;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

@@ -15,6 +15,6 @@ public class CategoryConverter implements
 
     @Override
     public Category convertToEntityAttribute(String dbData) {
-        return dbData==null?Category.HOTEL:Category.getByName(dbData);
+        return dbData == null ? Category.HOTEL : Category.getByName(dbData);
     }
 }

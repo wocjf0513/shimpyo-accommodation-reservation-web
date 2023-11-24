@@ -6,8 +6,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,10 +41,11 @@ public class Product {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String photoUrl;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Room> rooms = new ArrayList<>();
+    private final List<Room> rooms = new ArrayList<>();
 
     @Builder
-    public Product(Long id, String name, String address, Category category, String description, float starAvg,
+    public Product(Long id, String name, String address, Category category, String description,
+        float starAvg,
         String photoUrl) {
         this.id = id;
         this.name = name;

@@ -10,7 +10,7 @@ public enum Category {
     RENTAL_COTTAGE("펜션");
     private final String name;
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
@@ -24,7 +24,6 @@ public enum Category {
             .findFirst()
             .orElse(Category.HOTEL);
     }
-
 
 
 }

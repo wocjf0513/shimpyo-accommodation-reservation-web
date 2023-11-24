@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 public @interface PageableConstraint {
 
     String message() default "정확하지 않은 Pagination입니다.";
+
     Class<?>[] value() default {};
 
     Class<?>[] groups() default {};
