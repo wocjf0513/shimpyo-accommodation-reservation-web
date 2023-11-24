@@ -45,7 +45,6 @@ public class ProductRestController {
             .category(category)
             .build();
 
-        //pageable에 잘못된 값이 왔을 때의 처리가 필요함.
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.OK,
             productService.getProducts(searchKeywordRequest, pageable),
             "상품 목록을 성공적으로 조회했습니다."));
