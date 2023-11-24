@@ -33,6 +33,39 @@ public class MemberRestControllerDocsTest extends RestDocsSupport {
         CheckPasswordRequestDto.class);
 
     @Test
+    @DisplayName("checkPassword()은 비밀번호가 일치하는지 확인할 수 있다.")
+    @WithMockUser(roles = "USER")
+    void checkPassword() throws Exception {
+        // given
+        CheckPasswordRequestDto request = CheckPasswordRequestDto.builder()
+            .password("qwer1234$$")
+            .build();
+        CheckPasswordResponseDto checkPasswordResponseDto = CheckPasswordResponseDto.builder()
+            .isCorrectPassword(true)
+            .build();
+
+        given(memberService.checkPassword(any(CheckPasswordRequestDto.class))).willReturn(
+            checkPasswordResponseDto);
+
+        // when then
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/members")
+                .with(csrf())
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andDo(restDoc.document(
+                requestFields(
+                    fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
+                        .attributes(key("constraints").value(
+                            CheckPasswordDescriptions.descriptionsForProperty("password")))),
+                responseFields(responseCommon()).and(
+                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                    fieldWithPath("data.correctPassword").type(JsonFieldType.BOOLEAN)
+                        .description("회원 식별자")
+                ))
+            );
+    }
+
+    @Test
     @DisplayName("updateMember()은 회원 정보를 수정할 수 있다.")
     @WithMockUser(roles = "USER")
     void updateMember() throws Exception {
@@ -75,38 +108,4 @@ public class MemberRestControllerDocsTest extends RestDocsSupport {
                 ))
             );
     }
-
-    @Test
-    @DisplayName("checkPassword()은 비밀번호가 일치하는지 확인할 수 있다.")
-    @WithMockUser(roles = "USER")
-    void _willSuccess() throws Exception {
-        // given
-        CheckPasswordRequestDto request = CheckPasswordRequestDto.builder()
-            .password("qwer1234$$")
-            .build();
-        CheckPasswordResponseDto checkPasswordResponseDto = CheckPasswordResponseDto.builder()
-            .isCorrectPassword(true)
-            .build();
-
-        given(memberService.checkPassword(any(CheckPasswordRequestDto.class))).willReturn(
-            checkPasswordResponseDto);
-
-        // when then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/members")
-                .with(csrf())
-                .content(objectMapper.writeValueAsString(request))
-                .contentType(MediaType.APPLICATION_JSON))
-            .andDo(restDoc.document(
-                requestFields(
-                    fieldWithPath("password").type(JsonFieldType.STRING).description("비밀번호")
-                        .attributes(key("constraints").value(
-                            CheckPasswordDescriptions.descriptionsForProperty("password")))),
-                responseFields(responseCommon()).and(
-                    fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
-                    fieldWithPath("data.correctPassword").type(JsonFieldType.BOOLEAN)
-                        .description("회원 식별자")
-                ))
-            );
-    }
-
 }
