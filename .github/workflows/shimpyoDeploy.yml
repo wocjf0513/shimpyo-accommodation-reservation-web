@@ -48,9 +48,9 @@ jobs:
         uses: appleboy/ssh-action@master
         id: deploy
         with:
-          host: ${{ secrets.HOST | base64 --decode }}
+          host: ${{ secrets.HOST }} | base64 --decode
           username: ubuntu
-          key: ${{ secrets.KEY | base64 --decode }}
+          key: ${{ secrets.KEY }} | base64 --decode
           envs: GITHUB_SHA
           script: |
             git pull origin develop
