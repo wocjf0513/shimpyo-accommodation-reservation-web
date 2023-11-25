@@ -12,7 +12,6 @@ import com.fc.shimpyo_be.domain.member.exception.AlreadyExistsMemberException;
 import com.fc.shimpyo_be.domain.member.exception.InvalidRefreshTokenException;
 import com.fc.shimpyo_be.domain.member.exception.LoggedOutException;
 import com.fc.shimpyo_be.domain.member.exception.UnmatchedMemberException;
-import com.fc.shimpyo_be.domain.member.exception.UnmatchedPasswordException;
 import com.fc.shimpyo_be.domain.member.repository.RefreshTokenRepository;
 import com.fc.shimpyo_be.global.config.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -38,9 +37,9 @@ public class AuthService {
         if (memberService.isExistsByEmail(signUpRequestDto.getEmail())) {
             throw new AlreadyExistsMemberException();
         }
-        if (!signUpRequestDto.getPassword().equals(signUpRequestDto.getPasswordConfirm())) {
-            throw new UnmatchedPasswordException();
-        }
+        memberService.checkValidPassword(signUpRequestDto.getPassword());
+        memberService.checkMatchedPassword(signUpRequestDto.getPassword(),
+            signUpRequestDto.getPasswordConfirm());
         Member member = signUpRequestDto.toMember(passwordEncoder);
         return MemberResponseDto.of(memberService.saveMember(member));
     }

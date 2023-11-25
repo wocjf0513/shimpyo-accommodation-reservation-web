@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -138,7 +139,7 @@ public class AuthServiceTest {
         }
 
         @Test
-        @DisplayName("비밀번호와 비밀번호 확인이 일치하지 않으면 로그인을 할 수 없다.")
+        @DisplayName("비밀번호와 비밀번호 확인이 일치하지 않으면 회원 가입을 할 수 없다.")
         void unmatchedPassword_willFail() {
             // given
             SignUpRequestDto signUpRequestDto = SignUpRequestDto.builder()
@@ -149,7 +150,8 @@ public class AuthServiceTest {
                 .build();
 
             given(memberService.isExistsByEmail(any(String.class))).willReturn(false);
-
+            doThrow(new UnmatchedPasswordException()).when(memberService)
+                .checkMatchedPassword(any(String.class), any(String.class));
             // when
             Throwable exception = assertThrows(UnmatchedPasswordException.class, () -> {
                 authService.signUp(signUpRequestDto);
@@ -161,6 +163,7 @@ public class AuthServiceTest {
             verify(memberService, times(1)).isExistsByEmail(any(String.class));
             verify(memberService, never()).saveMember(any(Member.class));
         }
+
     }
 
     @Nested

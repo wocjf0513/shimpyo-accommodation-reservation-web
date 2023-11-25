@@ -1,0 +1,66 @@
+= Trip REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+[[Sign-Up]]
+== 회원 가입
+
+회원 가입 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/auth-rest-controller-docs-test/sign-up/http-request.adoc[]
+include::{snippets}/auth-rest-controller-docs-test/sign-up/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/auth-rest-controller-docs-test/sign-up/http-response.adoc[]
+include::{snippets}/auth-rest-controller-docs-test/sign-up/response-fields.adoc[]
+
+[[Sign-In]]
+== 로그인
+
+로그인 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/auth-rest-controller-docs-test/sign-in/http-request.adoc[]
+include::{snippets}/auth-rest-controller-docs-test/sign-in/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/auth-rest-controller-docs-test/sign-in/http-response.adoc[]
+include::{snippets}/auth-rest-controller-docs-test/sign-in/response-fields.adoc[]
+
+[[Check-Password]]
+== 비밀번호 확인
+
+비밀번호 확인 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/member-rest-controller-docs-test/check-password/http-request.adoc[]
+include::{snippets}/member-rest-controller-docs-test/check-password/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/member-rest-controller-docs-test/check-password/http-response.adoc[]
+include::{snippets}/member-rest-controller-docs-test/check-password/response-fields.adoc[]
+
+[[Update-Member]]
+== 회원 정보 수정
+
+회원 정보 수정 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/member-rest-controller-docs-test/update-member/http-request.adoc[]
+include::{snippets}/member-rest-controller-docs-test/update-member/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/member-rest-controller-docs-test/update-member/http-response.adoc[]
+include::{snippets}/member-rest-controller-docs-test/update-member/response-fields.adoc[]

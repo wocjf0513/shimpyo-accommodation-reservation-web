@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.member.entity;
 
+import com.fc.shimpyo_be.domain.member.dto.request.UpdateMemberRequestDto;
 import com.fc.shimpyo_be.global.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,5 +42,15 @@ public class Member extends BaseTimeEntity {
         this.password = password;
         this.photoUrl = photoUrl;
         this.authority = authority;
+    }
+
+    public void update(UpdateMemberRequestDto updateMemberRequestDto) {
+        if (updateMemberRequestDto.getPhotoUrl() != null) {
+            this.photoUrl = updateMemberRequestDto.getPhotoUrl();
+        }
+    }
+
+    public void changePassword(String password){
+        this.password = password;
     }
 }

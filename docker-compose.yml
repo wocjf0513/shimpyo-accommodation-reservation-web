@@ -8,8 +8,6 @@ services:
     environment:
       - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
       - MARIADB_DATABASE=shimpyo
-      - MARIADB_USERNAME=${DB_USERNAME}
-      - MARIADB_PASSWORD=${DB_PASSWORD}
       - TZ=Asia/Seoul
     volumes:
       - ./mariadb/config:/etc/mysql/conf.d
