@@ -46,11 +46,8 @@ jobs:
     - name: Build with Gradle1
       run: |
         chmod +x ./gradlew
-
-    - name: Build with Gradle2
-      uses: gradle/gradle-build-action@v2.6.0
-      with:
-        arguments: build
+        ./gradlew clean build -x test
+        
 
     - name: Docker build & push to docker repo
       run: |
@@ -68,6 +65,6 @@ jobs:
         envs: GITHUB_SHA
         script: |
           sudo docker rm -f $(docker ps -qa)
-          sudo docker pull ${{ secrets.DOCKER_REPO }}/directors-dev
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
           docker-compose up -d
           docker image prune -f
