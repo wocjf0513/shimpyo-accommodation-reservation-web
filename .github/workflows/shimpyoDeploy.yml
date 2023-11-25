@@ -23,21 +23,40 @@ jobs:
 
     - name: Make application.properties
       run: |
-        cd ./src/main/resources
-        touch ./application.properties
-        echo "${{ secrets.PROPERTIES }}" > ./application.properties
-      shell: bash
+        touch ./src/main/resources/application.yml
+        touch ./src/test/resources/application.yml
+        echo "${{ secrets.PROPERTIES }}" > ./src/main/resources/application.yml
+        echo "${{ secrets.TEST_PROPERTIES }}" > ./src/test/resources/application.yml
 
-    - name: Build with Gradle
+    - name: Make env file
+      run: |
+        touch ./.env
+        echo "${{ secrets.ENV }}" > ./.env
+
+    - name: Docker compose
+      run: |
+        docker-compose up -d  
+
+    - name: Make snippets folder
+      run: |
+        mkdir -p ./build/generated-snippets   
+        cd ./build/generated-snippets
+        pwd
+
+    - name: Build with Gradle1
       run: |
         chmod +x ./gradlew
-        ./gradlew clean build -x test
+
+    - name: Build with Gradle2
+      uses: gradle/gradle-build-action@v2.6.0
+      with:
+        arguments: build
 
     - name: Docker build & push to docker repo
       run: |
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-        docker build -f Dockerfile -t ${{ secrets.DOCKER_REPO }}/directors-dev .
-        docker push ${{ secrets.DOCKER_REPO }}/directors-dev
+        docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} .
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
 
     - name: Deploy to server
       uses: appleboy/ssh-action@master
