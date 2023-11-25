@@ -46,7 +46,11 @@ jobs:
     - name: Build with Gradle1
       run: |
         chmod +x ./gradlew
-        ./gradlew clean build -x test
+
+    - name: Build with Gradle2
+      uses: gradle/gradle-build-action@v2.6.0
+      with:
+        arguments: build
         
 
     - name: Docker build & push to docker repo
