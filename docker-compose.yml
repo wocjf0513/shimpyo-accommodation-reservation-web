@@ -15,7 +15,7 @@ services:
       - ./mariadb/data:/var/lib/mysql
     ports:
       - "${DB_PORT}:3306"
-    restart: on-failure
+    restart: unless-stopped
     networks:
       - shimpyo_network
 
