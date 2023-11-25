@@ -2,9 +2,7 @@ name: CD with Gradle
 
 on:
   push:
-    branches: [ "deploy/shimpyo" ]
-  pull_request:
-    branches: [ "deploy/shimpyo" ]
+    branches: [ "main", "develop" ]
 
 permissions:
   contents: read
