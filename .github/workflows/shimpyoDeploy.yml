@@ -52,6 +52,7 @@ jobs:
             sudo su
             cd Shimpyo_BE/
             git pull origin develop
+            chmod +x ./gradlew
             ./gradlew build
             chmod 755 ./mariadb/config/my.cnf
             chmod 755 ./redis/config/redis.cnf
