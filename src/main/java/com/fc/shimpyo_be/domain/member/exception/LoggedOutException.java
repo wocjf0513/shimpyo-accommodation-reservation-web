@@ -1,8 +1,11 @@
 package com.fc.shimpyo_be.domain.member.exception;
 
-public class LoggedOutException extends RuntimeException{
+import com.fc.shimpyo_be.global.exception.ApplicationException;
+import com.fc.shimpyo_be.global.exception.ErrorCode;
 
-    public LoggedOutException(){
-        super("로그아웃 된 회원 입니다.");
+public class LoggedOutException extends ApplicationException {
+
+    public LoggedOutException() {
+        super(ErrorCode.LOGGED_OUT);
     }
 }

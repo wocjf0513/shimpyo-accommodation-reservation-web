@@ -1,8 +1,11 @@
 package com.fc.shimpyo_be.domain.member.exception;
 
-public class UnmatchedMemberException extends RuntimeException{
+import com.fc.shimpyo_be.global.exception.ApplicationException;
+import com.fc.shimpyo_be.global.exception.ErrorCode;
 
-    public UnmatchedMemberException(){
-        super("토큰의 회원 정보가 일치하지 않습니다.");
+public class UnmatchedMemberException extends ApplicationException {
+
+    public UnmatchedMemberException() {
+        super(ErrorCode.UNMATCHED_MEMBER);
     }
 }

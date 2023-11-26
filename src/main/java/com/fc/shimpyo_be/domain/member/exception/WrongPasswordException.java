@@ -1,8 +1,11 @@
 package com.fc.shimpyo_be.domain.member.exception;
 
-public class WrongPasswordException extends RuntimeException{
+import com.fc.shimpyo_be.global.exception.ApplicationException;
+import com.fc.shimpyo_be.global.exception.ErrorCode;
 
-    public WrongPasswordException(){
-        super("비밀번호가 틀렸습니다.");
+public class WrongPasswordException extends ApplicationException {
+
+    public WrongPasswordException() {
+        super(ErrorCode.WRONG_PASSWORD);
     }
 }
