@@ -49,8 +49,10 @@ jobs:
           key: ${{ secrets.KEY }}
           envs: GITHUB_SHA
           script: |
+            sudo su
+            cd Shimpyo_BE/
             git pull origin develop
             ./gradlew build
             chmod 755 ./mariadb/config/my.cnf
             chmod 755 ./redis/config/redis.cnf
-            docker-compose up --build
+            docker-compose up --build -d
