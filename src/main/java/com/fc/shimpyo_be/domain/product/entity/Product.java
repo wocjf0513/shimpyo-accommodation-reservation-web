@@ -38,7 +38,7 @@ public class Product {
     private String description;
     @ColumnDefault("0")
     private float starAvg;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String thumbnail;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> photoUrls = new ArrayList<>();
