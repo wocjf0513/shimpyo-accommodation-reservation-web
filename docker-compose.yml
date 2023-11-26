@@ -1,26 +1,57 @@
 version: "3"
+
 services:
-  shimpyo-db:
+
+  database:
     container_name: shimpyo-db
     image: mariadb:10
-    env_file:
-      - .env
     environment:
-      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      - MARIADB_DATABASE=shimpyo
-      - MARIADB_USERNAME=${DB_USERNAME}
-      - MARIADB_PASSWORD=${DB_PASSWORD}
-      - TZ=Asia/Seoul
+      MARIADB_DATABASE: shimpyo
+      MARIADB_ROOT_HOST: ${DB_ROOT_HOST}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      TZ: Asia/Seoul
     volumes:
       - ./mariadb/config:/etc/mysql/conf.d
       - ./mariadb/data:/var/lib/mysql
     ports:
-      - "3307:3306"
-    restart: always
+      - "${DB_PORT}:3306"
+    restart: unless-stopped
+    networks:
+      - shimpyo_network
 
-  shimpyo-redis:
+  redis:
     container_name: shimpyo-redis
     image: redis:6
+    hostname: redis
     ports:
       - "6379:6379"
-    restart: always
+    volumes:
+      - ./redis/config:/usr/local/conf/redis.cnf
+      - ./redis/data:/data
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    restart: on-failure
+    networks:
+      - shimpyo_network
+
+  application:
+    container_name: shimpyo-app
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/shimpyo?useSSL=false&createDatabaseIfNotExist=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+    depends_on:
+      - database
+      - redis
+    networks:
+      - shimpyo_network
+
+networks:
+  shimpyo_network:
