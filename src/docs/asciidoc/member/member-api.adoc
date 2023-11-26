@@ -1,4 +1,4 @@
-= Trip REST API Docs
+= Member REST API Docs
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
