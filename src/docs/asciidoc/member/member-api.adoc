@@ -35,20 +35,19 @@ include::{snippets}/auth-rest-controller-docs-test/sign-in/request-fields.adoc[]
 include::{snippets}/auth-rest-controller-docs-test/sign-in/http-response.adoc[]
 include::{snippets}/auth-rest-controller-docs-test/sign-in/response-fields.adoc[]
 
-[[Check-Password]]
-== 비밀번호 확인
+[[Get-Member]]
+== 회원 정보 조회
 
-비밀번호 확인 API 입니다.
+회원 정보 조회 API 입니다.
 
 === HttpRequest
 
-include::{snippets}/member-rest-controller-docs-test/check-password/http-request.adoc[]
-include::{snippets}/member-rest-controller-docs-test/check-password/request-fields.adoc[]
+include::{snippets}/member-rest-controller-docs-test/get-member/http-request.adoc[]
 
 === HttpResponse
 
-include::{snippets}/member-rest-controller-docs-test/check-password/http-response.adoc[]
-include::{snippets}/member-rest-controller-docs-test/check-password/response-fields.adoc[]
+include::{snippets}/member-rest-controller-docs-test/get-member/http-response.adoc[]
+include::{snippets}/member-rest-controller-docs-test/get-member/response-fields.adoc[]
 
 [[Update-Member]]
 == 회원 정보 수정
@@ -64,3 +63,19 @@ include::{snippets}/member-rest-controller-docs-test/update-member/request-field
 
 include::{snippets}/member-rest-controller-docs-test/update-member/http-response.adoc[]
 include::{snippets}/member-rest-controller-docs-test/update-member/response-fields.adoc[]
+
+[[Check-Password]]
+== 비밀번호 확인
+
+비밀번호 확인 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/member-rest-controller-docs-test/check-password/http-request.adoc[]
+include::{snippets}/member-rest-controller-docs-test/check-password/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/member-rest-controller-docs-test/check-password/http-response.adoc[]
+include::{snippets}/member-rest-controller-docs-test/check-password/response-fields.adoc[]
+
