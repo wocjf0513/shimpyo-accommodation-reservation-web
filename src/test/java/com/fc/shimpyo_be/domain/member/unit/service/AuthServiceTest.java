@@ -215,7 +215,7 @@ public class AuthServiceTest {
             given(jwtTokenProvider.generateToken(any(Authentication.class))).willReturn(
                 tokenResponseDto);
             given(refreshTokenRepository.save(any(RefreshToken.class))).willReturn(refreshToken);
-            given(memberService.getMember(any(long.class))).willReturn(member);
+            given(memberService.getMemberById(any(long.class))).willReturn(member);
 
             // when
             SignInResponseDto result = authService.signIn(signInRequestDto);
@@ -236,7 +236,7 @@ public class AuthServiceTest {
             verify(authenticationManager, times(1)).authenticate(any(Authentication.class));
             verify(jwtTokenProvider, times(1)).generateToken(any(Authentication.class));
             verify(refreshTokenRepository, times(1)).save(any(RefreshToken.class));
-            verify(memberService, times(1)).getMember(any(long.class));
+            verify(memberService, times(1)).getMemberById(any(long.class));
         }
     }
 
@@ -291,7 +291,7 @@ public class AuthServiceTest {
                 Optional.of(refreshToken));
             given(jwtTokenProvider.generateToken(any(Authentication.class))).willReturn(
                 tokenResponseDto);
-            given(memberService.getMember(any(long.class))).willReturn(member);
+            given(memberService.getMemberById(any(long.class))).willReturn(member);
 
             // when
             SignInResponseDto result = authService.refresh(refreshRequestDto);
@@ -312,7 +312,7 @@ public class AuthServiceTest {
             verify(jwtTokenProvider, times(1)).getAuthentication(any(String.class));
             verify(refreshTokenRepository, times(1)).findById(any(Long.class));
             verify(jwtTokenProvider, times(1)).generateToken(any(Authentication.class));
-            verify(memberService, times(1)).getMember(any(long.class));
+            verify(memberService, times(1)).getMemberById(any(long.class));
         }
 
         @Test
