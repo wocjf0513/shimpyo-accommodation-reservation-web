@@ -23,17 +23,13 @@ jobs:
 
       - name: Make application.properties
         run: |
-          touch ./src/main/resources/application-local.yml
-          touch ./src/main/resources/application-prod.yml
-          touch ./src/test/resources/application.yml
-          echo "${{ secrets.LOCAL_PROPERTIES }}" | base64 --decode > ./src/main/resources/application-local.yml
-          echo "${{ secrets.PROD_PROPERTIES }}" | base64 --decode > ./src/main/resources/application-prod.yml
-          echo "${{ secrets.TEST_PROPERTIES }}" | base64 --decode > ./src/test/resources/application.yml
+          echo "${{ secrets.LOCAL_PROPERTIES }}" | base64 --decode > src/main/resources/application-local.yml
+          echo "${{ secrets.PROD_PROPERTIES }}" | base64 --decode > src/main/resources/application-prod.yml
+          echo "${{ secrets.TEST_PROPERTIES }}" | base64 --decode > src/test/resources/application.yml
 
       - name: Make env file
         run: |
-          touch ./.env
-          echo "${{ secrets.ENV }}" | base64 --decode > ./.env
+          echo "${{ secrets.ENV }}" | base64 --decode > .env
 
       - name: Grant execute permission for gradlew
         run: |
