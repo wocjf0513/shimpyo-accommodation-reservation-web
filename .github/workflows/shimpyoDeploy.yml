@@ -40,6 +40,12 @@ jobs:
         with:
           arguments: build
 
+      - name: Docker build & push to docker repo
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} .
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         id: deploy
@@ -49,11 +55,7 @@ jobs:
           key: ${{ secrets.KEY }}
           envs: GITHUB_SHA
           script: |
-            sudo su
-            cd Shimpyo_BE/
-            git pull origin develop
-            chmod +x ./gradlew
-            ./gradlew build
-            chmod 755 ./mariadb/config/my.cnf
-            chmod 755 ./redis/config/redis.cnf
-            docker-compose up --build -d
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+            docker-compose up -d
+            docker image prune -f
