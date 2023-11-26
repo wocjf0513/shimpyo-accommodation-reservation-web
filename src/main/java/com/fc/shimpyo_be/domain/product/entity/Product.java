@@ -39,20 +39,23 @@ public class Product {
     @ColumnDefault("0")
     private float starAvg;
     @Column(columnDefinition = "TEXT")
-    private String photoUrl;
+    private String thumbnail;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> photoUrls = new ArrayList<>();
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private final List<Room> rooms = new ArrayList<>();
+    private List<Room> rooms = new ArrayList<>();
 
     @Builder
     public Product(Long id, String name, String address, Category category, String description,
-        float starAvg) {
+        float starAvg, String thumbnail) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.category = category;
         this.description = description;
         this.starAvg = starAvg;
+        this.thumbnail = thumbnail;
     }
+
+
 }
