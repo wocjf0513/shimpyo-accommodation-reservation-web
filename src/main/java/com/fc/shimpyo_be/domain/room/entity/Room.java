@@ -9,7 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,25 +33,26 @@ public class Room {
     @Column(columnDefinition = "TINYINT")
     private int standard;
     @Column(columnDefinition = "TINYINT")
-    private int max;
+    private int capacity;
+    @Column(columnDefinition = "TIME")
+    private LocalTime checkIn;
+    @Column(columnDefinition = "TIME")
+    private LocalTime checkOut;
     @Column(nullable = false)
     private int price;
-    @Column(nullable = false)
-    private LocalDateTime checkIn;
-    @Column(nullable = false)
-    private LocalDateTime checkOut;
 
     @Builder
-    public Room(Long id, Product product, String name, String description, int standard, int max,
-        int price, LocalDateTime checkIn, LocalDateTime checkOut) {
+    public Room(Long id, Product product, String name, String description, int standard,
+        int capacity,
+        int price, LocalTime checkIn, LocalTime checkOut) {
         this.id = id;
         this.product = product;
         this.name = name;
         this.description = description;
         this.standard = standard;
-        this.max = max;
-        this.price = price;
+        this.capacity = capacity;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
+        this.price = price;
     }
 }
