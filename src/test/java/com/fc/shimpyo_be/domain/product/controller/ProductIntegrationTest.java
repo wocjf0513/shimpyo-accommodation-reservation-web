@@ -14,6 +14,7 @@ import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.factory.ProductFactory;
+import com.fc.shimpyo_be.domain.product.repository.ProductImageRepository;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.product.util.ProductMapper;
 import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
@@ -39,6 +40,9 @@ class ProductIntegrationTest extends RestDocsSupport {
 
     @Autowired
     private RoomRepository roomRepository;
+
+    @Autowired
+    private ProductImageRepository productImageRepository;
 
 
     private void assertProductDetailsResponse(Product expectedProduct, ResultActions resultActions)

@@ -1,6 +1,7 @@
 package com.fc.shimpyo_be.domain.product.factory;
 
 import com.fc.shimpyo_be.domain.member.entity.Member;
+import com.fc.shimpyo_be.domain.product.entity.ProductImage;
 import com.fc.shimpyo_be.domain.product.model.Area;
 import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
@@ -20,10 +21,17 @@ public class ProductFactory {
         return Product.builder()
             .name(area +" 숙박")
             .address("서울시"+ area)
-            .photoUrl("wjcojaodfjoadsfj,djaofjofjods,fadjofjodsafj")
+            .thumbnail("wjcojaodfjoadsfj,djaofjofjods,fadjofjodsafj")
             .category(Category.values()[ThreadLocalRandom.current().nextInt(Category.values().length)])
             .starAvg(ThreadLocalRandom.current().nextFloat(5))
             .description("좋아요")
+            .build();
+    }
+
+    public static ProductImage createTestProductImage(Product product) {
+        return ProductImage.builder()
+            .product(product)
+            .photoUrl()
             .build();
     }
 
@@ -41,6 +49,10 @@ public class ProductFactory {
             .standard(stadard)
             .capacity(stadard+ThreadLocalRandom.current().nextInt(10))
             .build();
+    }
+
+    public static String genRandomImage() {
+
     }
 //
 //    public static ReservationProduct createTestReservationProduct(Room room,Reservation reservation) {

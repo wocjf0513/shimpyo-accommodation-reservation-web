@@ -25,7 +25,7 @@ public class ProductImage {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String photoUrl;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
+    @JoinColumn(nullable = false, name = "product_id")
     private Product product;
 
     @Builder
