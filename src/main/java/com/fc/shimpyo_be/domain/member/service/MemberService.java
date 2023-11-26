@@ -65,7 +65,7 @@ public class MemberService {
     }
 
     public void checkCorrectPassword(Member member, String password) {
-        if (!member.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new WrongPasswordException();
         }
     }
