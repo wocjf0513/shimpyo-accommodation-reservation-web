@@ -1,8 +1,11 @@
 package com.fc.shimpyo_be.domain.member.exception;
 
-public class InvalidPasswordException extends RuntimeException{
+import com.fc.shimpyo_be.global.exception.ApplicationException;
+import com.fc.shimpyo_be.global.exception.ErrorCode;
+
+public class InvalidPasswordException extends ApplicationException {
 
     public InvalidPasswordException() {
-        super("비밀번호 양식에 맞지 않습니다.");
+        super(ErrorCode.INVALID_PASSWORD);
     }
 }
