@@ -1,8 +1,11 @@
 package com.fc.shimpyo_be.domain.member.exception;
 
-public class MemberNotFoundException extends RuntimeException{
+import com.fc.shimpyo_be.global.exception.ApplicationException;
+import com.fc.shimpyo_be.global.exception.ErrorCode;
 
-    public MemberNotFoundException(){
-        super("회원 정보를 찾을 수 없습니다.");
+public class MemberNotFoundException extends ApplicationException {
+
+    public MemberNotFoundException() {
+        super(ErrorCode.MEMBER_NOT_FOUND);
     }
 }

@@ -55,7 +55,7 @@ public class AuthService {
             .build();
         refreshTokenRepository.save(refreshToken);
         return SignInResponseDto.builder().member(MemberResponseDto.of(
-                memberService.getMember(refreshToken.getId())))
+                memberService.getMemberById(refreshToken.getId())))
             .token(tokenResponseDto).build();
     }
 
@@ -73,7 +73,7 @@ public class AuthService {
         TokenResponseDto tokenResponseDto = jwtTokenProvider.generateToken(authentication);
         refreshToken.updateValue(tokenResponseDto.getRefreshToken());
         return SignInResponseDto.builder()
-            .member(MemberResponseDto.of(memberService.getMember(refreshToken.getId())))
+            .member(MemberResponseDto.of(memberService.getMemberById(refreshToken.getId())))
             .token(tokenResponseDto)
             .build();
     }

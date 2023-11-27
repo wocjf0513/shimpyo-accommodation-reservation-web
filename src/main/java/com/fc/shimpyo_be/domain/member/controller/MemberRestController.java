@@ -2,13 +2,13 @@ package com.fc.shimpyo_be.domain.member.controller;
 
 import com.fc.shimpyo_be.domain.member.dto.request.CheckPasswordRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.request.UpdateMemberRequestDto;
-import com.fc.shimpyo_be.domain.member.dto.response.CheckPasswordResponseDto;
 import com.fc.shimpyo_be.domain.member.dto.response.MemberResponseDto;
 import com.fc.shimpyo_be.domain.member.service.MemberService;
 import com.fc.shimpyo_be.global.common.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,6 +22,13 @@ public class MemberRestController {
 
     private final MemberService memberService;
 
+    @GetMapping
+    public ResponseEntity<ResponseDto<MemberResponseDto>> getMember() {
+        return ResponseEntity.status(HttpStatus.OK).body(
+            ResponseDto.res(HttpStatus.OK, memberService.getMember(),
+                "성공적으로 회원 정보를 조회했습니다."));
+    }
+
     @PatchMapping
     public ResponseEntity<ResponseDto<MemberResponseDto>> updateMember(@RequestBody
     UpdateMemberRequestDto updateMemberRequestDto) {
@@ -31,10 +38,10 @@ public class MemberRestController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto<CheckPasswordResponseDto>> checkPassword(
+    public ResponseEntity<ResponseDto<Void>> checkPassword(
         @RequestBody CheckPasswordRequestDto checkPasswordRequestDto) {
+        memberService.checkPassword(checkPasswordRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(
-            ResponseDto.res(HttpStatus.OK, memberService.checkPassword(checkPasswordRequestDto),
-                "비밀번호가 일치합니다."));
+            ResponseDto.res(HttpStatus.OK, "비밀번호가 일치합니다."));
     }
 }

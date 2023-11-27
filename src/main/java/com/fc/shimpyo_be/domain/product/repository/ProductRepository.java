@@ -13,8 +13,4 @@ public interface ProductRepository extends JpaRepository<Product, Long>,
     JpaSpecificationExecutor<Product> {
 
     Page<Product> findAll(Specification<Product> spec, Pageable pageable);
-
-//    @Query("select p from Product p where p.name like %:keyword% or p.address like %:keyword% or p.category like %:keyword%")
-//    List<Product> findAllContainingKeyword(@Param("keyword") String keyword, Pageable pageable);
-
 }
