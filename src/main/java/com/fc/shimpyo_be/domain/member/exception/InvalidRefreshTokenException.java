@@ -1,8 +1,11 @@
 package com.fc.shimpyo_be.domain.member.exception;
 
-public class InvalidRefreshTokenException extends RuntimeException{
+import com.fc.shimpyo_be.global.exception.ApplicationException;
+import com.fc.shimpyo_be.global.exception.ErrorCode;
 
-    public InvalidRefreshTokenException(){
-        super("Refresh Token 이 유효하지 않습니다.");
+public class InvalidRefreshTokenException extends ApplicationException {
+
+    public InvalidRefreshTokenException() {
+        super(ErrorCode.INVALID_REFRESH_TOKEN);
     }
 }

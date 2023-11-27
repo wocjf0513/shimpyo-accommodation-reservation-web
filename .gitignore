@@ -50,3 +50,6 @@ src/main/generated/
 
 ### maridadb/data Directory ###
 mariadb/data/
+
+### redis/data Directory ###
+redis/data/

@@ -2,7 +2,9 @@ package com.fc.shimpyo_be.domain.member.unit.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -12,7 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fc.shimpyo_be.domain.member.dto.request.CheckPasswordRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.request.UpdateMemberRequestDto;
-import com.fc.shimpyo_be.domain.member.dto.response.CheckPasswordResponseDto;
 import com.fc.shimpyo_be.domain.member.dto.response.MemberResponseDto;
 import com.fc.shimpyo_be.domain.member.service.MemberService;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +51,39 @@ public class MemberRestControllerTest {
             .webAppContextSetup(this.context)
             .apply(springSecurity())
             .build();
+    }
+
+    @Nested
+    @DisplayName("getMember()은")
+    class Context_getMember {
+
+        @Test
+        @DisplayName("회원 정보를 조회할 수 있다.")
+        @WithMockUser(roles = "USER")
+        void _willSuccess() throws Exception {
+            // given
+            MemberResponseDto memberResponseDto = MemberResponseDto.builder()
+                .memberId(1L)
+                .email("test@mail.com")
+                .name("test")
+                .photoUrl(
+                    "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI")
+                .build();
+
+            given(memberService.getMember()).willReturn(memberResponseDto);
+
+            // when then
+            mockMvc.perform(get("/api/members"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").isNumber())
+                .andExpect(jsonPath("$.message").isString())
+                .andExpect(jsonPath("$.data").isMap())
+                .andExpect(jsonPath("$.data.memberId").isNumber())
+                .andExpect(jsonPath("$.data.email").isString())
+                .andExpect(jsonPath("$.data.name").isString())
+                .andExpect(jsonPath("$.data.photoUrl").isString())
+                .andDo(print());
+        }
     }
 
     @Nested
@@ -104,12 +138,8 @@ public class MemberRestControllerTest {
             CheckPasswordRequestDto request = CheckPasswordRequestDto.builder()
                 .password("qwer1234$$")
                 .build();
-            CheckPasswordResponseDto checkPasswordResponseDto = CheckPasswordResponseDto.builder()
-                .isCorrectPassword(true)
-                .build();
 
-            given(memberService.checkPassword(any(CheckPasswordRequestDto.class))).willReturn(
-                checkPasswordResponseDto);
+            doNothing().when(memberService).checkPassword(any(CheckPasswordRequestDto.class));
 
             // when then
             mockMvc.perform(post("/api/members")
@@ -118,8 +148,7 @@ public class MemberRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").isNumber())
                 .andExpect(jsonPath("$.message").isString())
-                .andExpect(jsonPath("$.data").isMap())
-                .andExpect(jsonPath("$.data.correctPassword").isBoolean())
+                .andExpect(jsonPath("$.data").isEmpty())
                 .andDo(print());
         }
     }

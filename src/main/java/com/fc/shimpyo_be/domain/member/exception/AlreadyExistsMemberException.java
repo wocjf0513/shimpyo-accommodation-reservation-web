@@ -1,8 +1,11 @@
 package com.fc.shimpyo_be.domain.member.exception;
 
-public class AlreadyExistsMemberException extends RuntimeException{
+import com.fc.shimpyo_be.global.exception.ApplicationException;
+import com.fc.shimpyo_be.global.exception.ErrorCode;
 
-    public AlreadyExistsMemberException(){
-        super("이미 가입된 회원 입니다.");
+public class AlreadyExistsMemberException extends ApplicationException {
+
+    public AlreadyExistsMemberException() {
+        super(ErrorCode.ALREADY_EXISTS_MEMBER);
     }
 }
