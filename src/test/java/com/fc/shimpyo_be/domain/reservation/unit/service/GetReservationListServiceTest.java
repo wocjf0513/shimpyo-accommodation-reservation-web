@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-public class ReservationServiceTest {
+public class GetReservationListServiceTest {
 
     @Autowired
     private ReservationService reservationService;
