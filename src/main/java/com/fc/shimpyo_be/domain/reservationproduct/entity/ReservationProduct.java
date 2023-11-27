@@ -27,8 +27,6 @@ public class ReservationProduct {
     @Column(nullable = false)
     private int price;
     @Column(nullable = false)
-    private int totalPeople;
-    @Column(nullable = false)
     private LocalDateTime startDate;
     @Column(nullable = false)
     private LocalDateTime endDate;
@@ -39,7 +37,6 @@ public class ReservationProduct {
         Reservation reservation,
         Room room,
         int price,
-        int totalPeople,
         LocalDateTime startDate,
         LocalDateTime endDate
     ) {
@@ -47,7 +44,6 @@ public class ReservationProduct {
         this.reservation = reservation;
         this.room = room;
         this.price = price;
-        this.totalPeople = totalPeople;
         this.startDate = startDate;
         this.endDate = endDate;
     }

@@ -71,7 +71,6 @@ public class ReservationRestControllerTest {
                     "호텔 주소 url",
                     1L,
                     "객실1",
-                    3,
                     "2023-11-23",
                     "2023-11-26",
                     "14:00",

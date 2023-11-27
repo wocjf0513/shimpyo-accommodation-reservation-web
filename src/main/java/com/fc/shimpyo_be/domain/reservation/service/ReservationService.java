@@ -43,11 +43,10 @@ public class ReservationService {
                     return new ReservationInfoResponseDto(
                         reservation.getId(),
                         product.getName(),
-                        product.getPhotoUrl(),
+                        product.getThumbnail(),
                         product.getAddress(),
                         room.getId(),
                         room.getName(),
-                        reservationProduct.getTotalPeople(),
                         dateFormatter.format(reservationProduct.getStartDate()),
                         dateFormatter.format(reservationProduct.getEndDate()),
                         timeFormatter.format(room.getCheckIn()),
