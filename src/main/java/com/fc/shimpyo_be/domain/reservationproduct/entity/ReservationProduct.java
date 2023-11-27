@@ -2,18 +2,13 @@ package com.fc.shimpyo_be.domain.reservationproduct.entity;
 
 import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
 import com.fc.shimpyo_be.domain.room.entity.Room;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -31,12 +26,29 @@ public class ReservationProduct {
     private Room room;
     @Column(nullable = false)
     private int price;
+    @Column(nullable = false)
+    private int totalPeople;
+    @Column(nullable = false)
+    private LocalDateTime startDate;
+    @Column(nullable = false)
+    private LocalDateTime endDate;
 
     @Builder
-    public ReservationProduct(Long id, Reservation reservation, Room room, int price) {
+    public ReservationProduct(
+        Long id,
+        Reservation reservation,
+        Room room,
+        int price,
+        int totalPeople,
+        LocalDateTime startDate,
+        LocalDateTime endDate
+    ) {
         this.id = id;
         this.reservation = reservation;
         this.room = room;
         this.price = price;
+        this.totalPeople = totalPeople;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 }
