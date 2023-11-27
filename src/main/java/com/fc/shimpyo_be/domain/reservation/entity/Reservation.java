@@ -26,7 +26,12 @@ public class Reservation extends BaseTimeEntity {
     private int totalPrice;
 
     @Builder
-    public Reservation(Long id, Member member, PayMethod payMethod, int totalPrice) {
+    public Reservation(
+        Long id,
+        Member member,
+        PayMethod payMethod,
+        int totalPrice
+    ) {
         this.id = id;
         this.member = member;
         this.payMethod = payMethod;
