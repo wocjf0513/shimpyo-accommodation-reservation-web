@@ -1,3 +1,7 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+
 = Member REST API Docs
 :doctype: book
 :icons: font
@@ -34,6 +38,22 @@ include::{snippets}/auth-rest-controller-docs-test/sign-in/request-fields.adoc[]
 
 include::{snippets}/auth-rest-controller-docs-test/sign-in/http-response.adoc[]
 include::{snippets}/auth-rest-controller-docs-test/sign-in/response-fields.adoc[]
+
+[[Refresh]]
+== 토큰 재발급
+
+토큰 재발급 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/auth-rest-controller-docs-test/refresh/http-request.adoc[]
+include::{snippets}/auth-rest-controller-docs-test/refresh/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/auth-rest-controller-docs-test/refresh/http-response.adoc[]
+include::{snippets}/auth-rest-controller-docs-test/refresh/response-fields.adoc[]
+
 
 [[Get-Member]]
 == 회원 정보 조회
