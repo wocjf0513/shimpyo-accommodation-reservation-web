@@ -2,7 +2,6 @@ package com.fc.shimpyo_be.domain.member.service;
 
 import com.fc.shimpyo_be.domain.member.dto.request.CheckPasswordRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.request.UpdateMemberRequestDto;
-import com.fc.shimpyo_be.domain.member.dto.response.CheckPasswordResponseDto;
 import com.fc.shimpyo_be.domain.member.dto.response.MemberResponseDto;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.exception.InvalidPasswordException;
@@ -35,12 +34,13 @@ public class MemberService {
         return memberRepository.existsByEmail(email);
     }
 
-    public Member getMember(long memberId) {
-        return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+    public MemberResponseDto getMember() {
+        Member member = getMemberById(securityUtil.getCurrentMemberId());
+        return MemberResponseDto.of(member);
     }
 
     public MemberResponseDto updateMember(UpdateMemberRequestDto updateMemberRequestDto) {
-        Member member = getMember(securityUtil.getCurrentMemberId());
+        Member member = getMemberById(securityUtil.getCurrentMemberId());
         member.update(updateMemberRequestDto);
         if (updateMemberRequestDto.getPassword() != null) {
             updatePassword(member, updateMemberRequestDto);
@@ -48,12 +48,13 @@ public class MemberService {
         return MemberResponseDto.of(member);
     }
 
-    public CheckPasswordResponseDto checkPassword(CheckPasswordRequestDto checkPasswordRequestDto) {
-        Member member = getMember(securityUtil.getCurrentMemberId());
+    public void checkPassword(CheckPasswordRequestDto checkPasswordRequestDto) {
+        Member member = getMemberById(securityUtil.getCurrentMemberId());
         checkCorrectPassword(member, checkPasswordRequestDto.getPassword());
-        return CheckPasswordResponseDto.builder()
-            .isCorrectPassword(true)
-            .build();
+    }
+
+    public Member getMemberById(long memberId) {
+        return memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
     }
 
     private void updatePassword(Member member, UpdateMemberRequestDto updateMemberRequestDto) {
@@ -64,7 +65,7 @@ public class MemberService {
     }
 
     public void checkCorrectPassword(Member member, String password) {
-        if (!member.getPassword().equals(password)) {
+        if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new WrongPasswordException();
         }
     }
