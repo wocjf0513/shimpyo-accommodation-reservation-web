@@ -49,7 +49,6 @@ dependencies {
 
     // Spring REST Docs
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-    testImplementation 'org.springframework.security:spring-security-test'
 
     // Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -102,6 +101,6 @@ tasks.register('copyDocument', Copy) {
     into file("src/main/resources/static/docs")
 }
 
-build {
+bootJar {
     dependsOn copyDocument
 }
