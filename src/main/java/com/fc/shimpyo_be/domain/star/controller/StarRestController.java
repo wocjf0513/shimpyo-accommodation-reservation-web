@@ -3,6 +3,7 @@ package com.fc.shimpyo_be.domain.star.controller;
 import com.fc.shimpyo_be.domain.star.dto.request.StarRegisterRequestDto;
 import com.fc.shimpyo_be.domain.star.service.StarService;
 import com.fc.shimpyo_be.global.common.ResponseDto;
+import com.fc.shimpyo_be.global.util.SecurityUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StarRestController {
 
     private final StarService starService;
+    private final SecurityUtil securityUtil;
 
     @PostMapping
     public ResponseEntity<?> register(@Valid @RequestBody StarRegisterRequestDto request) {
@@ -30,7 +32,7 @@ public class StarRestController {
             .body(
                 ResponseDto.res(
                     HttpStatus.CREATED,
-                    starService.register(request),
+                    starService.register(securityUtil.getCurrentMemberId(), request),
                     "별점 등록이 성공적으로 완료되었습니다."
                 )
             );

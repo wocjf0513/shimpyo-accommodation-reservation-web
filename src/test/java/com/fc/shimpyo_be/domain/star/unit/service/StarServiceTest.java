@@ -2,13 +2,14 @@ package com.fc.shimpyo_be.domain.star.unit.service;
 
 import com.fc.shimpyo_be.domain.member.entity.Authority;
 import com.fc.shimpyo_be.domain.member.entity.Member;
+import com.fc.shimpyo_be.domain.member.exception.MemberNotFoundException;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
 import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
+import com.fc.shimpyo_be.domain.product.exception.ProductNotFoundException;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.star.dto.request.StarRegisterRequestDto;
 import com.fc.shimpyo_be.domain.star.dto.response.StarResponseDto;
-import com.fc.shimpyo_be.domain.star.exception.EntityNotFoundException;
 import com.fc.shimpyo_be.domain.star.repository.StarRepository;
 import com.fc.shimpyo_be.domain.star.service.StarService;
 import org.junit.jupiter.api.AfterEach;
@@ -18,7 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class StarServiceTest {
@@ -56,8 +58,9 @@ class StarServiceTest {
                 .name("숙소1")
                 .description("숙소 설명")
                 .category(Category.HOTEL)
-                .photoUrl("photoUrl")
-                .starAvg(3.5F)
+                .thumbnail("thumbnail url")
+                .starAvg(3.5f)
+                .address("숙소 주소")
                 .build()
         );
     }
@@ -67,11 +70,12 @@ class StarServiceTest {
     void register() {
         // given
         float score = 3.5F;
+        long memberId = member.getId();
         StarRegisterRequestDto request
-            = new StarRegisterRequestDto(member.getId(), product.getId(), score);
+            = new StarRegisterRequestDto(product.getId(), score);
 
         // when
-        StarResponseDto result = starService.register(request);
+        StarResponseDto result = starService.register(memberId, request);
 
         // then
         assertThat(result.score()).isEqualTo(score);
@@ -79,30 +83,31 @@ class StarServiceTest {
 
     @DisplayName("별점 등록시, 회원 정보가 존재하지 않을 경우 실패한다.")
     @Test
-    void register_memberEntityNotFoundException() {
+    void register_memberNotFoundException() {
         // given
         long memberId = 1000L;
         float score = 3.5F;
         StarRegisterRequestDto request
-            = new StarRegisterRequestDto(memberId, product.getId(), score);
+            = new StarRegisterRequestDto(product.getId(), score);
 
         // when & then
-        assertThatThrownBy(() -> starService.register(request))
-            .isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> starService.register(memberId, request))
+            .isInstanceOf(MemberNotFoundException.class);
     }
 
     @DisplayName("별점 등록시, 숙소 정보가 존재하지 않을 경우 실패한다.")
     @Test
-    void register_productEntityNotFoundException() {
+    void register_productNotFoundException() {
         // given
+        long memberId = member.getId();
         long productId = 1000L;
         float score = 4F;
         StarRegisterRequestDto request
-            = new StarRegisterRequestDto(member.getId(), productId, score);
+            = new StarRegisterRequestDto(productId, score);
 
         // when & then
-        assertThatThrownBy(() -> starService.register(request))
-            .isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> starService.register(memberId, request))
+            .isInstanceOf(ProductNotFoundException.class);
     }
 
     @AfterEach

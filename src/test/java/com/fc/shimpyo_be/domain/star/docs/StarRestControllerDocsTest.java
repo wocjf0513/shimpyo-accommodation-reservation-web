@@ -4,6 +4,7 @@ import com.fc.shimpyo_be.config.RestDocsSupport;
 import com.fc.shimpyo_be.domain.star.dto.request.StarRegisterRequestDto;
 import com.fc.shimpyo_be.domain.star.dto.response.StarResponseDto;
 import com.fc.shimpyo_be.domain.star.service.StarService;
+import com.fc.shimpyo_be.global.util.SecurityUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -13,6 +14,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,6 +28,9 @@ public class StarRestControllerDocsTest extends RestDocsSupport {
     @MockBean
     private StarService starService;
 
+    @MockBean
+    private SecurityUtil securityUtil;
+
     private final ConstraintDescriptions starRegisterDescriptions
         = new ConstraintDescriptions(StarRegisterRequestDto.class);
 
@@ -35,14 +40,14 @@ public class StarRestControllerDocsTest extends RestDocsSupport {
     void register() throws Exception {
         // given
         String requestUrl = "/api/stars";
-        Long memberId = 1L;
         Long productId = 1L;
         float score = 3.5F;
 
-        StarRegisterRequestDto requestDto = new StarRegisterRequestDto(memberId, productId, score);
+        StarRegisterRequestDto requestDto = new StarRegisterRequestDto(productId, score);
         StarResponseDto responseDto = new StarResponseDto(1L, score);
 
-        given(starService.register(any(StarRegisterRequestDto.class)))
+        given(securityUtil.getCurrentMemberId()).willReturn(1L);
+        given(starService.register(anyLong(), any(StarRegisterRequestDto.class)))
             .willReturn(responseDto);
 
         // when
@@ -52,9 +57,6 @@ public class StarRestControllerDocsTest extends RestDocsSupport {
             .andExpect(status().isCreated())
             .andDo(restDoc.document(
                     requestFields(
-                        fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("별점 등록하는 회원 아이디")
-                            .attributes(key("constraints").value(
-                                starRegisterDescriptions.descriptionsForProperty("memberId"))),
                         fieldWithPath("productId").type(JsonFieldType.NUMBER).description("별점 등록 대상 숙소 아이디")
                             .attributes(key("constraints").value(
                                 starRegisterDescriptions.descriptionsForProperty("productId"))),
@@ -70,6 +72,6 @@ public class StarRestControllerDocsTest extends RestDocsSupport {
                 )
             );
 
-        verify(starService, times(1)).register(any(StarRegisterRequestDto.class));
+        verify(starService, times(1)).register(anyLong(), any(StarRegisterRequestDto.class));
     }
 }

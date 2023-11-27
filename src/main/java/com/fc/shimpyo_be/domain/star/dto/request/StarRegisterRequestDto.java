@@ -6,8 +6,6 @@ import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 
 public record StarRegisterRequestDto(
-    @NotNull(message = "별점 등록 회원 아이디는 필수값입니다.")
-    Long memberId,
     @NotNull(message = "별점 등록 대상 숙소 아이디는 필수값입니다.")
     Long productId,
     @DecimalMax(value = "5.0", message = "별점은 최대 5.0점을 초과할 수 없습니다.")
