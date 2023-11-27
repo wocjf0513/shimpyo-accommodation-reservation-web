@@ -1,6 +1,7 @@
 package com.fc.shimpyo_be.domain.star.controller;
 
 import com.fc.shimpyo_be.domain.star.dto.request.StarRegisterRequestDto;
+import com.fc.shimpyo_be.domain.star.dto.response.StarResponseDto;
 import com.fc.shimpyo_be.domain.star.service.StarService;
 import com.fc.shimpyo_be.global.common.ResponseDto;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
@@ -24,7 +25,7 @@ public class StarRestController {
     private final SecurityUtil securityUtil;
 
     @PostMapping
-    public ResponseEntity<?> register(@Valid @RequestBody StarRegisterRequestDto request) {
+    public ResponseEntity<ResponseDto<StarResponseDto>> register(@Valid @RequestBody StarRegisterRequestDto request) {
         log.info("[api][POST] /api/stars");
 
         return ResponseEntity
