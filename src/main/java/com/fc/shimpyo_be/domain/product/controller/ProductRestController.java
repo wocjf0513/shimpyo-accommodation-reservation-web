@@ -9,6 +9,7 @@ import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.domain.product.util.model.PageableConstraint;
 import com.fc.shimpyo_be.global.common.ResponseDto;
 import com.fc.shimpyo_be.global.util.DateUtil;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class ProductRestController {
 
 
     @GetMapping
-    public ResponseEntity<ResponseDto<List<ProductResponse>>> getAllProducts(
+    public ResponseEntity<ResponseDto<List<ProductResponse>>> getProducts(
         @RequestParam(required = false) String productName,
         @RequestParam(required = false) String address,
         @RequestParam(required = false) String category,
@@ -52,8 +53,8 @@ public class ProductRestController {
 
 
     @GetMapping("/{productId}")
-    ResponseEntity<ResponseDto<ProductDetailsResponse>> getProductDetails(
-        @PathVariable("productId") Long productId,
+    public ResponseEntity<ResponseDto<ProductDetailsResponse>> getProductDetails(
+        @PathVariable(value = "productId", required = true) Long productId,
         @RequestParam @Pattern(regexp = DateUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
         @RequestParam @Pattern(regexp = DateUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
 
@@ -62,7 +63,7 @@ public class ProductRestController {
     }
 
     @GetMapping("/amounts/{roomId}")
-    ResponseEntity<ResponseDto<Void>> isAvailableForReservation (@PathVariable("roomId") Long roomId,
+    public ResponseEntity<ResponseDto<Void>> isAvailableForReservation (@PathVariable("roomId") Long roomId,
         @RequestParam @Pattern(regexp = DateUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
         @RequestParam @Pattern(regexp = DateUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
         if(productService.isAvailableForReservation(roomId, startDate, endDate)){
