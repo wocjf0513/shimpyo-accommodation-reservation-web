@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 
+import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.cart.controller.CartRestController;
 import com.fc.shimpyo_be.domain.cart.factory.CartFactory;
 import com.fc.shimpyo_be.domain.cart.dto.request.CartCreateRequest;
@@ -33,7 +34,7 @@ import org.springframework.http.ResponseEntity;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CartRestControllerTest {
+public class CartRestControllerTest extends AbstractContainersSupport {
 
     private static List<CartResponse> cartResponses = new ArrayList<>();
     @MockBean
