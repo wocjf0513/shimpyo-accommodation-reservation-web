@@ -42,13 +42,12 @@ public class CartService {
 
     @Transactional
     public CartResponse addCart(@Valid @RequestBody CartCreateRequest cartCreateRequest) {
-        Member member= memberRepository.findById(securityUtil.getCurrentMemberId()).orElseThrow(
-            MemberNotFoundException::new);
+        Member member = memberRepository.findById(securityUtil.getCurrentMemberId())
+            .orElseThrow(MemberNotFoundException::new);
 
         Room room = roomRepository.findById(cartCreateRequest.roomId())
             .orElseThrow(RoomNotFoundException::new);
-        Cart cartToCreate = CartMapper.toCart(cartCreateRequest, room, member);
-        Cart createdCart = cartRepository.save(cartToCreate);
+        Cart createdCart = cartRepository.save(CartMapper.toCart(cartCreateRequest, room, member));
         return CartMapper.toCartResponse(createdCart);
     }
 
@@ -56,10 +55,10 @@ public class CartService {
     public CartDeleteResponse deleteCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new);
 
-        if (!cart.getMember().getId().equals(securityUtil.getCurrentMemberId())){
+        if (!cart.getMember().getId().equals(securityUtil.getCurrentMemberId())) {
             throw new CartNotDeleteException();
         }
-        cartRepository.deleteById(cartId);
+        cartRepository.deleteById(cart.getId());
 
         return CartMapper.toCartDeleteResponse(cart);
     }

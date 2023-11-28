@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fc.shimpyo_be.config.RestDocsSupport;
+import com.fc.shimpyo_be.domain.cart.controller.factory.CartFactory;
 import com.fc.shimpyo_be.domain.cart.dto.request.CartCreateRequest;
 import com.fc.shimpyo_be.domain.cart.entity.Cart;
 import com.fc.shimpyo_be.domain.cart.repository.CartRepository;
@@ -74,11 +75,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         room = roomRepository.save(ProductFactory.createTestRoom(product));
 
         for (int i = 0; i < 5; i++) {
-            Cart cart = cartRepository.save(
-                Cart.builder().room(room).member(member).price(
-                        100000L
-                    ).startDate(LocalDate.now().minusDays(1))
-                    .endDate(LocalDate.now()).build());
+            Cart cart = cartRepository.save(CartFactory.createCartTest(room, member));
         }
 
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
