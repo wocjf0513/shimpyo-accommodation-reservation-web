@@ -3,7 +3,7 @@ package com.fc.shimpyo_be.domain.reservation.docs;
 import com.fc.shimpyo_be.config.RestDocsSupport;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.response.PreoccupyRoomsResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
@@ -160,8 +160,8 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
             )
         );
 
-        PreoccupyRoomsResponseDto responseDto
-            = new PreoccupyRoomsResponseDto(true, new ArrayList<>());
+        ValidationResultResponseDto responseDto
+            = new ValidationResultResponseDto(true, new ArrayList<>());
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);

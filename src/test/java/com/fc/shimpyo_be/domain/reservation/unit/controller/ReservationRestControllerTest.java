@@ -6,7 +6,7 @@ import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.response.PreoccupyRoomsResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,8 +122,8 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                 )
         );
 
-        PreoccupyRoomsResponseDto responseDto
-            = new PreoccupyRoomsResponseDto(true, new ArrayList<>());
+        ValidationResultResponseDto responseDto
+            = new ValidationResultResponseDto(true, new ArrayList<>());
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
@@ -158,8 +158,8 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
             )
         );
 
-        PreoccupyRoomsResponseDto responseDto
-            = new PreoccupyRoomsResponseDto(true, new ArrayList<>());
+        ValidationResultResponseDto responseDto
+            = new ValidationResultResponseDto(true, new ArrayList<>());
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
@@ -193,8 +193,8 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
             )
         );
 
-        PreoccupyRoomsResponseDto responseDto
-            = new PreoccupyRoomsResponseDto(true, new ArrayList<>());
+        ValidationResultResponseDto responseDto
+            = new ValidationResultResponseDto(true, new ArrayList<>());
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
