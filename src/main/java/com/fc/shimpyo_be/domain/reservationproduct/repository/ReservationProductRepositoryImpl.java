@@ -1,6 +1,8 @@
 package com.fc.shimpyo_be.domain.reservationproduct.repository;
 
 import com.fc.shimpyo_be.domain.reservationproduct.entity.ReservationProduct;
+import com.fc.shimpyo_be.global.util.QueryDslUtil;
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -9,7 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.util.ObjectUtils;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.fc.shimpyo_be.domain.reservation.entity.QReservation.reservation;
@@ -31,7 +35,7 @@ public class ReservationProductRepositoryImpl implements ReservationProductRepos
             .where(reservation.id.in(reservationIds))
             .limit(pageable.getPageSize())
             .offset(pageable.getOffset())
-            .orderBy(getSort(pageable))
+            .orderBy(getAllOrderSpecifiers(pageable).toArray(OrderSpecifier[]::new))
             .fetch();
 
         JPAQuery<ReservationProduct> countQuery
@@ -43,27 +47,31 @@ public class ReservationProductRepositoryImpl implements ReservationProductRepos
         return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetch().size());
     }
 
-    private OrderSpecifier<?> getSort(Pageable pageable) {
-        //서비스에서 보내준 Pageable 객체에 정렬조건 null 값 체크
-        String property;
-        if (!pageable.getSort().isEmpty()) {
-            //정렬값이 들어 있으면 for 사용하여 값을 가져온다
-            for (Sort.Order sortOrder : pageable.getSort()) {
-                // 서비스에서 넣어준 DESC or ASC 를 가져온다.
-                com.querydsl.core.types.Order direction = sortOrder.getDirection().isAscending() ? com.querydsl.core.types.Order.ASC : com.querydsl.core.types.Order.DESC;
-                // 서비스에서 넣어준 정렬 조건을 스위치 케이스 문을 활용하여 셋팅하여 준다.
-                property = sortOrder.getProperty();
-                switch (property) {
+    private List<OrderSpecifier<?>> getAllOrderSpecifiers(Pageable pageable) {
+
+        List<OrderSpecifier<?>> ORDERS = new LinkedList<>();
+
+        if (!ObjectUtils.isEmpty(pageable.getSort())) {
+            for (Sort.Order order : pageable.getSort()) {
+                Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
+                switch (order.getProperty()) {
                     case "id" -> {
-                        return new OrderSpecifier<>(direction, reservationProduct.id);
+                        OrderSpecifier<?> orderId = QueryDslUtil.getSortedColumn(direction, reservationProduct, "id");
+                        ORDERS.add(orderId);
                     }
                     case "createdAt" -> {
-                        return new OrderSpecifier<>(direction, reservation.createdAt);
+                        OrderSpecifier<?> orderCreatedAt = QueryDslUtil.getSortedColumn(direction, reservation, "createdAt");
+                        ORDERS.add(orderCreatedAt);
                     }
                 }
             }
         }
 
-        return new OrderSpecifier<>(com.querydsl.core.types.Order.DESC, reservationProduct.id);
+        // 기본 default : 최신순
+        if(ORDERS.isEmpty()) {
+            ORDERS.add(QueryDslUtil.getSortedColumn(Order.DESC, reservationProduct, "id"));
+        }
+
+        return ORDERS;
     }
 }
