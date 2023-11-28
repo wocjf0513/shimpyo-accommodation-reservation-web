@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 
 @AutoConfigureMockMvc
-class ProductIntegrationTest extends RestDocsSupport {
+class ProductControllerTest extends RestDocsSupport {
 
 
     @Autowired
@@ -114,21 +114,16 @@ class ProductIntegrationTest extends RestDocsSupport {
     @WithMockUser
     void shouldSuccessToGetDetailsProduct() throws Exception {
         // given
-//        Member member = memberRepository.save(ProductFactory.createTestMember());
         Product product = productRepository.save(ProductFactory.createTestProduct());
         ProductImage productImage = productImageRepository.save(
             ProductFactory.createTestProductImage(product));
         ProductImage productImage2 = productImageRepository.save(
             ProductFactory.createTestProductImage(product));
 
-//        Reservation reservation = reservationRepository.save(
-//            ProductFactory.createTestReservation(member));
 
         for (int i = 0; i < 5; i++) {
             Room room = roomRepository.save(ProductFactory.createTestRoom(product));
             product.getRooms().add(room);
-//            if(i%2==0)
-//            reservationProductRepository.save(ProductFactory.createTestReservationProduct(room, reservation));
         }
 
         // when
