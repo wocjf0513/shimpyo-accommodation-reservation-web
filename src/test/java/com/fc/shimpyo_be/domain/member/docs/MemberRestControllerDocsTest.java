@@ -49,8 +49,7 @@ public class MemberRestControllerDocsTest extends RestDocsSupport {
         given(memberService.getMember()).willReturn(memberResponseDto);
 
         // when then
-        mockMvc.perform(get("/api/members")
-                .with(csrf()))
+        mockMvc.perform(get("/api/members"))
             .andDo(restDoc.document(
                 responseFields(responseCommon()).and(
                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
@@ -85,7 +84,6 @@ public class MemberRestControllerDocsTest extends RestDocsSupport {
 
         // when then
         mockMvc.perform(patch("/api/members")
-                .with(csrf())
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(restDoc.document(
@@ -120,7 +118,6 @@ public class MemberRestControllerDocsTest extends RestDocsSupport {
 
         // when then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/members")
-                .with(csrf())
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(restDoc.document(
