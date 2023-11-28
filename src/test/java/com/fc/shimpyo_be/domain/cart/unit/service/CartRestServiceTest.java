@@ -3,12 +3,13 @@ package com.fc.shimpyo_be.domain.cart.unit.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 
-import com.fc.shimpyo_be.domain.cart.factory.CartFactory;
 import com.fc.shimpyo_be.domain.cart.dto.request.CartCreateRequest;
 import com.fc.shimpyo_be.domain.cart.dto.response.CartDeleteResponse;
 import com.fc.shimpyo_be.domain.cart.dto.response.CartResponse;
 import com.fc.shimpyo_be.domain.cart.entity.Cart;
+import com.fc.shimpyo_be.domain.cart.factory.CartFactory;
 import com.fc.shimpyo_be.domain.cart.repository.CartRepository;
 import com.fc.shimpyo_be.domain.cart.service.CartService;
 import com.fc.shimpyo_be.domain.cart.util.CartMapper;
@@ -17,8 +18,10 @@ import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.factory.ProductFactory;
+import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
+import com.fc.shimpyo_be.global.util.DateUtil;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +43,9 @@ public class CartRestServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private ProductService productService;
     @Mock
     private RoomRepository roomRepository;
     @Mock
@@ -68,6 +74,9 @@ public class CartRestServiceTest {
         carts.add(cart);
         List<CartResponse> expectedCartResponses = carts.stream().map(CartMapper::toCartResponse)
             .toList();
+        doReturn(true).when(productService)
+            .isAvailableForReservation(cart.getId(), DateUtil.toString(cart.getStartDate()),
+                DateUtil.toString(cart.getEndDate()));
         given(cartRepository.findByMemberId(1L)).willReturn(Optional.of(carts));
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
         //when
@@ -80,8 +89,12 @@ public class CartRestServiceTest {
     @Test
     void SuccessToAddCart() {
         //given
+
         CartCreateRequest cartCreateRequest = CartCreateRequest.builder().roomId(room.getId())
             .price(100000L).startDate("2023-11-27").endDate("2023-11-28").build();
+        doReturn(true).when(productService)
+            .isAvailableForReservation(cartCreateRequest.roomId(), cartCreateRequest.startDate(),
+                cartCreateRequest.endDate());
         Cart expectedCart = CartMapper.toCart(cartCreateRequest, room, member);
         CartResponse expectedCartResponse = CartMapper.toCartResponse(expectedCart);
         given(cartRepository.save(any())).willReturn(expectedCart);
