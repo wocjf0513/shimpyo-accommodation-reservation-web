@@ -107,6 +107,7 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
             .andExpect(jsonPath("$.data.totalElements", is(3)));
     }
 
+    @WithMockUser(roles = "USER")
     @DisplayName("[api][POST][정상] 예약 유효성 검증 및 예약 선점 API")
     @Test
     void checkAvailableAndPreoccupy_test() throws Exception {
