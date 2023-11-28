@@ -31,6 +31,13 @@ jobs:
         run: |
           echo "${{ secrets.ENV }}" | base64 --decode > .env
 
+      - name: Make docker-compose file
+        run: |
+          echo "${{ secrets.DOCKER_COMPOSE }}" | base64 --decode > ./docker-compose.yml
+        
+      - name: run redis server
+        run: docker-compose up -d
+
       - name: Grant execute permission for gradlew
         run: |
           chmod +x gradlew
