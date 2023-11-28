@@ -24,6 +24,10 @@ jobs:
       with:
         java-version: '17'
         distribution: 'oracle'
+        
+    - name: Make env file
+      run: |
+        echo "${{ secrets.ENV }}" | base64 --decode > .env
 
     - name: run redis server
       run: docker-compose up -d
