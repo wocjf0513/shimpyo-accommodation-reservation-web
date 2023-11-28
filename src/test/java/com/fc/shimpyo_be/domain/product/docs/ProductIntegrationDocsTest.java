@@ -1,4 +1,4 @@
-package com.fc.shimpyo_be.domain.product.controller;
+package com.fc.shimpyo_be.domain.product.docs;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 
 @AutoConfigureMockMvc
-class ProductIntegrationTest extends RestDocsSupport {
+class ProductIntegrationDocsTest extends RestDocsSupport {
 
 
     @Autowired

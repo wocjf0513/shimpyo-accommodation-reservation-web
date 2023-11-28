@@ -11,6 +11,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,12 +32,12 @@ public class CartRestController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto<CartResponse>> createCart(
+    public ResponseEntity<ResponseDto<CartResponse>> addCart(
         @Valid @RequestBody CartCreateRequest cartCreateRequest) {
-        return ResponseEntity.ok().body(ResponseDto.res(HttpStatus.OK,cartService.createCart(cartCreateRequest),"장바구니를 성공적으로 등록했습니다."));
+        return ResponseEntity.ok().body(ResponseDto.res(HttpStatus.OK,cartService.addCart(cartCreateRequest),"장바구니를 성공적으로 등록했습니다."));
     }
 
-    @PostMapping("/{cartId}")
+    @DeleteMapping("/{cartId}")
     public ResponseEntity<ResponseDto<CartDeleteResponse>> deleteCart(@PathVariable("cartId") Long cartId) {
         return ResponseEntity.ok().body(ResponseDto.res(HttpStatus.OK,cartService.deleteCart(cartId),"장바구니를 성공적으로 삭제했습니다."));
     }

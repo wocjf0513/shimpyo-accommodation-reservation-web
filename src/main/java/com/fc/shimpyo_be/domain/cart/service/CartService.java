@@ -41,7 +41,7 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponse createCart(@Valid @RequestBody CartCreateRequest cartCreateRequest) {
+    public CartResponse addCart(@Valid @RequestBody CartCreateRequest cartCreateRequest) {
         Member member= memberRepository.findById(securityUtil.getCurrentMemberId()).orElseThrow(
             MemberNotFoundException::new);
 
