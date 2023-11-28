@@ -25,6 +25,7 @@ import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import java.time.LocalDate;
+import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     void initTest() {
         //given
         member = memberRepository.save(memberRepository.save(
-            Member.builder().email("wocjf0513@naver.com").photoUrl("hello,world.jpg").name("심재철")
+            Member.builder().email("wocjf"+ThreadLocalRandom.current().nextInt(100000)+"@naver.com").photoUrl("hello,world.jpg").name("심재철")
                 .password("1234").authority(Authority.ROLE_USER).build()));
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
