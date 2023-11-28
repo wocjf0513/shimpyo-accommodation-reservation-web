@@ -31,7 +31,7 @@ jobs:
 
     - name: Make docker-compose file
       run: |
-        echo "${{ secrets.DOCKER_COMPOSE }}" base64 --decode > ./docker-compose.yml
+        echo "${{ secrets.DOCKER_COMPOSE }}" | base64 --decode > ./docker-compose.yml
         
     - name: run redis server
       run: docker-compose up -d
