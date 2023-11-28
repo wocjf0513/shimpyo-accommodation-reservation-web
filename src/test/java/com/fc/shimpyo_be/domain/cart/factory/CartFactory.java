@@ -1,4 +1,4 @@
-package com.fc.shimpyo_be.domain.cart.controller.factory;
+package com.fc.shimpyo_be.domain.cart.factory;
 
 import com.fc.shimpyo_be.domain.cart.dto.response.CartResponse;
 import com.fc.shimpyo_be.domain.cart.entity.Cart;

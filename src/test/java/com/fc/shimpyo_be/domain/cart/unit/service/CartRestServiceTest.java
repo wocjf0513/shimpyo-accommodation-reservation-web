@@ -1,11 +1,10 @@
-package com.fc.shimpyo_be.domain.cart.controller.unit.service;
+package com.fc.shimpyo_be.domain.cart.unit.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
-import com.fc.shimpyo_be.domain.cart.controller.factory.CartFactory;
+import com.fc.shimpyo_be.domain.cart.factory.CartFactory;
 import com.fc.shimpyo_be.domain.cart.dto.request.CartCreateRequest;
 import com.fc.shimpyo_be.domain.cart.dto.response.CartDeleteResponse;
 import com.fc.shimpyo_be.domain.cart.dto.response.CartResponse;

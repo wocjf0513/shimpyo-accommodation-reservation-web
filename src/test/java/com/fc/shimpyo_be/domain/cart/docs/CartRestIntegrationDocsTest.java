@@ -1,17 +1,21 @@
-package com.fc.shimpyo_be.domain.cart.controller.docs;
+package com.fc.shimpyo_be.domain.cart.docs;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fc.shimpyo_be.config.RestDocsSupport;
-import com.fc.shimpyo_be.domain.cart.controller.factory.CartFactory;
+import com.fc.shimpyo_be.domain.cart.factory.CartFactory;
 import com.fc.shimpyo_be.domain.cart.dto.request.CartCreateRequest;
 import com.fc.shimpyo_be.domain.cart.entity.Cart;
 import com.fc.shimpyo_be.domain.cart.repository.CartRepository;
@@ -24,7 +28,6 @@ import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
-import java.time.LocalDate;
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -125,6 +128,12 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
 
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
+            requestFields(
+                fieldWithPath("roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+                fieldWithPath("startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
+                fieldWithPath("endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
+                fieldWithPath("price").type(JsonFieldType.NUMBER).description("장바구니 가격")
+            ),
             responseFields(responseCommon()).and(
                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                 fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
@@ -153,6 +162,9 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         ResultActions resultActions = mockMvc.perform(delete("/api/carts/{cartId}",1L));
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
+            pathParameters(
+                parameterWithName("cartId").description("삭제할 장바구니 아이디")
+            ),
             responseFields(responseCommon()).and(
                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                 fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),

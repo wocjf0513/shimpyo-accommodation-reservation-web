@@ -1,4 +1,4 @@
-package com.fc.shimpyo_be.domain.cart.controller.unit.controller;
+package com.fc.shimpyo_be.domain.cart.unit.controller;
 
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
 
 import com.fc.shimpyo_be.domain.cart.controller.CartRestController;
-import com.fc.shimpyo_be.domain.cart.controller.factory.CartFactory;
+import com.fc.shimpyo_be.domain.cart.factory.CartFactory;
 import com.fc.shimpyo_be.domain.cart.dto.request.CartCreateRequest;
 import com.fc.shimpyo_be.domain.cart.dto.response.CartDeleteResponse;
 import com.fc.shimpyo_be.domain.cart.dto.response.CartResponse;
@@ -24,10 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
