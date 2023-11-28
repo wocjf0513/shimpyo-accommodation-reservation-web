@@ -72,8 +72,8 @@ public class CartRestControllerTest {
     @Test
     void successToAddCart() {
         //given
-        CartCreateRequest cartCreateRequest = CartCreateRequest.builder().roomId(room.getId()).price(cartResponse.price())
-            .startDate(cartResponse.startDate()).endDate(cartResponse.endDate())
+        CartCreateRequest cartCreateRequest = CartCreateRequest.builder().roomId(room.getId()).price(cartResponse.getPrice())
+            .startDate(cartResponse.getStartDate()).endDate(cartResponse.getEndDate())
             .build();
 
         given(cartService.addCart(cartCreateRequest)).willReturn(cartResponse);
@@ -90,10 +90,10 @@ public class CartRestControllerTest {
     void successToDeleteCart() {
         //given
         CartDeleteResponse expectedCartDeleteResponse= CartMapper.toCartDeleteResponse(cart);
-        given(cartService.deleteCart(cartResponse.cartId())).willReturn(
+        given(cartService.deleteCart(cartResponse.getCartId())).willReturn(
             CartMapper.toCartDeleteResponse(cart));
         //when
-        ResponseEntity<ResponseDto<CartDeleteResponse>> cartDeleteResponse = cartRestController.deleteCart(cartResponse.cartId());
+        ResponseEntity<ResponseDto<CartDeleteResponse>> cartDeleteResponse = cartRestController.deleteCart(cartResponse.getCartId());
         //then
         assertNotNull(cartDeleteResponse);
         assertEquals(cartDeleteResponse.getStatusCode(),HttpStatus.OK);

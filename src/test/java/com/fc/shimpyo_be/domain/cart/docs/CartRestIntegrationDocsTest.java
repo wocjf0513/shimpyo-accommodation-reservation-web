@@ -9,15 +9,14 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
-import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fc.shimpyo_be.config.RestDocsSupport;
-import com.fc.shimpyo_be.domain.cart.factory.CartFactory;
 import com.fc.shimpyo_be.domain.cart.dto.request.CartCreateRequest;
 import com.fc.shimpyo_be.domain.cart.entity.Cart;
+import com.fc.shimpyo_be.domain.cart.factory.CartFactory;
 import com.fc.shimpyo_be.domain.cart.repository.CartRepository;
 import com.fc.shimpyo_be.domain.member.entity.Authority;
 import com.fc.shimpyo_be.domain.member.entity.Member;
@@ -58,7 +57,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     @Autowired
     private ProductRepository productRepository;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private Room room;
 
@@ -69,9 +68,10 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     @BeforeEach
     void initTest() {
         //given
-        member = memberRepository.save(memberRepository.save(
-            Member.builder().email("wocjf"+ThreadLocalRandom.current().nextInt(100000)+"@naver.com").photoUrl("hello,world.jpg").name("심재철")
-                .password("1234").authority(Authority.ROLE_USER).build()));
+        member = memberRepository.save(memberRepository.save(Member.builder()
+            .email("wocjf" + ThreadLocalRandom.current().nextInt(100000) + "@naver.com")
+            .photoUrl("hello,world.jpg").name("심재철").password("1234").authority(Authority.ROLE_USER)
+            .build()));
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
 
@@ -91,7 +91,6 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         //given
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/carts"));
-
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
             responseFields(responseCommon()).and(
@@ -110,7 +109,9 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
                 fieldWithPath("data[].endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
                 fieldWithPath("data[].checkIn").type(JsonFieldType.STRING).description("방 체크인 시간"),
                 fieldWithPath("data[].checkOut").type(JsonFieldType.STRING)
-                    .description("방 체크아웃 시간"))));
+                    .description("방 체크아웃 시간"),
+                fieldWithPath("data[].reserved").type(JsonFieldType.BOOLEAN)
+                    .description("예약 가능 여부"))));
 
     }
 
@@ -118,22 +119,19 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     @WithMockUser
     void addCart() throws Exception {
         //given
-        CartCreateRequest cartCreateRequest = CartCreateRequest.builder()
-            .startDate("2023-11-27").endDate("2023-11-28").price(100000L).roomId(room.getId())
-            .build();
+        CartCreateRequest cartCreateRequest = CartCreateRequest.builder().startDate("2023-11-27")
+            .endDate("2023-11-28").price(100000L).roomId(room.getId()).build();
         //when
-        ResultActions resultActions = mockMvc.perform(post("/api/carts")
-            .content(objectMapper.writeValueAsString(cartCreateRequest))
-            .contentType(MediaType.APPLICATION_JSON));
+        ResultActions resultActions = mockMvc.perform(
+            post("/api/carts").content(objectMapper.writeValueAsString(cartCreateRequest))
+                .contentType(MediaType.APPLICATION_JSON));
 
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
-            requestFields(
-                fieldWithPath("roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+            requestFields(fieldWithPath("roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
                 fieldWithPath("startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
                 fieldWithPath("endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
-                fieldWithPath("price").type(JsonFieldType.NUMBER).description("장바구니 가격")
-            ),
+                fieldWithPath("price").type(JsonFieldType.NUMBER).description("장바구니 가격")),
             responseFields(responseCommon()).and(
                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                 fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
@@ -149,8 +147,12 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
                 fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
                 fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
                 fieldWithPath("data.checkIn").type(JsonFieldType.STRING).description("방 체크인 시간"),
-                fieldWithPath("data.checkOut").type(JsonFieldType.STRING)
-                    .description("방 체크아웃 시간"))));
+                fieldWithPath("data.checkOut").type(JsonFieldType.STRING).description("방 체크아웃 시간"),
+                fieldWithPath(("data.checkOut")).type(JsonFieldType.STRING)
+                    .description("방 체크아웃 시간"),
+                fieldWithPath("data.reserved").type(JsonFieldType.BOOLEAN)
+                    .description("예약 가능 여부"))));
+
     }
 
     @Test
@@ -159,18 +161,15 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         //given
 
         //when
-        ResultActions resultActions = mockMvc.perform(delete("/api/carts/{cartId}",1L));
+        ResultActions resultActions = mockMvc.perform(delete("/api/carts/{cartId}", 1L));
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
-            pathParameters(
-                parameterWithName("cartId").description("삭제할 장바구니 아이디")
-            ),
+            pathParameters(parameterWithName("cartId").description("삭제할 장바구니 아이디")),
             responseFields(responseCommon()).and(
                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                 fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
                 fieldWithPath("data.roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
                 fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
-                fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("숙박 종료일")
-                )));
+                fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("숙박 종료일"))));
     }
 }

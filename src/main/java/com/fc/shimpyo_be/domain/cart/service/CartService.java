@@ -12,6 +12,8 @@ import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.exception.MemberNotFoundException;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
 import com.fc.shimpyo_be.domain.product.exception.RoomNotFoundException;
+import com.fc.shimpyo_be.domain.product.exception.RoomNotReserveException;
+import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
@@ -34,16 +36,29 @@ public class CartService {
 
     private final MemberRepository memberRepository;
 
-    public List<CartResponse> getCarts() {
+    private final ProductService productService;
 
-        return cartRepository.findByMemberId(securityUtil.getCurrentMemberId()).orElseThrow()
+    public List<CartResponse> getCarts() {
+        List<CartResponse> cartResponses= cartRepository.findByMemberId(securityUtil.getCurrentMemberId()).orElseThrow()
             .stream().map(CartMapper::toCartResponse).toList();
+        cartResponses.stream().filter(
+            cartResponse -> !productService.isAvailableForReservation(cartResponse.getRoomId(),
+                cartResponse.getStartDate(), cartResponse.getEndDate())).forEach(
+            CartResponse::setReserved);
+
+        return cartResponses;
     }
 
     @Transactional
     public CartResponse addCart(@Valid @RequestBody CartCreateRequest cartCreateRequest) {
+
         Member member = memberRepository.findById(securityUtil.getCurrentMemberId())
             .orElseThrow(MemberNotFoundException::new);
+
+        if (!productService.isAvailableForReservation(cartCreateRequest.roomId(),
+            cartCreateRequest.startDate(), cartCreateRequest.endDate())) {
+            throw new RoomNotReserveException();
+        }
 
         Room room = roomRepository.findById(cartCreateRequest.roomId())
             .orElseThrow(RoomNotFoundException::new);
@@ -62,5 +77,6 @@ public class CartService {
 
         return CartMapper.toCartDeleteResponse(cart);
     }
+
 
 }
