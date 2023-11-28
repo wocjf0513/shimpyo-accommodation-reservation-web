@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.member.dto.request.CheckPasswordRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.request.UpdateMemberRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.response.MemberResponseDto;
@@ -32,7 +33,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class MemberRestControllerTest {
+public class MemberRestControllerTest extends AbstractContainersSupport {
 
     @Autowired
     private MockMvc mockMvc;
