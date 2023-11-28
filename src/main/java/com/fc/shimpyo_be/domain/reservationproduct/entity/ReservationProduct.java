@@ -30,6 +30,8 @@ public class ReservationProduct {
     private LocalDateTime startDate;
     @Column(nullable = false)
     private LocalDateTime endDate;
+    private String visitorName;
+    private String visitorPhone;
 
     @Builder
     public ReservationProduct(
@@ -38,7 +40,9 @@ public class ReservationProduct {
         Room room,
         int price,
         LocalDateTime startDate,
-        LocalDateTime endDate
+        LocalDateTime endDate,
+        String visitorName,
+        String visitorPhone
     ) {
         this.id = id;
         this.reservation = reservation;
@@ -46,5 +50,7 @@ public class ReservationProduct {
         this.price = price;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.visitorName = visitorName;
+        this.visitorPhone = visitorPhone;
     }
 }

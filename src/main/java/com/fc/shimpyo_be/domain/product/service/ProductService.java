@@ -10,7 +10,7 @@ import com.fc.shimpyo_be.domain.product.repository.model.ProductSpecification;
 import com.fc.shimpyo_be.domain.product.util.ProductMapper;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomResponse;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
-import com.fc.shimpyo_be.global.util.DateUtil;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -76,12 +76,12 @@ public class ProductService {
         final String endDate) {
         ValueOperations<String, Object> values = restTemplate.opsForValue();
 
-        LocalDate startLocalDate = DateUtil.toLocalDate(startDate);
-        LocalDate endLocalDate = DateUtil.toLocalDate(endDate);
+        LocalDate startLocalDate = DateTimeUtil.toLocalDate(startDate);
+        LocalDate endLocalDate = DateTimeUtil.toLocalDate(endDate);
 
         while (startLocalDate.isBefore(endLocalDate)) {
 
-            String accommodationDate = DateUtil.toString(startLocalDate);
+            String accommodationDate = DateTimeUtil.toString(startLocalDate);
             if (values.get("roomId:" + String.valueOf(roomId) + ":" + accommodationDate) != null) {
                 return false;
             }

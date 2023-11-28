@@ -3,7 +3,7 @@ package com.fc.shimpyo_be.global.util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class DateUtil {
+public class DateTimeUtil {
 
     public final static String LOCAL_DATE_PATTERN = "yyyy-MM-dd";
 

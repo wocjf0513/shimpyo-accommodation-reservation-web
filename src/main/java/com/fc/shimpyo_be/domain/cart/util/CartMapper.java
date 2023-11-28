@@ -7,7 +7,7 @@ import com.fc.shimpyo_be.domain.cart.entity.Cart;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.room.entity.Room;
-import com.fc.shimpyo_be.global.util.DateUtil;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
 
 public class CartMapper {
 
@@ -19,15 +19,15 @@ public class CartMapper {
             .productName(product.getName()).image(product.getThumbnail()).roomId(room.getId())
             .roomName(room.getName()).price(cart.getPrice()).description(room.getDescription())
             .standard((long) room.getStandard()).capacity((long) room.getCapacity())
-            .startDate(DateUtil.toString(cart.getStartDate()))
-            .endDate(DateUtil.toString(cart.getEndDate())).checkIn(room.getCheckIn().toString())
+            .startDate(DateTimeUtil.toString(cart.getStartDate()))
+            .endDate(DateTimeUtil.toString(cart.getEndDate())).checkIn(room.getCheckIn().toString())
             .checkOut(room.getCheckOut().toString()).build();
     }
 
     public static CartDeleteResponse toCartDeleteResponse(Cart cart) {
         return CartDeleteResponse.builder().cartId(cart.getId()).roomId(cart.getRoom().getId())
-            .startDate(DateUtil.toString(cart.getStartDate()))
-            .endDate(DateUtil.toString(cart.getEndDate())).build();
+            .startDate(DateTimeUtil.toString(cart.getStartDate()))
+            .endDate(DateTimeUtil.toString(cart.getEndDate())).build();
     }
 
     public static Cart toCart(CartCreateRequest cartCreateRequest, Room room, Member member) {
@@ -35,8 +35,8 @@ public class CartMapper {
             .room(room)
             .member(member)
             .price(cartCreateRequest.price())
-            .startDate(DateUtil.toLocalDate(cartCreateRequest.startDate()))
-            .endDate(DateUtil.toLocalDate(cartCreateRequest.endDate()))
+            .startDate(DateTimeUtil.toLocalDate(cartCreateRequest.startDate()))
+            .endDate(DateTimeUtil.toLocalDate(cartCreateRequest.endDate()))
             .build();
     }
 }
