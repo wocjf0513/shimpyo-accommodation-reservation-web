@@ -22,6 +22,14 @@ public enum ErrorCode {
     ROOM_NOT_RESERVE(HttpStatus.FORBIDDEN, "예약 불가능한 방입니다."),
     ROON_NOT_FOUND(HttpStatus.NOT_FOUND,"방 정보를 찾을 수 없습니다."),
 
+    // 예약
+    UNAVAILABLE_ROOMS(HttpStatus.BAD_REQUEST, "예약 불가능한 방이 존재합니다."),
+    LOCK_FAIL(HttpStatus.BAD_REQUEST, "요청 완료에 실패했습니다. 재시도가 필요합니다."),
+
+    // 장바구니
+    CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니 정보를 찾을 수 없습니다."),
+    CART_NOT_DELETE(HttpStatus.FORBIDDEN, "해당 장바구니를 삭제할 권한이 없습니다"),
+
     // Open API
     HTTP_CLIENT_CONNECTION_ERROR(HttpStatus.UNAUTHORIZED, "외부 API 연결에 실패했습니다.");
 

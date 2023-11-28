@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.member.dto.request.RefreshRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.request.SignInRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.request.SignUpRequestDto;
@@ -33,7 +34,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class AuthRestControllerTest {
+public class AuthRestControllerTest extends AbstractContainersSupport {
 
     @Autowired
     private MockMvc mockMvc;

@@ -1,6 +1,7 @@
 package com.fc.shimpyo_be.domain.star.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.star.dto.request.StarRegisterRequestDto;
 import com.fc.shimpyo_be.domain.star.dto.response.StarResponseDto;
 import com.fc.shimpyo_be.domain.star.service.StarService;
@@ -27,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-class StarRestControllerTest {
+class StarRestControllerTest extends AbstractContainersSupport {
 
     private MockMvc mockMvc;
 

@@ -42,9 +42,17 @@ public class Room {
     private int price;
 
     @Builder
-    public Room(Long id, Product product, String name, String description, int standard,
+    public Room(
+        Long id,
+        Product product,
+        String name,
+        String description,
+        int standard,
         int capacity,
-        int price, LocalTime checkIn, LocalTime checkOut) {
+        int price,
+        LocalTime checkIn,
+        LocalTime checkOut
+    ) {
         this.id = id;
         this.product = product;
         this.name = name;

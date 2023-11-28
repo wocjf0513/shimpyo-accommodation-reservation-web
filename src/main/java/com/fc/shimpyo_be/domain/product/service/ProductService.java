@@ -74,19 +74,19 @@ public class ProductService {
 
     public boolean isAvailableForReservation(final Long roomId, final String startDate,
         final String endDate) {
-//        ValueOperations<String, Object> values = restTemplate.opsForValue();
-//
-//        LocalDate startLocalDate = DateUtil.toLocalDate(startDate);
-//        LocalDate endLocalDate = DateUtil.toLocalDate(endDate);
-//
-//        while (startLocalDate.isBefore(endLocalDate)) {
-//
-//            String accommodationDate = DateUtil.toString(startLocalDate);
-//            if (values.get("roomId:" + roomId + ":" + accommodationDate) != null) {
-//                return false;
-//            }
-//            startLocalDate = startLocalDate.plusDays(1);
-//        }
+        ValueOperations<String, Object> values = restTemplate.opsForValue();
+
+        LocalDate startLocalDate = DateUtil.toLocalDate(startDate);
+        LocalDate endLocalDate = DateUtil.toLocalDate(endDate);
+
+        while (startLocalDate.isBefore(endLocalDate)) {
+
+            String accommodationDate = DateUtil.toString(startLocalDate);
+            if (values.get("roomId:" + String.valueOf(roomId) + ":" + accommodationDate) != null) {
+                return false;
+            }
+            startLocalDate = startLocalDate.plusDays(1);
+        }
 
         return true;
     }
