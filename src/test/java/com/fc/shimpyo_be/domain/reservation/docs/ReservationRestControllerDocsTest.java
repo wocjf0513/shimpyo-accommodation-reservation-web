@@ -5,7 +5,7 @@ import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequest
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.PreoccupyRoomsResponseDto;
 import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
-import com.fc.shimpyo_be.domain.reservation.dto.ReservationInfoResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import org.junit.jupiter.api.DisplayName;

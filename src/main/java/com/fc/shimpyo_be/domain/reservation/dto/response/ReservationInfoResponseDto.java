@@ -1,4 +1,4 @@
-package com.fc.shimpyo_be.domain.reservation.dto;
+package com.fc.shimpyo_be.domain.reservation.dto.response;
 
 public record ReservationInfoResponseDto(
     Long reservationId,

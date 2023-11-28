@@ -1,7 +1,7 @@
 package com.fc.shimpyo_be.domain.reservation.service;
 
 import com.fc.shimpyo_be.domain.product.entity.Product;
-import com.fc.shimpyo_be.domain.reservation.dto.ReservationInfoResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
 import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;

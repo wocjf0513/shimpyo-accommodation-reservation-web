@@ -1,6 +1,7 @@
 package com.fc.shimpyo_be.domain.reservation.unit.service;
 
-import com.fc.shimpyo_be.domain.reservation.dto.ReservationInfoResponseDto;
+import com.fc.shimpyo_be.config.AbstractContainersSupport;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
@@ -23,7 +24,7 @@ import static org.assertj.core.api.Assertions.*;
 @Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
-public class GetReservationListServiceTest {
+public class GetReservationListServiceTest extends AbstractContainersSupport {
 
     @Autowired
     private ReservationService reservationService;

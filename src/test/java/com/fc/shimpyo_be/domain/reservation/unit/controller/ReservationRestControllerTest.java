@@ -1,7 +1,7 @@
 package com.fc.shimpyo_be.domain.reservation.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fc.shimpyo_be.domain.reservation.dto.ReservationInfoResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
