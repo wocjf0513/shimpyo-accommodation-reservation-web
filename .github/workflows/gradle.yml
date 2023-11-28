@@ -27,6 +27,7 @@ jobs:
         
     - name: Make env file
       run: |
+        sudo su
         echo "${{ secrets.ENV }}" | base64 --decode > .env
 
     - name: run redis server
