@@ -23,6 +23,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
@@ -41,6 +43,9 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
     @Autowired
     private ProductImageRepository productImageRepository;
+
+    @Autowired
+    private RedisTemplate<String, Object> restTemplate;
 
 
     private void assertProductDetailsResponse(Product expectedProduct, ResultActions resultActions)
@@ -174,39 +179,40 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                         .description("예약 여부"))));
 
     }
-//
-//    @Test
-//    @DisplayName("예약 가능 여부를 확인할 수 있다.")
-//    @WithMockUser
-//    void isAvailableForReservation() throws Exception {
-//        // given
-//        Product product = productRepository.save(ProductFactory.createTestProduct());
-//        Room room = roomRepository.save(ProductFactory.createTestRoom(product));
-//        product.getRooms().add(room);
-//
-//        // when
-//        ResultActions getProductAction = mockMvc.perform(
-//            get("/api/products/amounts/{roomId}?startDate=2023-11-22&endDate=2023-11-23",room.getId()));
-//
-//        // then
-//        getProductAction
-//            .andExpect(status().isOk())
-//            .andDo(MockMvcResultHandlers.print())
-//            .andDo(restDoc.document(
-//                pathParameters(
-//                    parameterWithName("roomId").description("방 아이디")
-//                ),
-//                queryParameters(
-//                    parameterWithName("startDate").description("상세 검색, 체크인 일"),
-//                    parameterWithName("endDate").description("상세 검색, 체크아웃 일")
-//                ),
-//                responseFields(
-//                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
-//                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-//                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 NULL")
-//                )
-//            ));
-//    }
+
+    @Test
+    @DisplayName("예약 가능 여부를 확인할 수 있다.")
+    @WithMockUser
+    void isAvailableForReservation() throws Exception {
+        // given
+        Product product = productRepository.save(ProductFactory.createTestProduct());
+        Room room = roomRepository.save(ProductFactory.createTestRoom(product));
+        product.getRooms().add(room);
+        ValueOperations<String, Object> values = restTemplate.opsForValue();
+        values.set("roomId:" + String.valueOf(room.getId()) + ":" + "2023-11-26", "OK");
+        // when
+        ResultActions getProductAction = mockMvc.perform(
+            get("/api/products/amounts/{roomId}?startDate=2023-11-26&endDate=2023-11-29",room.getId()));
+
+        // then
+        getProductAction
+            .andExpect(status().isForbidden())
+            .andDo(MockMvcResultHandlers.print())
+            .andDo(restDoc.document(
+                pathParameters(
+                    parameterWithName("roomId").description("방 아이디")
+                ),
+                queryParameters(
+                    parameterWithName("startDate").description("상세 검색, 체크인 일"),
+                    parameterWithName("endDate").description("상세 검색, 체크아웃 일")
+                ),
+                responseFields(
+                    fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
+                    fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
+                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 NULL")
+                )
+            ));
+    }
 
 
 }
