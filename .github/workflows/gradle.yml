@@ -27,9 +27,12 @@ jobs:
         
     - name: Make env file
       run: |
-        sudo su
         echo "${{ secrets.ENV }}" | base64 --decode > .env
 
+    - name: Docker-compose file
+      run: |
+        cat "${{ secrets.DOCKER_COMPOSE }}" > ./docker-compose.yml
+        
     - name: run redis server
       run: docker-compose up -d
 
