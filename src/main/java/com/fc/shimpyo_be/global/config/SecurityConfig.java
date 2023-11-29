@@ -32,7 +32,8 @@ public class SecurityConfig implements WebMvcConfigurer {
         "/error",
         "/docs/**",
         "/api/auth/**",
-        "/api/products/**"
+        "/api/products/**",
+        "/api/open-api"
     };
 
     @Bean

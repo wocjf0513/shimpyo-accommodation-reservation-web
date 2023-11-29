@@ -32,7 +32,13 @@ jobs:
     - name: Make docker-compose file
       run: |
         echo "${{ secrets.DOCKER_COMPOSE }}" | base64 --decode > ./docker-compose.yml
-        
+
+    - name: Make application.properties
+      run: |
+        echo "${{ secrets.LOCAL_PROPERTIES }}" | base64 --decode > src/main/resources/application-local.yml
+        echo "${{ secrets.PROD_PROPERTIES }}" | base64 --decode > src/main/resources/application-prod.yml
+        echo "${{ secrets.TEST_PROPERTIES }}" | base64 --decode > src/test/resources/application.yml
+
     - name: run redis server
       run: docker-compose up -d
 

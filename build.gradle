@@ -70,6 +70,9 @@ dependencies {
 
     // TestContainers
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+
+    // JSON
+    implementation 'org.json:json:20230227'
 }
 
 tasks.named('bootBuildImage') {
