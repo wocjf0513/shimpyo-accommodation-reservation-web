@@ -21,7 +21,7 @@ import com.fc.shimpyo_be.domain.product.factory.ProductFactory;
 import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
-import com.fc.shimpyo_be.global.util.DateUtil;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,8 +75,8 @@ public class CartRestServiceTest {
         List<CartResponse> expectedCartResponses = carts.stream().map(CartMapper::toCartResponse)
             .toList();
         doReturn(true).when(productService)
-            .isAvailableForReservation(cart.getId(), DateUtil.toString(cart.getStartDate()),
-                DateUtil.toString(cart.getEndDate()));
+            .isAvailableForReservation(cart.getId(), DateTimeUtil.toString(cart.getStartDate()),
+                DateTimeUtil.toString(cart.getEndDate()));
         given(cartRepository.findByMemberId(1L)).willReturn(Optional.of(carts));
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
         //when

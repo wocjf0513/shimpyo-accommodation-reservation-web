@@ -1,10 +1,14 @@
 package com.fc.shimpyo_be.domain.reservation.controller;
 
+import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
+import com.fc.shimpyo_be.domain.reservation.facade.ReservationLockFacade;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.global.common.ResponseDto;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -27,10 +31,28 @@ public class ReservationRestController {
 
     private final ReservationService reservationService;
     private final PreoccupyRoomsLockFacade preoccupyRoomsLockFacade;
+    private final ReservationLockFacade reservationLockFacade;
     private final SecurityUtil securityUtil;
 
+    @PostMapping
+    public ResponseEntity<ResponseDto<SaveReservationResponseDto>> saveReservation(
+        @Valid @RequestBody SaveReservationRequestDto request
+    ) {
+        log.info("[api][POST] /api/reservations");
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(
+                ResponseDto.res(
+                    HttpStatus.CREATED,
+                    reservationLockFacade.saveReservation(securityUtil.getCurrentMemberId(), request),
+                    "예약 결제가 정상적으로 완료되었습니다."
+                )
+            );
+    }
+
     @GetMapping
-    public ResponseEntity<?> getReservationList(
+    public ResponseEntity<ResponseDto<Page<?>>> getReservationList(
         @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
         log.info("[api][GET] /api/reservations");
