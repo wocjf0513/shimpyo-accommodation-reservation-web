@@ -35,6 +35,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
 
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -70,7 +71,7 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
     @DisplayName("숙소 저장 후, 검색 조회 및 페이징할 수 있다.")
     @Test
     @WithMockUser
-    void shouldSuccessToGetAllProducts() throws Exception {
+    void getProducts() throws Exception {
         // given
         for (int i = 0; i < 20; i++) {
             Product product = productRepository.save(ProductFactory.createTestProduct());
@@ -117,7 +118,7 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
     @DisplayName("숙소 상세 검색을 할 수 있다.")
     @Test
     @WithMockUser
-    void shouldSuccessToGetDetailsProduct() throws Exception {
+    void getProductDetails() throws Exception {
         // given
         Product product = productRepository.save(ProductFactory.createTestProduct());
         ProductImage productImage = productImageRepository.save(
@@ -209,7 +210,7 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                 responseFields(
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                     fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 NULL")
+                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
                 )
             ));
     }

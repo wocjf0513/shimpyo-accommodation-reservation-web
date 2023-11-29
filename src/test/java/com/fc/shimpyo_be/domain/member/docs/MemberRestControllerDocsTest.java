@@ -1,16 +1,5 @@
 package com.fc.shimpyo_be.domain.member.docs;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-
 import com.fc.shimpyo_be.config.RestDocsSupport;
 import com.fc.shimpyo_be.domain.member.dto.request.CheckPasswordRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.request.UpdateMemberRequestDto;
@@ -24,6 +13,14 @@ import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.key;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 
 public class MemberRestControllerDocsTest extends RestDocsSupport {
 
@@ -49,8 +46,7 @@ public class MemberRestControllerDocsTest extends RestDocsSupport {
         given(memberService.getMember()).willReturn(memberResponseDto);
 
         // when then
-        mockMvc.perform(get("/api/members")
-                .with(csrf()))
+        mockMvc.perform(get("/api/members"))
             .andDo(restDoc.document(
                 responseFields(responseCommon()).and(
                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
@@ -85,7 +81,6 @@ public class MemberRestControllerDocsTest extends RestDocsSupport {
 
         // when then
         mockMvc.perform(patch("/api/members")
-                .with(csrf())
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(restDoc.document(
@@ -120,7 +115,6 @@ public class MemberRestControllerDocsTest extends RestDocsSupport {
 
         // when then
         mockMvc.perform(MockMvcRequestBuilders.post("/api/members")
-                .with(csrf())
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(restDoc.document(

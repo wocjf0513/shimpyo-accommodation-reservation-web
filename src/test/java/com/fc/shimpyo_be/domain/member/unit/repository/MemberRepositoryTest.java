@@ -3,6 +3,7 @@ package com.fc.shimpyo_be.domain.member.unit.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fc.shimpyo_be.config.TestJpaConfig;
+import com.fc.shimpyo_be.config.TestQuerydslConfig;
 import com.fc.shimpyo_be.domain.member.entity.Authority;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
@@ -20,7 +21,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 
 @DataJpaTest
-@Import({TestJpaConfig.class})
+@Import({TestJpaConfig.class, TestQuerydslConfig.class})
 @AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class MemberRepositoryTest {
 

@@ -1,6 +1,3 @@
-ifndef::snippets[]
-:snippets: ../../build/generated-snippets
-endif::[]
 = 쉼표 API 문서
 :doctype: book
 :icons: font
@@ -13,6 +10,11 @@ endif::[]
 == API
 
 === link:member/member-api.html[회원 API, window=blank]
+
+=== link:product/product-api.html[상품 API, window=blank]
+
+=== link:cart/cart-api.html[장바구니 API, window=blank]
+
 
 == API Common Response
 
