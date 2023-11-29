@@ -25,6 +25,7 @@ public enum ErrorCode {
     // 예약
     UNAVAILABLE_ROOMS(HttpStatus.BAD_REQUEST, "예약 불가능한 방이 존재합니다."),
     LOCK_FAIL(HttpStatus.BAD_REQUEST, "요청 완료에 실패했습니다. 재시도가 필요합니다."),
+    INVALID_RESERVATION_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 예약 요청 데이터입니다."),
 
     // 장바구니
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니 정보를 찾을 수 없습니다."),
