@@ -119,8 +119,8 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     @WithMockUser
     void addCart() throws Exception {
         //given
-        CartCreateRequest cartCreateRequest = CartCreateRequest.builder().startDate("2022-11-27")
-            .endDate("2022-11-28").price(100000L).roomId(room.getId()).build();
+        CartCreateRequest cartCreateRequest = CartCreateRequest.builder().startDate("2022-12-27")
+            .endDate("2022-12-30").price(100000L).roomId(room.getId()).build();
         //when
         ResultActions resultActions = mockMvc.perform(
             post("/api/carts").content(objectMapper.writeValueAsString(cartCreateRequest))
