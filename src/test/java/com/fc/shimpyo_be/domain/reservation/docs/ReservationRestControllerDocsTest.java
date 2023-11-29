@@ -3,10 +3,15 @@ package com.fc.shimpyo_be.domain.reservation.docs;
 import com.fc.shimpyo_be.config.RestDocsSupport;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
-import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
+import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
+import com.fc.shimpyo_be.domain.reservation.entity.PayMethod;
+import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
+import com.fc.shimpyo_be.domain.reservation.facade.ReservationLockFacade;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
+import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,11 +19,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
-
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
+import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,17 +30,15 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.restdocs.snippet.Attributes.key;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ReservationRestControllerDocsTest extends RestDocsSupport {
@@ -48,6 +50,9 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
     private PreoccupyRoomsLockFacade preoccupyRoomsLockFacade;
 
     @MockBean
+    private ReservationLockFacade reservationLockFacade;
+
+    @MockBean
     private SecurityUtil securityUtil;
 
     private final ConstraintDescriptions preoccupyRoomsDescriptions
@@ -56,6 +61,121 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
     private final ConstraintDescriptions preoccupyRoomItemDescriptions
         = new ConstraintDescriptions(PreoccupyRoomItemRequestDto.class);
 
+    private final ConstraintDescriptions saveReservationDescriptions
+        = new ConstraintDescriptions(SaveReservationRequestDto.class);
+
+    private final ConstraintDescriptions reservationProductDescriptions
+        = new ConstraintDescriptions(ReservationProductRequestDto.class);
+
+    @WithMockUser(roles = "USER")
+    @DisplayName("saveReservation()는 예약을 저장할 수 있다.")
+    @Test
+    void saveReservation() throws Exception {
+        //given
+        String requestUrl = "/api/reservations";
+
+        SaveReservationRequestDto requestDto
+            = new SaveReservationRequestDto(
+            List.of(
+                new ReservationProductRequestDto(
+                    1L, "신라호텔", "디럭스 더블1",
+                    2, 4, "2023-11-20", "2023-11-23",
+                    "13:00", "12:00",
+                    "홍길동", "010-1111-1111", 300000
+                ),
+                new ReservationProductRequestDto(
+                    3L, "강릉 고즈넉한 펜션", "숲의 방",
+                    6, 9, "2023-12-10", "2023-12-12",
+                    "13:00", "12:00",
+                    "김갑돌", "010-2222-2222", 150000
+                )
+            ), PayMethod.CREDIT_CARD, 450000
+        );
+
+        SaveReservationResponseDto responseDto = new SaveReservationResponseDto(1L, requestDto);
+
+        given(securityUtil.getCurrentMemberId()).willReturn(1L);
+        given(reservationLockFacade.saveReservation(anyLong(), any(SaveReservationRequestDto.class)))
+            .willReturn(responseDto);
+
+        //when & then
+        mockMvc.perform(post(requestUrl)
+                .content(objectMapper.writeValueAsString(requestDto))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andDo(restDoc.document(
+                    requestFields(
+                        fieldWithPath("reservationProducts").type(JsonFieldType.ARRAY).description("예약할 객실 상품 리스트")
+                            .attributes(key("constraints").value(
+                                saveReservationDescriptions.descriptionsForProperty("reservationProducts"))),
+                        fieldWithPath("reservationProducts[].roomId").type(JsonFieldType.NUMBER).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("roomId"))),
+                        fieldWithPath("reservationProducts[].productName").type(JsonFieldType.STRING).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("productName"))),
+                        fieldWithPath("reservationProducts[].roomName").type(JsonFieldType.STRING).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("roomName"))),
+                        fieldWithPath("reservationProducts[].standard").type(JsonFieldType.NUMBER).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("standard"))),
+                        fieldWithPath("reservationProducts[].max").type(JsonFieldType.NUMBER).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("max"))),
+                        fieldWithPath("reservationProducts[].startDate").type(JsonFieldType.STRING).description("숙박 시작일")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("startDate"))),
+                        fieldWithPath("reservationProducts[].endDate").type(JsonFieldType.STRING).description("숙박 마지막일")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("endDate"))),
+                        fieldWithPath("reservationProducts[].checkIn").type(JsonFieldType.STRING).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("checkIn"))),
+                        fieldWithPath("reservationProducts[].checkOut").type(JsonFieldType.STRING).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("checkOut"))),
+                        fieldWithPath("reservationProducts[].visitorName").type(JsonFieldType.STRING).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("visitorName"))),
+                        fieldWithPath("reservationProducts[].visitorPhone").type(JsonFieldType.STRING).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("visitorPhone"))),
+                        fieldWithPath("reservationProducts[].price").type(JsonFieldType.NUMBER).description("예약할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("price"))),
+                        fieldWithPath("payMethod").type(JsonFieldType.STRING).description("결제 수단")
+                            .attributes(key("constraints").value(
+                                saveReservationDescriptions.descriptionsForProperty("payMethod"))),
+                        fieldWithPath("totalPrice").type(JsonFieldType.NUMBER).description("총 결제 금액")
+                            .attributes(key("constraints").value(
+                                saveReservationDescriptions.descriptionsForProperty("totalPrice")))
+
+                    ),
+                    responseFields(responseCommon()).and(
+                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                        fieldWithPath("data.reservationId").type(JsonFieldType.NUMBER).description("예약 주문 식별자"),
+                        fieldWithPath("data.reservationProducts").type(JsonFieldType.ARRAY).description("예약 상품 리스트"),
+                        fieldWithPath("data.reservationProducts[].roomId").type(JsonFieldType.NUMBER).description("예약 상품 리스트"),
+                        fieldWithPath("data.reservationProducts[].productName").type(JsonFieldType.STRING).description("숙소명"),
+                        fieldWithPath("data.reservationProducts[].roomName").type(JsonFieldType.STRING).description("객실명"),
+                        fieldWithPath("data.reservationProducts[].standard").type(JsonFieldType.NUMBER).description("기준 인원"),
+                        fieldWithPath("data.reservationProducts[].max").type(JsonFieldType.NUMBER).description("최대 인원"),
+                        fieldWithPath("data.reservationProducts[].startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
+                        fieldWithPath("data.reservationProducts[].endDate").type(JsonFieldType.STRING).description("숙박 마지막일"),
+                        fieldWithPath("data.reservationProducts[].checkIn").type(JsonFieldType.STRING).description("체크인 시간"),
+                        fieldWithPath("data.reservationProducts[].checkOut").type(JsonFieldType.STRING).description("체크아웃 시간"),
+                        fieldWithPath("data.reservationProducts[].visitorName").type(JsonFieldType.STRING).description("방문자명"),
+                        fieldWithPath("data.reservationProducts[].visitorPhone").type(JsonFieldType.STRING).description("방문자 전화번호"),
+                        fieldWithPath("data.reservationProducts[].price").type(JsonFieldType.NUMBER).description("객실 이용 가격"),
+                        fieldWithPath("data.payMethod").type(JsonFieldType.STRING).description("결제 수단"),
+                        fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER).description("총 결제 금액")
+                        )
+                )
+            );
+
+        verify(reservationLockFacade, times(1)).saveReservation(anyLong(), any(SaveReservationRequestDto.class));
+    }
 
     @WithMockUser(roles = "USER")
     @DisplayName("getReservationInfoList()는 전체 주문 목록 조회를 할 수 있다.")
