@@ -1,13 +1,18 @@
 package com.fc.shimpyo_be.domain.reservation.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
-import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
+import com.fc.shimpyo_be.domain.reservation.entity.PayMethod;
 import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
+import com.fc.shimpyo_be.domain.reservation.facade.ReservationLockFacade;
+import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
+import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,6 +56,9 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
     private PreoccupyRoomsLockFacade preoccupyRoomsLockFacade;
 
     @MockBean
+    private ReservationLockFacade reservationLockFacade;
+
+    @MockBean
     private SecurityUtil securityUtil;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -65,7 +73,43 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
     }
 
     @WithMockUser(roles = "USER")
-    @DisplayName("[api][GET] 전체 주문 목록 조회 API 성공 테스트")
+    @DisplayName("[api][POST][정상] 예약 주문 결제 API 성공 테스트")
+    @Test
+    void saveReservation_Api_test() throws Exception {
+        //given
+        String requestUrl = "/api/reservations";
+
+        SaveReservationRequestDto requestDto
+            = new SaveReservationRequestDto(
+            List.of(
+                getReservationProductRequestData(
+                    1L, "2023-11-20", "2023-11-23",
+                    "visitor1", "010-1111-1111", 150000),
+                getReservationProductRequestData(
+                    2L, "2023-11-18", "2023-11-20",
+                    "visitor2", "010-2222-2222", 200000)
+            ), PayMethod.CREDIT_CARD, 350000
+        );
+
+        SaveReservationResponseDto responseDto = new SaveReservationResponseDto(1L, requestDto);
+
+        given(securityUtil.getCurrentMemberId()).willReturn(1L);
+        given(reservationLockFacade.saveReservation(anyLong(), any(SaveReservationRequestDto.class)))
+            .willReturn(responseDto);
+
+        //when & then
+        mockMvc.perform(
+                post(requestUrl)
+                    .content(objectMapper.writeValueAsString(requestDto))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.data").isNotEmpty())
+            .andExpect(jsonPath("$.data.reservationId").isNumber());
+    }
+
+    @WithMockUser(roles = "USER")
+    @DisplayName("[api][GET][정상] 전체 주문 목록 조회 API 성공 테스트")
     @Test
     void getReservationInfoList_Api_test() throws Exception {
         //given
@@ -210,5 +254,30 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
             )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code", is(400)));
+    }
+
+    private ReservationProductRequestDto getReservationProductRequestData(
+        long roomId,
+        String startDate,
+        String endDate,
+        String visitorName,
+        String visitorPhone,
+        Integer price
+    ) {
+        String defaultValue = "DEFAULT_VALUE";
+        return new ReservationProductRequestDto(
+            roomId,
+            defaultValue,
+            defaultValue,
+            2,
+            4,
+            startDate,
+            endDate,
+            "13:00",
+            "12:00",
+            visitorName,
+            visitorPhone,
+            price
+        );
     }
 }
