@@ -11,6 +11,11 @@ public class DateTimeUtil {
 
     public final static String LOCAL_DATE_REGEX_PATTERN = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])";
 
+
+    public static boolean isNotValidDate(LocalDate startDate, LocalDate endDate) {
+        return startDate.isEqual(endDate) || endDate.isBefore(startDate) || startDate.isBefore(LocalDate.now());
+    }
+
     public static String toString(LocalDate dateObject) {
         return dateObject.format(DateTimeFormatter.ofPattern(LOCAL_DATE_PATTERN));
     }

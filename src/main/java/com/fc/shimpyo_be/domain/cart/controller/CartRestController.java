@@ -4,7 +4,9 @@ import com.fc.shimpyo_be.domain.cart.dto.request.CartCreateRequest;
 import com.fc.shimpyo_be.domain.cart.dto.response.CartDeleteResponse;
 import com.fc.shimpyo_be.domain.cart.dto.response.CartResponse;
 import com.fc.shimpyo_be.domain.cart.service.CartService;
+import com.fc.shimpyo_be.domain.product.exception.InvalidDateException;
 import com.fc.shimpyo_be.global.common.ResponseDto;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import java.util.List;
@@ -34,6 +36,9 @@ public class CartRestController {
     @PostMapping
     public ResponseEntity<ResponseDto<CartResponse>> addCart(
         @Valid @RequestBody CartCreateRequest cartCreateRequest) {
+        if(DateTimeUtil.isNotValidDate(DateTimeUtil.toLocalDate(cartCreateRequest.startDate()),DateTimeUtil.toLocalDate(cartCreateRequest.endDate()))){
+            throw new InvalidDateException();
+        }
         return ResponseEntity.ok().body(ResponseDto.res(HttpStatus.OK,cartService.addCart(cartCreateRequest),"장바구니를 성공적으로 등록했습니다."));
     }
 
