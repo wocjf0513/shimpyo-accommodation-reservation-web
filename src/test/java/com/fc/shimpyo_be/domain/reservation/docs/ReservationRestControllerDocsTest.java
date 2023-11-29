@@ -268,7 +268,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
     @WithMockUser(roles = "USER")
     @DisplayName("checkAvailableAndPreoccupy()는 객실 예약이 가능한지 검증하고, 가능한 경우 객실을 선점한다.")
     @Test
-    void checkAvailableAndPreoccupy_test() throws Exception {
+    void checkAvailableAndPreoccupy() throws Exception {
         // given
         String requestUrl = "/api/reservations/preoccupy";
 
