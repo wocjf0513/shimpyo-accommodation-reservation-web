@@ -2,6 +2,7 @@ package com.fc.shimpyo_be.domain.reservationproduct.entity;
 
 import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.global.common.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -9,11 +10,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class ReservationProduct {
+public class ReservationProduct extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,5 +58,9 @@ public class ReservationProduct {
 
     public void setReservation(Reservation reservation) {
         this.reservation = reservation;
+    }
+
+    public void cancel() {
+        this.delete(LocalDateTime.now());
     }
 }
