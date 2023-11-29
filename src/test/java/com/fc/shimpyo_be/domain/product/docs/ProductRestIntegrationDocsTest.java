@@ -35,7 +35,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
 
-
     @Autowired
     private ProductRepository productRepository;
 
