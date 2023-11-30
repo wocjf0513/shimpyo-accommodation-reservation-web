@@ -37,9 +37,7 @@ out/
 .vscode/
 
 ### Application.yaml ###
-
-### Test Application.yaml ###
-**/test/resources/application.yaml
+**/*.yaml
 
 ### REST Docs Html ###
 **/*.html
