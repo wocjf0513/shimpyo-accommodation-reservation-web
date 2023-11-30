@@ -17,6 +17,7 @@ import com.fc.shimpyo_be.domain.member.dto.request.CheckPasswordRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.request.UpdateMemberRequestDto;
 import com.fc.shimpyo_be.domain.member.dto.response.MemberResponseDto;
 import com.fc.shimpyo_be.domain.member.service.MemberService;
+import com.fc.shimpyo_be.global.util.SecurityUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,6 +44,9 @@ public class MemberRestControllerTest extends AbstractContainersSupport {
 
     @MockBean
     MemberService memberService;
+
+    @MockBean
+    SecurityUtil securityUtil;
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -71,6 +75,7 @@ public class MemberRestControllerTest extends AbstractContainersSupport {
                     "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI")
                 .build();
 
+            given(securityUtil.getCurrentMemberId()).willReturn(1L);
             given(memberService.getMember()).willReturn(memberResponseDto);
 
             // when then
@@ -108,6 +113,7 @@ public class MemberRestControllerTest extends AbstractContainersSupport {
                     "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI")
                 .build();
 
+            given(securityUtil.getCurrentMemberId()).willReturn(1L);
             given(memberService.updateMember(any(UpdateMemberRequestDto.class))).willReturn(
                 memberResponseDto);
 
@@ -140,6 +146,7 @@ public class MemberRestControllerTest extends AbstractContainersSupport {
                 .password("qwer1234$$")
                 .build();
 
+            given(securityUtil.getCurrentMemberId()).willReturn(1L);
             doNothing().when(memberService).checkPassword(any(CheckPasswordRequestDto.class));
 
             // when then
