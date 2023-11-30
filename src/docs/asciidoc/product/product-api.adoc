@@ -1,0 +1,58 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+
+= Member REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+[[Get-Products]]
+== 상품 조회
+
+상품 조회 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/product-rest-integration-docs-test/get-products/http-request.adoc[]
+include::{snippets}/product-rest-integration-docs-test/get-products/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/product-rest-integration-docs-test/get-products/http-response.adoc[]
+include::{snippets}/product-rest-integration-docs-test/get-products/response-fields.adoc[]
+
+[[Get-Product-Details]]
+== 상품 상세 조회
+
+상품 상세 조회 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/product-rest-integration-docs-test/get-product-details/http-request.adoc[]
+include::{snippets}/product-rest-integration-docs-test/get-product-details/path-parameters.adoc[]
+include::{snippets}/product-rest-integration-docs-test/get-product-details/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/product-rest-integration-docs-test/get-product-details/http-response.adoc[]
+include::{snippets}/product-rest-integration-docs-test/get-product-details/response-fields.adoc[]
+
+[[Available-For-Reservation]]
+== 상품 예약 가능 여부
+
+상품의 예약 가능 여부를 확인하는 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/product-rest-integration-docs-test/is-available-for-reservation/http-request.adoc[]
+include::{snippets}/product-rest-integration-docs-test/is-available-for-reservation/path-parameters.adoc[]
+include::{snippets}/product-rest-integration-docs-test/is-available-for-reservation/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/product-rest-integration-docs-test/is-available-for-reservation/http-response.adoc[]
+include::{snippets}/product-rest-integration-docs-test/is-available-for-reservation/response-fields.adoc[]
+

@@ -1,0 +1,23 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+
+= ReservationProduct REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+[[Cancel]]
+== 예약 상품 취소
+
+예약 상품 취소 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/reservation-product-rest-controller-docs-test/cancel/http-request.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/reservation-product-rest-controller-docs-test/cancel/http-response.adoc[]

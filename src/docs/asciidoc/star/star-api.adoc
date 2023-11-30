@@ -1,0 +1,25 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+
+= Star REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+[[Register]]
+== 별점 등록
+
+별점 등록 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/star-rest-controller-docs-test/register/http-request.adoc[]
+include::{snippets}/star-rest-controller-docs-test/register/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/star-rest-controller-docs-test/register/http-response.adoc[]
+include::{snippets}/star-rest-controller-docs-test/register/response-fields.adoc[]

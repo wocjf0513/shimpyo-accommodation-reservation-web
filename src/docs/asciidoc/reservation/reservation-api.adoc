@@ -1,0 +1,70 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+
+= Reservation REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+[[Save-Reservation]]
+== 예약 결제/저장
+
+예약 결제/저장 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/reservation-rest-controller-docs-test/save-reservation/http-request.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/save-reservation/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/reservation-rest-controller-docs-test/save-reservation/http-response.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/save-reservation/response-fields.adoc[]
+
+[[Check-Available-Preoccupy]]
+== 예약 가능 검증 및 예약 선점
+
+예약 가능 검증 및 예약 선점 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy/http-request.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy/http-response.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy/response-fields.adoc[]
+
+[[Get-Reservation-Info-List]]
+== 전체 예약 목록 조회
+
+전체 예약 목록 조회 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/reservation-rest-controller-docs-test/get-reservation-info-list/http-request.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/get-reservation-info-list/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/reservation-rest-controller-docs-test/get-reservation-info-list/http-response.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/get-reservation-info-list/response-fields.adoc[]
+
+[[Release-Rooms]]
+== 선점 객실 취소
+
+선점 객실 취소 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/reservation-rest-controller-docs-test/release-rooms/http-request.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/release-rooms/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/reservation-rest-controller-docs-test/release-rooms/http-response.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/release-rooms/response-fields.adoc[]

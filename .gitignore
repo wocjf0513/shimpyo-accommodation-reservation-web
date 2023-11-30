@@ -35,3 +35,21 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Application.yaml ###
+**/*.yaml
+
+### REST Docs Html ###
+**/*.html
+
+### QueryDSL ###
+src/main/generated/
+
+### .env File ###
+.env
+
+### maridadb/data Directory ###
+mariadb/data/
+
+### redis/data Directory ###
+redis/data/
