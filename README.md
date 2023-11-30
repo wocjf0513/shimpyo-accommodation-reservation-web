@@ -40,7 +40,7 @@
     - Spring Web
     - Test Containers
     - Json
-- `applicaion-local.yaml`, `application-prod.yaml` 파일은 LMS에서 확인하실 수 있습니다!
+- `applicaion-local.yaml`, `application-prod.yaml`, `.env` 파일은 LMS에서 확인하실 수 있습니다!
 
 ---
 
