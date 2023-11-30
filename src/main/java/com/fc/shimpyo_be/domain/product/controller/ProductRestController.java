@@ -13,6 +13,7 @@ import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import jakarta.validation.constraints.Pattern;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
@@ -39,7 +41,7 @@ public class ProductRestController {
         @RequestParam(required = false) String address,
         @RequestParam(required = false) String category,
         @PageableConstraint(Product.class) @PageableDefault(size = 10, page = 0) Pageable pageable) {
-
+        log.debug("productName: {}, address: {}, category: {}", productName, address, category);
         SearchKeywordRequest searchKeywordRequest = SearchKeywordRequest.builder()
             .productName(productName).address(address).category(category).build();
 
@@ -53,7 +55,7 @@ public class ProductRestController {
         @PathVariable("productId") Long productId,
         @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
         @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
-
+        log.debug("productId: {}, startDate: {}, endDate: {}", productId, startDate, endDate);
         if (DateTimeUtil.isNotValidDate(DateTimeUtil.toLocalDate(startDate),
             DateTimeUtil.toLocalDate(endDate))) {
             throw new InvalidDateException();
@@ -64,10 +66,11 @@ public class ProductRestController {
     }
 
     @GetMapping("/amounts/{roomId}")
-    public ResponseEntity<ResponseDto<Void>> isAvailableForReservation(@PathVariable("roomId") Long roomId,
+    public ResponseEntity<ResponseDto<Void>> isAvailableForReservation(
+        @PathVariable("roomId") Long roomId,
         @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
         @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
-
+        log.debug("roomId: {}, startDate: {}, endDate: {}", roomId, startDate, endDate);
         if (DateTimeUtil.isNotValidDate(DateTimeUtil.toLocalDate(startDate),
             DateTimeUtil.toLocalDate(endDate))) {
             throw new InvalidDateException();
