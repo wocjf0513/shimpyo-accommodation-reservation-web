@@ -27,7 +27,7 @@ public class ReservationProductRestControllerDocsTest extends RestDocsSupport {
     @WithMockUser(roles = "USER")
     @DisplayName("cancel()는 예약 주문 상품을 취소할 수 있다.")
     @Test
-    void cancel_test() throws Exception {
+    void cancel() throws Exception {
         // given
         String requestUrl = "/api/reservation-products/" + 1;
 

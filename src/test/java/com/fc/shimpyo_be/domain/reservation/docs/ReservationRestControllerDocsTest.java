@@ -272,7 +272,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
     @WithMockUser(roles = "USER")
     @DisplayName("checkAvailableAndPreoccupy()는 객실 예약이 가능한지 검증하고, 가능한 경우 객실을 선점한다.")
     @Test
-    void checkAvailableAndPreoccupy_test() throws Exception {
+    void checkAvailableAndPreoccupy() throws Exception {
         // given
         String requestUrl = "/api/reservations/preoccupy";
 
@@ -325,7 +325,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
     @WithMockUser(roles = "USER")
     @DisplayName("releaseRooms()는 예약 객실의 선점을 취소하고 객실을 릴리즈한다.")
     @Test
-    void releaseRooms_test() throws Exception {
+    void releaseRooms() throws Exception {
         // given
         String requestUrl = "/api/reservations/release";
 
