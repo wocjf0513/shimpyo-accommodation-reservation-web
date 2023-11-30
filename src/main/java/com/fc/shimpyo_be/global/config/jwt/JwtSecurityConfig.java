@@ -13,7 +13,7 @@ public class JwtSecurityConfig extends
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public void configure(HttpSecurity builder) throws Exception {
+    public void configure(HttpSecurity builder) {
         JwtAuthenticationFilter customFilter = new JwtAuthenticationFilter(jwtTokenProvider);
         builder.addFilterBefore(customFilter, UsernamePasswordAuthenticationFilter.class);
     }
