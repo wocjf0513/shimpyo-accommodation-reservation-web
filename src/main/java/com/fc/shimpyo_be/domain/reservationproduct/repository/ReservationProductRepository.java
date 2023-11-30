@@ -12,4 +12,7 @@ public interface ReservationProductRepository
 
     @Query("select rp from ReservationProduct rp join fetch rp.reservation where rp.id = :id")
     Optional<ReservationProduct> findByIdWithReservation(@Param("id") Long id);
+
+    @Query("select rp from ReservationProduct rp join fetch rp.room where rp.id = :id")
+    Optional<ReservationProduct> findByIdWithRoom(@Param("id") Long id);
 }

@@ -107,6 +107,8 @@ public class ReservationService {
 
                     return new ReservationInfoResponseDto(
                         reservation.getId(),
+                        reservationProduct.getId(),
+                        product.getId(),
                         product.getName(),
                         product.getThumbnail(),
                         product.getAddress(),

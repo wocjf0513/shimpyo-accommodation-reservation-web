@@ -35,6 +35,9 @@ public enum ErrorCode {
     CART_NOT_FOUND(HttpStatus.NOT_FOUND, "장바구니 정보를 찾을 수 없습니다."),
     CART_NOT_DELETE(HttpStatus.FORBIDDEN, "해당 장바구니를 삭제할 권한이 없습니다"),
 
+    // 별점
+    REGISTER_BEFORE_CHECKOUT(HttpStatus.BAD_REQUEST, "별점 등록 가능 기간이 아닙니다."),
+
     // Open API
     HTTP_CLIENT_CONNECTION_ERROR(HttpStatus.UNAUTHORIZED, "외부 API 연결에 실패했습니다."),
     OPEN_API_ERROR(HttpStatus.NOT_FOUND, "오픈 API에서 데이터를 불러오는데 실패했습니다."),

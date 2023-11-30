@@ -40,10 +40,11 @@ public class StarRestControllerDocsTest extends RestDocsSupport {
     void register() throws Exception {
         // given
         String requestUrl = "/api/stars";
+        Long reservationProductId = 1L;
         Long productId = 1L;
         float score = 3.5F;
 
-        StarRegisterRequestDto requestDto = new StarRegisterRequestDto(productId, score);
+        StarRegisterRequestDto requestDto = new StarRegisterRequestDto(reservationProductId, productId, score);
         StarResponseDto responseDto = new StarResponseDto(1L, score);
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
@@ -57,7 +58,10 @@ public class StarRestControllerDocsTest extends RestDocsSupport {
             .andExpect(status().isCreated())
             .andDo(restDoc.document(
                     requestFields(
-                        fieldWithPath("productId").type(JsonFieldType.NUMBER).description("별점 등록 대상 숙소 아이디")
+                        fieldWithPath("reservationProductId").type(JsonFieldType.NUMBER).description("별점 등록 대상 예약 상품 식별자")
+                            .attributes(key("constraints").value(
+                                starRegisterDescriptions.descriptionsForProperty("productId"))),
+                        fieldWithPath("productId").type(JsonFieldType.NUMBER).description("별점 등록 대상 숙소 식별자")
                             .attributes(key("constraints").value(
                                 starRegisterDescriptions.descriptionsForProperty("productId"))),
                         fieldWithPath("score").type(JsonFieldType.NUMBER).description("별점 점수")

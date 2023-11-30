@@ -8,9 +8,15 @@ import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.exception.ProductNotFoundException;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
+import com.fc.shimpyo_be.domain.reservation.entity.PayMethod;
+import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
+import com.fc.shimpyo_be.domain.reservationproduct.entity.ReservationProduct;
+import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
+import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.star.dto.request.StarRegisterRequestDto;
 import com.fc.shimpyo_be.domain.star.dto.response.StarResponseDto;
 import com.fc.shimpyo_be.domain.star.entity.Star;
+import com.fc.shimpyo_be.domain.star.exception.CannotBeforeCheckOutException;
 import com.fc.shimpyo_be.domain.star.repository.StarRepository;
 import com.fc.shimpyo_be.domain.star.service.StarService;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +27,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -46,9 +54,16 @@ public class StarServiceTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private ReservationProductRepository reservationProductRepository;
+
     private Member member;
 
     private Product product;
+
+    private ReservationProduct reservationProduct;
+
+    private ReservationProduct reservationProduct2;
 
     @BeforeEach
     void setUp() {
@@ -70,6 +85,38 @@ public class StarServiceTest {
             .starAvg(3.5f)
             .address("숙소 주소")
             .build();
+
+        Reservation reservation = Reservation.builder()
+            .member(member)
+            .totalPrice(250000)
+            .payMethod(PayMethod.CREDIT_CARD)
+            .build();
+
+        reservationProduct = ReservationProduct.builder()
+            .id(2L)
+            .reservation(reservation)
+            .room(Room.builder()
+                .price(50000)
+                .description("객실정보")
+                .product(product)
+                .checkOut(LocalTime.of(12, 0))
+                .build()
+            )
+            .endDate(LocalDate.of(2023, 11, 29))
+            .build();
+
+        reservationProduct2 = ReservationProduct.builder()
+            .id(3L)
+            .reservation(reservation)
+            .room(Room.builder()
+                .price(50000)
+                .description("객실정보")
+                .product(product)
+                .checkOut(LocalTime.of(12, 0))
+                .build()
+            )
+            .endDate(LocalDate.of(2100, 11, 29))
+            .build();
     }
 
     @DisplayName("별점 등록에 성공한다.")
@@ -78,12 +125,14 @@ public class StarServiceTest {
         // given
         float score = 3.5F;
         StarRegisterRequestDto request
-            = new StarRegisterRequestDto(product.getId(), score);
+            = new StarRegisterRequestDto(reservationProduct.getId(), product.getId(), score);
 
         given(memberRepository.findById(anyLong()))
             .willReturn(Optional.of(member));
         given(productRepository.findById(anyLong()))
             .willReturn(Optional.of(product));
+        given(reservationProductRepository.findByIdWithRoom(anyLong()))
+            .willReturn(Optional.of(reservationProduct));
         given(starRepository.save(any(Star.class)))
             .willReturn(
                 Star.builder()
@@ -103,6 +152,7 @@ public class StarServiceTest {
 
         verify(memberRepository, times(1)).findById(anyLong());
         verify(productRepository, times(1)).findById(anyLong());
+        verify(reservationProductRepository, times(1)).findByIdWithRoom(anyLong());
         verify(starRepository, times(1)).save(any(Star.class));
     }
 
@@ -113,7 +163,7 @@ public class StarServiceTest {
         long memberId = 1000L;
         float score = 3.5F;
         StarRegisterRequestDto request
-            = new StarRegisterRequestDto(product.getId(), score);
+            = new StarRegisterRequestDto(1L, product.getId(), score);
 
         given(memberRepository.findById(anyLong()))
             .willThrow(MemberNotFoundException.class);
@@ -135,10 +185,12 @@ public class StarServiceTest {
         long productId = 1000L;
         float score = 4F;
         StarRegisterRequestDto request
-            = new StarRegisterRequestDto(productId, score);
+            = new StarRegisterRequestDto(1L, productId, score);
 
         given(memberRepository.findById(anyLong()))
             .willReturn(Optional.ofNullable(member));
+        given(reservationProductRepository.findByIdWithRoom(anyLong()))
+            .willReturn(Optional.ofNullable(reservationProduct));
         given(productRepository.findById(anyLong()))
             .willThrow(ProductNotFoundException.class);
 
@@ -147,7 +199,33 @@ public class StarServiceTest {
             .isInstanceOf(ProductNotFoundException.class);
 
         verify(memberRepository, times(1)).findById(anyLong());
+        verify(reservationProductRepository, times(1)).findByIdWithRoom(anyLong());
         verify(productRepository, times(1)).findById(anyLong());
+        verify(starRepository, times(0)).save(any(Star.class));
+    }
+
+    @DisplayName("별점 등록일시가 체크아웃 일시와 같거나 이전일 경우 등록할 수 없다.")
+    @Test
+    void register_cannotBeforeCheckOutException() {
+        // given
+        long memberId = member.getId();
+        long productId = 1000L;
+        float score = 4F;
+        StarRegisterRequestDto request
+            = new StarRegisterRequestDto(1L, productId, score);
+
+        given(memberRepository.findById(anyLong()))
+            .willReturn(Optional.ofNullable(member));
+        given(reservationProductRepository.findByIdWithRoom(anyLong()))
+            .willReturn(Optional.ofNullable(reservationProduct2));
+
+        // when & then
+        assertThatThrownBy(() -> starService.register(memberId, request))
+            .isInstanceOf(CannotBeforeCheckOutException.class);
+
+        verify(memberRepository, times(1)).findById(anyLong());
+        verify(reservationProductRepository, times(1)).findByIdWithRoom(anyLong());
+        verify(productRepository, times(0)).findById(anyLong());
         verify(starRepository, times(0)).save(any(Star.class));
     }
 }

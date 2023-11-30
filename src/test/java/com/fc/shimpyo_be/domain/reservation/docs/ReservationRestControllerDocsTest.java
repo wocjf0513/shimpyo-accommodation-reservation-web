@@ -195,6 +195,8 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
             = List.of(
             new ReservationInfoResponseDto(
                 2L,
+                3L,
+                5L,
                 "호텔1",
                 "호텔1 photoUrl",
                 "호텔1 주소 url",
@@ -230,6 +232,8 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                         fieldWithPath("data.content").type(JsonFieldType.ARRAY).description("조회 데이터 리스트"),
                         fieldWithPath("data.content.[].reservationId").type(JsonFieldType.NUMBER).description("예약 식별자"),
+                        fieldWithPath("data.content.[].reservationProductId").type(JsonFieldType.NUMBER).description("예약 상품 식별자"),
+                        fieldWithPath("data.content.[].productId").type(JsonFieldType.NUMBER).description("상품 식별자"),
                         fieldWithPath("data.content.[].productName").type(JsonFieldType.STRING).description("숙소명"),
                         fieldWithPath("data.content.[].productImageUrl").type(JsonFieldType.STRING).description("숙소 대표 이미지 URL"),
                         fieldWithPath("data.content.[].productAddress").type(JsonFieldType.STRING).description("숙소 주소"),
