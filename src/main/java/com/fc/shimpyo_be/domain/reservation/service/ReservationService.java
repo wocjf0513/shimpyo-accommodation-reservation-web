@@ -5,6 +5,8 @@ import com.fc.shimpyo_be.domain.member.exception.MemberNotFoundException;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.exception.RoomNotFoundException;
+import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomItemRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
@@ -34,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,6 +48,7 @@ public class ReservationService {
     private final MemberRepository memberRepository;
     private final RoomRepository roomRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private static final String REDIS_ROOM_KEY_FORMAT = "roomId:%d:%s";
 
     @Transactional
     public SaveReservationResponseDto saveReservation(Long memberId, SaveReservationRequestDto request) {
@@ -120,10 +124,9 @@ public class ReservationService {
     }
 
     public ValidationResultResponseDto validate(Long memberId, List<ReservationProductRequestDto> reservationProducts) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "validateBeforeSave");
+        log.info("{} ::: {}", getClass().getSimpleName(), "validate");
 
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
-        String keyFormat = "roomId:%d:%s";
 
         boolean isValid = true;
         List<Long> invalidRoomIds = new ArrayList<>();
@@ -133,7 +136,7 @@ public class ReservationService {
 
             List<String> keys = new LinkedList<>();
             while(targetDate.isBefore(endDate)) {
-                keys.add(String.format(keyFormat, reservationProduct.roomId(), targetDate));
+                keys.add(String.format(REDIS_ROOM_KEY_FORMAT, reservationProduct.roomId(), targetDate));
                 targetDate = targetDate.plusDays(1);
             }
 
@@ -154,5 +157,30 @@ public class ReservationService {
         }
 
         return new ValidationResultResponseDto(isValid, invalidRoomIds);
+    }
+
+    public void releaseRooms(Long memberId, ReleaseRoomsRequestDto request) {
+        log.info("{} ::: {}", getClass().getSimpleName(), "releaseRooms");
+
+        String memberIdValue = String.valueOf(memberId);
+        ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
+
+        for (ReleaseRoomItemRequestDto roomItem : request.rooms()) {
+            LocalDate targetDate = DateTimeUtil.toLocalDate(roomItem.startDate());
+            LocalDate endDate = DateTimeUtil.toLocalDate(roomItem.endDate());
+
+            List<String> deleteKeys = new ArrayList<>();
+            while (targetDate.isBefore(endDate)) {
+                String key = String.format(REDIS_ROOM_KEY_FORMAT, roomItem.roomId(), targetDate);
+
+                if (Objects.equals(opsForValue.get(key), memberIdValue)) {
+                    deleteKeys.add(key);
+                }
+
+                targetDate = targetDate.plusDays(1);
+            }
+
+            redisTemplate.delete(deleteKeys);
+        }
     }
 }
