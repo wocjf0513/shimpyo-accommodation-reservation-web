@@ -57,5 +57,7 @@ public class Product {
         this.thumbnail = thumbnail;
     }
 
-
+    public void updateStarAvg(float starAvg) {
+        this.starAvg = starAvg;
+    }
 }
