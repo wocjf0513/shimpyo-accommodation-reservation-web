@@ -189,7 +189,7 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
         Room room = roomRepository.save(ProductFactory.createTestRoom(product));
         product.getRooms().add(room);
         ValueOperations<String, Object> values = restTemplate.opsForValue();
-        values.set("roomId:" + String.valueOf(room.getId()) + ":" + "2023-11-26", "OK");
+        values.set("roomId:" + String.valueOf(room.getId()) + ":" + "2023-12-22", "OK");
         // when
         ResultActions getProductAction = mockMvc.perform(
 

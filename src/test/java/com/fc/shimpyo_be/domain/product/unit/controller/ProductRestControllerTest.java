@@ -60,10 +60,10 @@ class ProductRestControllerTest {
         Product product = ProductFactory.createTestProduct();
         ProductDetailsResponse expectedResult = ProductMapper.toProductDetailsResponse(product);
         doReturn(expectedResult).when(productService)
-            .getProductDetails(1L, "2023-11-27", "2023-11-28");
+            .getProductDetails(1L, "2024-12-27", "2024-12-28");
         //when
         ResponseEntity<ResponseDto<ProductDetailsResponse>> result = productRestController.getProductDetails(
-            1L, "2023-11-27", "2023-11-28");
+            1L, "2024-12-27", "2024-12-28");
         //then
         assertEquals(result.getStatusCode(), HttpStatus.OK);
         assertThat(result.getBody().getData()).usingRecursiveComparison().isEqualTo(expectedResult);
@@ -73,10 +73,10 @@ class ProductRestControllerTest {
     void isAvailableForReservation() {
         //given
         doReturn(false).when(productService)
-            .isAvailableForReservation(1L, "2023-11-27", "2023-11-28");
+            .isAvailableForReservation(1L, "2024-11-27", "2024-11-28");
         //when & then
         assertThrows(RoomNotReserveException.class,
-            () -> productRestController.isAvailableForReservation(1L, "2023-11-27", "2023-11-28"));
+            () -> productRestController.isAvailableForReservation(1L, "2024-11-27", "2024-11-28"));
 
 
     }
