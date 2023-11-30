@@ -59,7 +59,7 @@ class StarRestControllerTest extends AbstractContainersSupport {
         float score = 3.5F;
 
         StarRegisterRequestDto requestDto
-            = new StarRegisterRequestDto(productId, score);
+            = new StarRegisterRequestDto(1L, productId, score);
         Long registeredStarId = 1L;
         StarResponseDto responseDto = new StarResponseDto(registeredStarId, score);
 
