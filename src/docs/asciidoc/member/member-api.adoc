@@ -98,4 +98,3 @@ include::{snippets}/member-rest-controller-docs-test/check-password/request-fiel
 
 include::{snippets}/member-rest-controller-docs-test/check-password/http-response.adoc[]
 include::{snippets}/member-rest-controller-docs-test/check-password/response-fields.adoc[]
-

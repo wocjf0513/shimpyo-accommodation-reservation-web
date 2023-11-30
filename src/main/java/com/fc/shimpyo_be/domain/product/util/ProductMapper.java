@@ -20,6 +20,10 @@ public class ProductMapper {
                 ? 0 : Long.valueOf(
                 product.getRooms().stream().map(Room::getPrice).min((o1, o2) -> o1 - o2)
                     .orElseThrow()))
+            .capacity(product.getRooms().isEmpty()
+                ? 0 : Long.valueOf(
+                product.getRooms().stream().map(Room::getCapacity).min((o1, o2) -> o2 - o1)
+                    .orElseThrow()))
             .favorites(false)
             .build();
     }

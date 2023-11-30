@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class ProductSpecification {
 
     public static Specification<Product> likeProductName(String productName) {
-        return (root, query, CriteriaBuilder) -> CriteriaBuilder.like(root.get("productName"),
+        return (root, query, CriteriaBuilder) -> CriteriaBuilder.like(root.get("name"),
             "%" + productName + "%");
     }
 

@@ -1,0 +1,56 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+
+= Member REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+[[Get-Carts]]
+== 장바구니 조회
+
+장바구니 조회 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/cart-rest-integration-docs-test/get-carts/http-request.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/cart-rest-integration-docs-test/get-carts/http-response.adoc[]
+include::{snippets}/cart-rest-integration-docs-test/get-carts/response-fields.adoc[]
+
+[[add-cart]]
+== 장바구니 추가
+
+장바구니 추가 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/cart-rest-integration-docs-test/add-cart/http-request.adoc[]
+include::{snippets}/cart-rest-integration-docs-test/add-cart/request-fields.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/cart-rest-integration-docs-test/add-cart/http-response.adoc[]
+include::{snippets}/cart-rest-integration-docs-test/add-cart/response-fields.adoc[]
+
+[[Delte-Cart]]
+== 장바구니 삭제
+
+장바구니 삭제 API 입니다.
+
+=== HttpRequest
+
+include::{snippets}/cart-rest-integration-docs-test/delete-cart/http-request.adoc[]
+include::{snippets}/cart-rest-integration-docs-test/delete-cart/path-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/cart-rest-integration-docs-test/delete-cart/http-response.adoc[]
+include::{snippets}/cart-rest-integration-docs-test/delete-cart/response-fields.adoc[]
+
+

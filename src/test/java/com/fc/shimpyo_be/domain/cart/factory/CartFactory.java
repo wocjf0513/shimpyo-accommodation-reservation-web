@@ -11,8 +11,8 @@ public class CartFactory {
     public static Cart createCartTest(Room room, Member member) {
         return Cart.builder().room(room).member(member).price(
                     100000L
-                ).startDate(LocalDate.now().minusDays(1))
-                .endDate(LocalDate.now()).build();
+                ).startDate(LocalDate.now().plusDays(1))
+                .endDate(LocalDate.now().plusDays(2)).build();
     }
 
 

@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.product.factory;
 
+import java.util.*;
 import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.entity.ProductImage;
@@ -7,6 +8,7 @@ import com.fc.shimpyo_be.domain.product.model.Area;
 import com.fc.shimpyo_be.domain.product.model.RandomProductInfo;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ProductFactory {
@@ -39,35 +41,14 @@ public class ProductFactory {
 
     }
 
-//
-//    public static ReservationProduct createTestReservationProduct(Room room,Reservation reservation) {
-//
-//        return ReservationProduct.builder()
-//            .room(room)
-//            .reservation(reservation)
-//            .price(ThreadLocalRandom.current().nextInt(100000))
-//            .accommodationDate(LocalDate.of(2023,11,22))
-//            .build();
-//    }
-//
-//    public static Reservation createTestReservation(Member member) {
-//
-//        int stadard = ThreadLocalRandom.current().nextInt(10);
-//
-//        return Reservation.builder()
-//            .member(member)
-//            .payMethod(PayMethod.CASH)
-//            .build();
-//    }
-//
-//    public static Member createTestMember() {
-//        return Member.builder()
-//            .name("심재철")
-//            .email("wocjf0513@naver.com")
-//            .password("1234")
-//            .photoUrl("dsklaffjdlsajldfjs")
-//            .build();
-//    }
+    public static List<Product> createTestProducts() {
+        List<Product> productList = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            productList.add(createTestProduct());
+        }
+        return productList;
+    }
 
 
 }
