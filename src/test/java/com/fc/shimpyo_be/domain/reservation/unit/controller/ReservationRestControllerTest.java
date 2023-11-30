@@ -120,6 +120,8 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
             = List.of(
             new ReservationInfoResponseDto(
                 2L,
+                3L,
+                5L,
                 "호텔2",
                 "호텔 photoUrl",
                 "호텔 주소 url",
