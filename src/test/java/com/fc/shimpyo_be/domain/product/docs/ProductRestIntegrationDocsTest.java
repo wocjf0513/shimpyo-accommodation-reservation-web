@@ -110,7 +110,9 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                     fieldWithPath("data[].image").type(JsonFieldType.STRING)
                         .description("상품 썸네일 이미지"),
                     fieldWithPath("data[].price").type(JsonFieldType.NUMBER)
-                        .description("상품 내 방 최저 가격"))));
+                        .description("상품 내 방 최저 가격"),
+                    fieldWithPath("data[].capacity").type(JsonFieldType.NUMBER)
+                        .description("최대 인원"))));
 
     }
 
