@@ -65,7 +65,7 @@ public class PreoccupyRoomsService {
             Map<String, String> map = preoccupyMap.get(room.roomId());
             opsForValue.multiSet(map);
 
-            Date expireDate = convertLocalDateToDate(DateTimeUtil.toLocalDate(room.endDate()).minusDays(1));
+            Date expireDate = convertLocalDateToDate(DateTimeUtil.toLocalDate(room.endDate()));
             for (String key : map.keySet()) {
                 redisTemplate.expireAt(key, expireDate);
             }

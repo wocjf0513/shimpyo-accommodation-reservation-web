@@ -57,4 +57,8 @@ public class Reservation extends BaseTimeEntity {
         this.reservationProducts.add(reservationProduct);
         reservationProduct.setReservation(this);
     }
+
+    public void minusPrice(int price) {
+        this.totalPrice -= price;
+    }
 }

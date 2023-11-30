@@ -23,6 +23,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
@@ -30,7 +32,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 
 @AutoConfigureMockMvc
-class ProductIntegrationDocsTest extends RestDocsSupport {
+class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
 
     @Autowired
@@ -41,6 +43,9 @@ class ProductIntegrationDocsTest extends RestDocsSupport {
 
     @Autowired
     private ProductImageRepository productImageRepository;
+
+    @Autowired
+    private RedisTemplate<String, Object> restTemplate;
 
 
     private void assertProductDetailsResponse(Product expectedProduct, ResultActions resultActions)
@@ -65,7 +70,7 @@ class ProductIntegrationDocsTest extends RestDocsSupport {
     @DisplayName("숙소 저장 후, 검색 조회 및 페이징할 수 있다.")
     @Test
     @WithMockUser
-    void shouldSuccessToGetAllProducts() throws Exception {
+    void getProducts() throws Exception {
         // given
         for (int i = 0; i < 20; i++) {
             Product product = productRepository.save(ProductFactory.createTestProduct());
@@ -77,7 +82,7 @@ class ProductIntegrationDocsTest extends RestDocsSupport {
 
         // when
         ResultActions getProductAction = mockMvc.perform(
-            get("/api/products?page=0&size=20&address=서울시&category=호텔,모텔"));
+            get("/api/products?page=0&size=20&address=서울시&category=호텔,모텔&productName=숙박"));
 
         // then
         getProductAction.andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andDo(
@@ -105,14 +110,16 @@ class ProductIntegrationDocsTest extends RestDocsSupport {
                     fieldWithPath("data[].image").type(JsonFieldType.STRING)
                         .description("상품 썸네일 이미지"),
                     fieldWithPath("data[].price").type(JsonFieldType.NUMBER)
-                        .description("상품 내 방 최저 가격"))));
+                        .description("상품 내 방 최저 가격"),
+                    fieldWithPath("data[].capacity").type(JsonFieldType.NUMBER)
+                        .description("최대 인원"))));
 
     }
 
     @DisplayName("숙소 상세 검색을 할 수 있다.")
     @Test
     @WithMockUser
-    void shouldSuccessToGetDetailsProduct() throws Exception {
+    void getProductDetails() throws Exception {
         // given
         Product product = productRepository.save(ProductFactory.createTestProduct());
         ProductImage productImage = productImageRepository.save(
@@ -128,7 +135,7 @@ class ProductIntegrationDocsTest extends RestDocsSupport {
 
         // when
         ResultActions getProductAction = mockMvc.perform(
-            get("/api/products/{productId}?startDate=2023-11-22&endDate=2023-11-23",
+            get("/api/products/{productId}?startDate=2023-12-22&endDate=2023-12-23",
                 product.getId()));
 
         // then
@@ -183,14 +190,16 @@ class ProductIntegrationDocsTest extends RestDocsSupport {
         Product product = productRepository.save(ProductFactory.createTestProduct());
         Room room = roomRepository.save(ProductFactory.createTestRoom(product));
         product.getRooms().add(room);
-
+        ValueOperations<String, Object> values = restTemplate.opsForValue();
+        values.set("roomId:" + String.valueOf(room.getId()) + ":" + "2023-12-22", "OK");
         // when
         ResultActions getProductAction = mockMvc.perform(
-            get("/api/products/amounts/{roomId}?startDate=2023-11-22&endDate=2023-11-23",room.getId()));
+
+            get("/api/products/amounts/{roomId}?startDate=2023-12-22&endDate=2023-12-23",room.getId()));
 
         // then
         getProductAction
-            .andExpect(status().isOk())
+            .andExpect(status().isForbidden())
             .andDo(MockMvcResultHandlers.print())
             .andDo(restDoc.document(
                 pathParameters(
@@ -203,7 +212,7 @@ class ProductIntegrationDocsTest extends RestDocsSupport {
                 responseFields(
                     fieldWithPath("code").type(JsonFieldType.NUMBER).description("응답 코드"),
                     fieldWithPath("message").type(JsonFieldType.STRING).description("응답 메시지"),
-                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터 NULL")
+                    fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
                 )
             ));
     }

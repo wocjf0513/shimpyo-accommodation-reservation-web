@@ -1,9 +1,7 @@
 package com.fc.shimpyo_be.domain.reservation.docs;
 
 import com.fc.shimpyo_be.config.RestDocsSupport;
-import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.request.*;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
@@ -66,6 +64,12 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
 
     private final ConstraintDescriptions reservationProductDescriptions
         = new ConstraintDescriptions(ReservationProductRequestDto.class);
+
+    private final ConstraintDescriptions releaseRoomsDescriptions
+        = new ConstraintDescriptions(ReleaseRoomsRequestDto.class);
+
+    private final ConstraintDescriptions releaseRoomItemDescriptions
+        = new ConstraintDescriptions(ReleaseRoomItemRequestDto.class);
 
     @WithMockUser(roles = "USER")
     @DisplayName("saveReservation()는 예약을 저장할 수 있다.")
@@ -316,5 +320,55 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
             );
 
         verify(preoccupyRoomsLockFacade, times(1)).checkAvailableAndPreoccupy(anyLong(), any(PreoccupyRoomsRequestDto.class));
+    }
+
+    @WithMockUser(roles = "USER")
+    @DisplayName("releaseRooms()는 예약 객실의 선점을 취소하고 객실을 릴리즈한다.")
+    @Test
+    void releaseRooms_test() throws Exception {
+        // given
+        String requestUrl = "/api/reservations/release";
+
+        ReleaseRoomsRequestDto requestDto = new ReleaseRoomsRequestDto(
+            List.of(
+                new ReleaseRoomItemRequestDto(1L, "2023-12-23", "2023-12-25"),
+                new ReleaseRoomItemRequestDto(2L, "2023-11-11", "2023-11-14"),
+                new ReleaseRoomItemRequestDto(3L, "2023-11-15", "2023-11-16")
+            )
+        );
+
+        given(securityUtil.getCurrentMemberId())
+            .willReturn(1L);
+        willDoNothing()
+            .given(reservationService)
+            .releaseRooms(1L, requestDto);
+
+        // when & then
+        mockMvc.perform(post(requestUrl)
+                .content(objectMapper.writeValueAsString(requestDto))
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andDo(restDoc.document(
+                    requestFields(
+                        fieldWithPath("rooms").type(JsonFieldType.ARRAY).description("선점 취소할 객실 리스트")
+                            .attributes(key("constraints").value(
+                                releaseRoomsDescriptions.descriptionsForProperty("rooms"))),
+                        fieldWithPath("rooms[].roomId").type(JsonFieldType.NUMBER).description("선점 취소할 객실 식별자")
+                            .attributes(key("constraints").value(
+                                releaseRoomItemDescriptions.descriptionsForProperty("roomId"))),
+                        fieldWithPath("rooms[].startDate").type(JsonFieldType.STRING).description("숙박 시작일")
+                            .attributes(key("constraints").value(
+                                releaseRoomItemDescriptions.descriptionsForProperty("startDate"))),
+                        fieldWithPath("rooms[].endDate").type(JsonFieldType.STRING).description("숙박 마지막일")
+                            .attributes(key("constraints").value(
+                                releaseRoomItemDescriptions.descriptionsForProperty("endDate")))
+                    ),
+                    responseFields(responseCommon()).and(
+                        fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
+                    )
+                )
+            );
+
+        verify(reservationService, times(1)).releaseRooms(anyLong(), any(ReleaseRoomsRequestDto.class));
     }
 }

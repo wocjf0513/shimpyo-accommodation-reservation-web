@@ -2,9 +2,7 @@ package com.fc.shimpyo_be.domain.reservation.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fc.shimpyo_be.config.AbstractContainersSupport;
-import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.request.*;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
@@ -254,6 +252,38 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
             )
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code", is(400)));
+    }
+
+    @WithMockUser(roles = "USER")
+    @DisplayName("[api][POST][정상] 예약 객실 선점 취소 API")
+    @Test
+    void releaseRooms_test() throws Exception {
+        // given
+        String requestUrl = "/api/reservations/release";
+
+        ReleaseRoomsRequestDto requestDto = new ReleaseRoomsRequestDto(
+            List.of(
+                new ReleaseRoomItemRequestDto(1L, "2023-12-23", "2023-12-25"),
+                new ReleaseRoomItemRequestDto(2L, "2023-11-11", "2023-11-14"),
+                new ReleaseRoomItemRequestDto(3L, "2023-11-15", "2023-11-16")
+            )
+        );
+
+        given(securityUtil.getCurrentMemberId())
+            .willReturn(1L);
+        willDoNothing()
+            .given(reservationService)
+            .releaseRooms(1L, requestDto);
+
+        // when & then
+        mockMvc.perform(
+                post(requestUrl)
+                    .content(objectMapper.writeValueAsString(requestDto))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.code", is(200)))
+            .andExpect(jsonPath("$.data").isEmpty());
     }
 
     private ReservationProductRequestDto getReservationProductRequestData(
