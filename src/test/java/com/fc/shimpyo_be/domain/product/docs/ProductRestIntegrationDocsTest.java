@@ -82,7 +82,7 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
         // when
         ResultActions getProductAction = mockMvc.perform(
-            get("/api/products?page=0&size=20&address=서울시&category=호텔,모텔"));
+            get("/api/products?page=0&size=20&address=서울시&category=호텔,모텔&productName=숙박"));
 
         // then
         getProductAction.andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andDo(
