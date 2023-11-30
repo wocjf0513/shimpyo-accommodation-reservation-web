@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,9 +27,11 @@ public class ReservationProduct {
     @Column(nullable = false)
     private int price;
     @Column(nullable = false)
-    private LocalDateTime startDate;
+    private LocalDate startDate;
     @Column(nullable = false)
-    private LocalDateTime endDate;
+    private LocalDate endDate;
+    private String visitorName;
+    private String visitorPhone;
 
     @Builder
     public ReservationProduct(
@@ -37,8 +39,10 @@ public class ReservationProduct {
         Reservation reservation,
         Room room,
         int price,
-        LocalDateTime startDate,
-        LocalDateTime endDate
+        LocalDate startDate,
+        LocalDate endDate,
+        String visitorName,
+        String visitorPhone
     ) {
         this.id = id;
         this.reservation = reservation;
@@ -46,5 +50,11 @@ public class ReservationProduct {
         this.price = price;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.visitorName = visitorName;
+        this.visitorPhone = visitorPhone;
+    }
+
+    public void setReservation(Reservation reservation) {
+        this.reservation = reservation;
     }
 }

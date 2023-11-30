@@ -27,14 +27,14 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private String address;
     @Column(nullable = false)
     @Convert(converter = CategoryConverter.class)
     private Category category;
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
     @ColumnDefault("0")
     private float starAvg;

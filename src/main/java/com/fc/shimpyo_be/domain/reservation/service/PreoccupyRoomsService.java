@@ -3,7 +3,7 @@ package com.fc.shimpyo_be.domain.reservation.service;
 import com.fc.shimpyo_be.domain.reservation.dto.CheckAvailableRoomsResultDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
-import com.fc.shimpyo_be.global.util.DateUtil;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,8 +32,8 @@ public class PreoccupyRoomsService {
 
         for (PreoccupyRoomItemRequestDto room : request.rooms()) {
 
-            LocalDate targetDate = DateUtil.toLocalDate(room.startDate());
-            LocalDate endDate = DateUtil.toLocalDate(room.endDate());
+            LocalDate targetDate = DateTimeUtil.toLocalDate(room.startDate());
+            LocalDate endDate = DateTimeUtil.toLocalDate(room.endDate());
 
             while(targetDate.isBefore(endDate)) {
 
@@ -65,7 +65,7 @@ public class PreoccupyRoomsService {
             Map<String, String> map = preoccupyMap.get(room.roomId());
             opsForValue.multiSet(map);
 
-            Date expireDate = convertLocalDateToDate(DateUtil.toLocalDate(room.endDate()).minusDays(1));
+            Date expireDate = convertLocalDateToDate(DateTimeUtil.toLocalDate(room.endDate()).minusDays(1));
             for (String key : map.keySet()) {
                 redisTemplate.expireAt(key, expireDate);
             }

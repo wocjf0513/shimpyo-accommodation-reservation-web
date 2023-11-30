@@ -4,12 +4,12 @@ import com.fc.shimpyo_be.domain.product.dto.request.SearchKeywordRequest;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Product;
+import com.fc.shimpyo_be.domain.product.exception.InvalidDateException;
 import com.fc.shimpyo_be.domain.product.exception.RoomNotReserveException;
 import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.domain.product.util.model.PageableConstraint;
 import com.fc.shimpyo_be.global.common.ResponseDto;
-import com.fc.shimpyo_be.global.util.DateUtil;
-import jakarta.validation.constraints.NotNull;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import jakarta.validation.constraints.Pattern;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -41,33 +41,40 @@ public class ProductRestController {
         @PageableConstraint(Product.class) @PageableDefault(size = 10, page = 0) Pageable pageable) {
 
         SearchKeywordRequest searchKeywordRequest = SearchKeywordRequest.builder()
-            .productName(productName)
-            .address(address)
-            .category(category)
-            .build();
+            .productName(productName).address(address).category(category).build();
 
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.OK,
-            productService.getProducts(searchKeywordRequest, pageable),
-            "상품 목록을 성공적으로 조회했습니다."));
+            productService.getProducts(searchKeywordRequest, pageable), "상품 목록을 성공적으로 조회했습니다."));
     }
 
 
     @GetMapping("/{productId}")
-    public ResponseEntity<ResponseDto<ProductDetailsResponse>> getProductDetails(
-        @PathVariable(value = "productId", required = true) Long productId,
-        @RequestParam @Pattern(regexp = DateUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
-        @RequestParam @Pattern(regexp = DateUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
+    ResponseEntity<ResponseDto<ProductDetailsResponse>> getProductDetails(
+        @PathVariable("productId") Long productId,
+        @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
+        @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
+
+        if (DateTimeUtil.isNotValidDate(DateTimeUtil.toLocalDate(startDate),
+            DateTimeUtil.toLocalDate(endDate))) {
+            throw new InvalidDateException();
+        }
 
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.OK,
             productService.getProductDetails(productId, startDate, endDate), "상품을 성공적으로 조회했습니다."));
     }
 
     @GetMapping("/amounts/{roomId}")
-    public ResponseEntity<ResponseDto<Void>> isAvailableForReservation (@PathVariable("roomId") Long roomId,
-        @RequestParam @Pattern(regexp = DateUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
-        @RequestParam @Pattern(regexp = DateUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
-        if(productService.isAvailableForReservation(roomId, startDate, endDate)){
-            return ResponseEntity.ok(ResponseDto.res(HttpStatus.OK,"예약 가능한 방입니다."));
+    ResponseEntity<ResponseDto<Void>> isAvailableForReservation(@PathVariable("roomId") Long roomId,
+        @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
+        @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
+
+        if (DateTimeUtil.isNotValidDate(DateTimeUtil.toLocalDate(startDate),
+            DateTimeUtil.toLocalDate(endDate))) {
+            throw new InvalidDateException();
+        }
+
+        if (productService.isAvailableForReservation(roomId, startDate, endDate)) {
+            return ResponseEntity.ok(ResponseDto.res(HttpStatus.OK, "예약 가능한 방입니다."));
         }
         throw new RoomNotReserveException();
     }

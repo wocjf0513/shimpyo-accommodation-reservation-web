@@ -65,7 +65,7 @@ public class StarServiceTest {
             .id(1L)
             .name("숙소1")
             .description("숙소 설명")
-            .category(Category.HOTEL)
+            .category(Category.TOURIST_HOTEL)
             .thumbnail("thumbnail url")
             .starAvg(3.5f)
             .address("숙소 주소")

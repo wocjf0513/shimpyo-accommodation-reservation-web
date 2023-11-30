@@ -133,7 +133,7 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
         // when
         ResultActions getProductAction = mockMvc.perform(
-            get("/api/products/{productId}?startDate=2023-11-22&endDate=2023-11-23",
+            get("/api/products/{productId}?startDate=2023-12-22&endDate=2023-12-23",
                 product.getId()));
 
         // then
@@ -192,7 +192,8 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
         values.set("roomId:" + String.valueOf(room.getId()) + ":" + "2023-11-26", "OK");
         // when
         ResultActions getProductAction = mockMvc.perform(
-            get("/api/products/amounts/{roomId}?startDate=2023-11-26&endDate=2023-11-29",room.getId()));
+
+            get("/api/products/amounts/{roomId}?startDate=2023-12-22&endDate=2023-12-23",room.getId()));
 
         // then
         getProductAction
