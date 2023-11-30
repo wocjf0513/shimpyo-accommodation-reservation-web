@@ -31,13 +31,13 @@ include::{snippets}/reservation-rest-controller-docs-test/save-reservation/respo
 
 === HttpRequest
 
-include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy_test/http-request.adoc[]
-include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy_test/request-fields.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy/http-request.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy/request-fields.adoc[]
 
 === HttpResponse
 
-include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy_test/http-response.adoc[]
-include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy_test/response-fields.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy/http-response.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/check-available-and-preoccupy/response-fields.adoc[]
 
 [[Get-Reservation-Info-List]]
 == 전체 예약 목록 조회
@@ -61,10 +61,10 @@ include::{snippets}/reservation-rest-controller-docs-test/get-reservation-info-l
 
 === HttpRequest
 
-include::{snippets}/reservation-rest-controller-docs-test/release-rooms_test/http-request.adoc[]
-include::{snippets}/reservation-rest-controller-docs-test/release-rooms_test/request-fields.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/release-rooms/http-request.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/release-rooms/request-fields.adoc[]
 
 === HttpResponse
 
-include::{snippets}/reservation-rest-controller-docs-test/release-rooms_test/http-response.adoc[]
-include::{snippets}/reservation-rest-controller-docs-test/release-rooms_test/response-fields.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/release-rooms/http-response.adoc[]
+include::{snippets}/reservation-rest-controller-docs-test/release-rooms/response-fields.adoc[]

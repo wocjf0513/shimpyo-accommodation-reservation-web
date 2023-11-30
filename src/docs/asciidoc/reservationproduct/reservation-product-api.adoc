@@ -16,8 +16,8 @@ endif::[]
 
 === HttpRequest
 
-include::{snippets}/reservation-product-rest-controller-docs-test/cancel_test/http-request.adoc[]
+include::{snippets}/reservation-product-rest-controller-docs-test/cancel/http-request.adoc[]
 
 === HttpResponse
 
-include::{snippets}/reservation-product-rest-controller-docs-test/cancel_test/http-response.adoc[]
+include::{snippets}/reservation-product-rest-controller-docs-test/cancel/http-response.adoc[]
