@@ -14,8 +14,9 @@ import org.hibernate.annotations.Comment;
 public class RefreshToken {
 
     @Id
-    @Comment("member_id")
+    @Comment("회원 식별자")
     private Long id;
+    @Comment("Refresh 토큰")
     private String token;
 
     @Builder

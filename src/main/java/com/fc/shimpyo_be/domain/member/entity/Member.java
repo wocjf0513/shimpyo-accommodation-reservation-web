@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,16 +22,22 @@ public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("식별자")
     private Long id;
     @Column(unique = true, nullable = false, length = 30)
+    @Comment("이메일")
     private String email;
     @Column(nullable = false, length = 30)
+    @Comment("이름")
     private String name;
     @Column(nullable = false)
+    @Comment("암호화된 비밀번호")
     private String password;
     @Column(nullable = false, columnDefinition = "TEXT")
+    @Comment("프로필 사진 URL")
     private String photoUrl;
     @Enumerated(EnumType.STRING)
+    @Comment("권한")
     private Authority authority;
 
     @Builder
@@ -50,7 +57,7 @@ public class Member extends BaseTimeEntity {
         }
     }
 
-    public void changePassword(String password){
+    public void changePassword(String password) {
         this.password = password;
     }
 }
