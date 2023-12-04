@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
@@ -20,13 +21,17 @@ public class Reservation extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment(value = "예약 식별자")
     private Long id;
+    @Comment(value = "예약 회원 식별자")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+    @Comment(value = "결제 수단")
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private PayMethod payMethod;
+    @Comment(value = "총 결제 금액")
     @Column(nullable = false)
     private int totalPrice;
 
