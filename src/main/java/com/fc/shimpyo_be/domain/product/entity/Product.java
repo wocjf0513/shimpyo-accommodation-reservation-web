@@ -27,7 +27,7 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("숙소 아이디")
+    @Comment("숙소 식별자")
     private Long id;
     @Column(nullable = false)
     @Comment("숙소 이름")
@@ -46,7 +46,7 @@ public class Product {
     @Comment("숙소 평점")
     private float starAvg;
     @Column(columnDefinition = "TEXT", nullable = false)
-    @Comment("숙소 대표 이미지")
+    @Comment("숙소 대표 이미지 URL")
     private String thumbnail;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> photoUrls = new ArrayList<>();

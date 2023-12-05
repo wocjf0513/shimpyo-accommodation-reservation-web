@@ -23,11 +23,11 @@ public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("객실 아이디")
+    @Comment("객실 식별자")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
-    @Comment("숙소 아이디")
+    @Comment("숙소 식별자")
     private Product product;
     @Column(length = 30)
     @Comment("객실 이름")

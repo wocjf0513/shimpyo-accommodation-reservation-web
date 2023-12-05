@@ -22,14 +22,14 @@ public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment("숙소 이미지 아이디")
+    @Comment("숙소 이미지 식별자")
     private Long id;
     @Column(nullable = false, columnDefinition = "TEXT")
-    @Comment("숙소 관련 이미지")
+    @Comment("숙소 사진 URL")
     private String photoUrl;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "product_id")
-    @Comment("숙소 아이디")
+    @Comment("숙소 식별자")
     private Product product;
 
     @Builder
