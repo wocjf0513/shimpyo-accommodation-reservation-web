@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,20 +20,28 @@ public class ReservationProduct extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment(value = "예약 상품 식별자")
     private Long id;
+    @Comment(value = "예약 주문 식별자")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
+    @Comment(value = "예약 객실 식별자")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
+    @Comment(value = "총 이용 금액")
     @Column(nullable = false)
     private int price;
+    @Comment(value = "숙박 시작일")
     @Column(nullable = false)
     private LocalDate startDate;
+    @Comment(value = "숙박 마지막일")
     @Column(nullable = false)
     private LocalDate endDate;
+    @Comment(value = "방문자명")
     private String visitorName;
+    @Comment(value = "방문자 전화번호")
     private String visitorPhone;
 
     @Builder

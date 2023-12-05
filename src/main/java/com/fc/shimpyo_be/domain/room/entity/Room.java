@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,23 +23,32 @@ public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("객실 식별자")
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
+    @Comment("숙소 식별자")
     private Product product;
     @Column(length = 30)
+    @Comment("객실 이름")
     private String name;
     @Column(nullable = false)
+    @Comment("객실 설명")
     private String description;
     @Column(columnDefinition = "TINYINT")
+    @Comment("객실 기준인원")
     private int standard;
     @Column(columnDefinition = "TINYINT")
+    @Comment("객실 최대인원")
     private int capacity;
     @Column(columnDefinition = "TIME")
+    @Comment("객실 체크인 시간")
     private LocalTime checkIn;
     @Column(columnDefinition = "TIME")
+    @Comment("객실 체크아웃 시간")
     private LocalTime checkOut;
     @Column(nullable = false)
+    @Comment("객실 가격")
     private int price;
 
     @Builder
