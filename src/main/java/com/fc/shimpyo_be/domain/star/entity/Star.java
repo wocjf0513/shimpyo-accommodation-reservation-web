@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,13 +23,17 @@ public class Star {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment(value = "별점 식별자")
     private Long id;
+    @Comment(value = "회원 식별자")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+    @Comment(value = "별점 등록 상품 식별자")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
+    @Comment(value = "별점 점수")
     @Column(nullable = false)
     private float score;
 
