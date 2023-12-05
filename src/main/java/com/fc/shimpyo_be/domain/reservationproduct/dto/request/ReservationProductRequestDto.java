@@ -26,7 +26,7 @@ public record ReservationProductRequestDto(
     String checkOut,
     String visitorName,
     String visitorPhone,
-    @Min(value = 0, message = "객실 이용 금액은 음수일 수 없습니다.")
+    @Min(value = 0, message = "객실 이용 금액은 0원 이상부터 가능합니다.")
     Integer price
 ) {
 }
