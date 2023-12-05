@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Comment;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,19 +27,26 @@ public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("숙소 아이디")
     private Long id;
     @Column(nullable = false)
+    @Comment("숙소 이름")
     private String name;
     @Column(nullable = false)
+    @Comment("숙소 위치")
     private String address;
     @Column(nullable = false)
     @Convert(converter = CategoryConverter.class)
+    @Comment("숙소 카테고리")
     private Category category;
     @Column(columnDefinition = "TEXT", nullable = false)
+    @Comment("숙소 설명")
     private String description;
     @ColumnDefault("0")
+    @Comment("숙소 평점")
     private float starAvg;
     @Column(columnDefinition = "TEXT", nullable = false)
+    @Comment("숙소 대표 이미지")
     private String thumbnail;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> photoUrls = new ArrayList<>();

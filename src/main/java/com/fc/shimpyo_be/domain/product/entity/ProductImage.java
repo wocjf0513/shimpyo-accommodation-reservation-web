@@ -12,6 +12,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Comment;
 
 
 @Getter
@@ -21,11 +22,14 @@ public class ProductImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Comment("숙소 이미지 아이디")
     private Long id;
     @Column(nullable = false, columnDefinition = "TEXT")
+    @Comment("숙소 관련 이미지")
     private String photoUrl;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "product_id")
+    @Comment("숙소 아이디")
     private Product product;
 
     @Builder
