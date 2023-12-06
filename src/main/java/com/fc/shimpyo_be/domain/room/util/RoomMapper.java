@@ -9,7 +9,8 @@ public class RoomMapper {
         return RoomResponse.builder()
             .roomId(room.getId())
             .roomName(room.getName())
-            .price((long) (room.getPrice()))
+            // TODO 날짜에 따라 가격이 달라지므로 로직 수정이 필요함
+            .price((long) (room.getPrice().getPeakWeekendMinFee()))
             .standard((long) (room.getStandard()))
             .capacity((long) room.getCapacity())
             .description(room.getDescription())
