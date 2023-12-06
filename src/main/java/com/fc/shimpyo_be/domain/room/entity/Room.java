@@ -52,9 +52,9 @@ public class Room {
     @Column(columnDefinition = "TIME")
     @Comment("객실 체크아웃 시간")
     private LocalTime checkOut;
-    @Column(nullable = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Comment("객실 가격")
-    private int price;
+    private RoomPrice price;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Comment("객실 옵션 식별자")
     private RoomOption roomOption;
@@ -72,7 +72,7 @@ public class Room {
         int capacity,
         LocalTime checkIn,
         LocalTime checkOut,
-        int price,
+        RoomPrice price,
         RoomOption roomOption,
         List<RoomImage> roomImages
     ) {
