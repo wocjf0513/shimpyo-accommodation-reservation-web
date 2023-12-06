@@ -10,7 +10,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
@@ -54,10 +53,13 @@ public class Product {
     private List<ProductImage> photoUrls = new ArrayList<>();
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms = new ArrayList<>();
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductOption productOption;
 
     @Builder
     public Product(Long id, String name, Address address, Category category, String description,
-        float starAvg, String thumbnail) {
+        float starAvg, String thumbnail, List<ProductImage> photoUrls, List<Room> rooms,
+        ProductOption productOption) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -65,6 +67,9 @@ public class Product {
         this.description = description;
         this.starAvg = starAvg;
         this.thumbnail = thumbnail;
+        this.photoUrls = photoUrls;
+        this.rooms = rooms;
+        this.productOption = productOption;
     }
 
     public void updateStarAvg(float starAvg) {
