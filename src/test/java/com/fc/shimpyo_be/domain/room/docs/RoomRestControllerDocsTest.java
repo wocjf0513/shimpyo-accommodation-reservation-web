@@ -42,12 +42,12 @@ public class RoomRestControllerDocsTest extends RestDocsSupport {
         GetRoomListWithProductInfoRequestDto requestDto = new GetRoomListWithProductInfoRequestDto(roomIds);
 
         List<RoomWithProductResponseDto> rooms = List.of(
-            new RoomWithProductResponseDto(1L, "호텔1", "호텔1 썸네일 이미지 url", 1L,
-                "객실1", 2, 4, "14:00", "12:00", 100000),
-            new RoomWithProductResponseDto(2L, "호텔2", "호텔2 썸네일 이미지 url", 3L,
-                "객실3", 3, 5, "14:00", "11:30", 120000),
-            new RoomWithProductResponseDto(3L, "호텔3", "호텔3 썸네일 이미지 url", 4L,
-                "객실4", 2, 4, "13:00", "11:00", 95000)
+            new RoomWithProductResponseDto(1L, "호텔1", "호텔1 썸네일 이미지 url", "호텔1 주소",
+                1L, "객실1", 2, 4, "14:00", "12:00", 100000),
+            new RoomWithProductResponseDto(2L, "호텔2", "호텔2 썸네일 이미지 url", "호텔2 주소",
+                3L, "객실3", 3, 5, "14:00", "11:30", 120000),
+            new RoomWithProductResponseDto(3L, "호텔3", "호텔3 썸네일 이미지 url", "호텔3 주소",
+                4L, "객실4", 2, 4, "13:00", "11:00", 95000)
         );
 
         given(roomService.getRoomsWithProductInfo(roomIds))
@@ -73,6 +73,7 @@ public class RoomRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("data.rooms[].productId").type(JsonFieldType.NUMBER).description("숙소 식별자"),
                         fieldWithPath("data.rooms[].productName").type(JsonFieldType.STRING).description("숙소명"),
                         fieldWithPath("data.rooms[].productThumbnail").type(JsonFieldType.STRING).description("숙소 썸네일 이미지 URL"),
+                        fieldWithPath("data.rooms[].productAddress").type(JsonFieldType.STRING).description("숙소 주소"),
                         fieldWithPath("data.rooms[].roomId").type(JsonFieldType.NUMBER).description("객실 식별자"),
                         fieldWithPath("data.rooms[].roomName").type(JsonFieldType.STRING).description("객실명"),
                         fieldWithPath("data.rooms[].standard").type(JsonFieldType.NUMBER).description("기준 인원"),

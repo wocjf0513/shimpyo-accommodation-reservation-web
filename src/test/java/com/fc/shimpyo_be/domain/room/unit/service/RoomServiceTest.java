@@ -33,12 +33,12 @@ public class RoomServiceTest {
         List<Long> roomIds = List.of(1L, 3L, 4L);
 
         List<RoomWithProductResponseDto> rooms = List.of(
-            new RoomWithProductResponseDto(1L, "호텔1", "호텔1 썸네일", 1L,
-                "객실1", 2, 4, "14:00", "12:00", 100000),
-            new RoomWithProductResponseDto(2L, "호텔2", "호텔2 썸네일", 3L,
-                "객실3", 2, 4, "14:00", "11:30", 120000),
-            new RoomWithProductResponseDto(3L, "호텔3", "호텔3 썸네일", 4L,
-                "객실4", 2, 4, "13:00", "11:00", 95000)
+            new RoomWithProductResponseDto(1L, "호텔1", "호텔1 썸네일", "호텔1 주소",
+                1L, "객실1", 2, 4, "14:00", "12:00", 100000),
+            new RoomWithProductResponseDto(2L, "호텔2", "호텔2 썸네일", "호텔2 주소",
+                3L, "객실3", 2, 4, "14:00", "11:30", 120000),
+            new RoomWithProductResponseDto(3L, "호텔3", "호텔3 썸네일", "호텔3 주소",
+                4L, "객실4", 2, 4, "13:00", "11:00", 95000)
         );
 
         given(roomRepository.findAllInRoomIdsResponseDto(roomIds))

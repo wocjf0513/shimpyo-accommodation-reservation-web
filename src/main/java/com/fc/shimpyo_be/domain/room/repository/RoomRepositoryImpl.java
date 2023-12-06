@@ -27,6 +27,7 @@ public class RoomRepositoryImpl implements RoomRepositoryCustom {
                     product.id.as("productId"),
                     product.name.as("productName"),
                     product.thumbnail.as("productThumbnail"),
+                    product.address.as("productAddress"),
                     room.id.as("roomId"),
                     room.name.as("roomName"),
                     room.standard,

@@ -4,6 +4,7 @@ public record RoomWithProductResponseDto(
     Long productId,
     String productName,
     String productThumbnail,
+    String productAddress,
     Long roomId,
     String roomName,
     Integer standard,
