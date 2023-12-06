@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,8 +55,12 @@ public class Room {
     @Column(nullable = false)
     @Comment("객실 가격")
     private int price;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Comment("객실 옵션 식별자")
+    private RoomOption roomOption;
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoomImage> roomImages = new ArrayList<>();
+
 
     @Builder
     public Room(
@@ -68,6 +73,7 @@ public class Room {
         LocalTime checkIn,
         LocalTime checkOut,
         int price,
+        RoomOption roomOption,
         List<RoomImage> roomImages
     ) {
         this.id = id;
@@ -79,6 +85,7 @@ public class Room {
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.price = price;
+        this.roomOption = roomOption;
         this.roomImages = roomImages;
     }
 }
