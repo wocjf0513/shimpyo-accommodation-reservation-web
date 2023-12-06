@@ -55,11 +55,13 @@ public class Product {
     private List<Room> rooms = new ArrayList<>();
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private ProductOption productOption;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Amenity amenity;
 
     @Builder
     public Product(Long id, String name, Address address, Category category, String description,
         float starAvg, String thumbnail, List<ProductImage> photoUrls, List<Room> rooms,
-        ProductOption productOption) {
+        ProductOption productOption, Amenity amenity) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -70,6 +72,7 @@ public class Product {
         this.photoUrls = photoUrls;
         this.rooms = rooms;
         this.productOption = productOption;
+        this.amenity = amenity;
     }
 
     public void updateStarAvg(float starAvg) {
