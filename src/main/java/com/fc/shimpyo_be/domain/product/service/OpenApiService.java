@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.product.service;
 
+import com.fc.shimpyo_be.domain.product.entity.Address;
 import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.entity.ProductImage;
@@ -7,6 +8,7 @@ import com.fc.shimpyo_be.domain.product.exception.OpenApiException;
 import com.fc.shimpyo_be.domain.product.repository.ProductImageRepository;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.domain.room.entity.RoomPrice;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -212,7 +214,14 @@ public class OpenApiService {
         Product product = Product.builder()
             .name(base.getString("title"))
             .category(Category.getByCode(base.getString("cat3")))
-            .address(base.getString("addr1") + " " + base.getString("addr2"))
+            .address(
+                Address.builder()
+                    .address(base.getString("addr1"))
+                    .detailAddress(base.getString("addr2"))
+                    .mapX(base.getDouble("mapx"))
+                    .mapY(base.getDouble("mapy"))
+                    .build()
+            )
             .description(common.getString("overview"))
             .starAvg(0)
             .thumbnail(base.getString("firstimage"))
@@ -257,8 +266,17 @@ public class OpenApiService {
                             Integer.parseInt(checkOut[0].substring(checkOut[0].length() - 2)),
                             Integer.parseInt(checkOut[1].substring(0, 2))))
                         .price(
-                            Integer.parseInt(
-                                roomJson.getString("roompeakseasonminfee1")))
+                            RoomPrice.builder()
+                                .offWeekDaysMinFee(Integer.parseInt(
+                                    roomJson.getString("roomoffseasonminfee1")))
+                                .offWeekendMinFee(Integer.parseInt(
+                                    roomJson.getString("roomoffseasonminfee12")))
+                                .peakWeekDaysMinFee(Integer.parseInt(
+                                    roomJson.getString("roompeakseasonminfee1")))
+                                .peakWeekendMinFee(Integer.parseInt(
+                                    roomJson.getString("roompeakseasonminfee2")))
+                                .build()
+                        )
                         .build());
                 }
             }
