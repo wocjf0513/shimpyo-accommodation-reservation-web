@@ -49,19 +49,22 @@ public class Product {
     @Column(columnDefinition = "TEXT", nullable = false)
     @Comment("숙소 대표 이미지 URL")
     private String thumbnail;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Comment("숙소 옵션 식별자")
+    private ProductOption productOption;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Comment("숙소 부대시설 식별자")
+    private Amenity amenity;
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> photoUrls = new ArrayList<>();
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms = new ArrayList<>();
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private ProductOption productOption;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Amenity amenity;
+
 
     @Builder
     public Product(Long id, String name, Address address, Category category, String description,
-        float starAvg, String thumbnail, List<ProductImage> photoUrls, List<Room> rooms,
-        ProductOption productOption, Amenity amenity) {
+        float starAvg, String thumbnail, ProductOption productOption, Amenity amenity,
+        List<ProductImage> photoUrls, List<Room> rooms) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -69,10 +72,10 @@ public class Product {
         this.description = description;
         this.starAvg = starAvg;
         this.thumbnail = thumbnail;
-        this.photoUrls = photoUrls;
-        this.rooms = rooms;
         this.productOption = productOption;
         this.amenity = amenity;
+        this.photoUrls = photoUrls;
+        this.rooms = rooms;
     }
 
     public void updateStarAvg(float starAvg) {
