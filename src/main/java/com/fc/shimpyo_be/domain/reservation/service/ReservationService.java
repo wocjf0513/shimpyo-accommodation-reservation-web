@@ -111,7 +111,7 @@ public class ReservationService {
                         product.getId(),
                         product.getName(),
                         product.getThumbnail(),
-                        product.getAddress(),
+                        product.getAddress().getAddress() + " " + product.getAddress().getDetailAddress(),
                         room.getId(),
                         room.getName(),
                         dateFormatter.format(reservationProduct.getStartDate()),
