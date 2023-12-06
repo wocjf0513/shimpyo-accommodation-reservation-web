@@ -10,7 +10,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -32,9 +34,9 @@ public class Product {
     @Column(nullable = false)
     @Comment("숙소 이름")
     private String name;
-    @Column(nullable = false)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Comment("숙소 위치")
-    private String address;
+    private Address address;
     @Column(nullable = false)
     @Convert(converter = CategoryConverter.class)
     @Comment("숙소 카테고리")
@@ -54,7 +56,7 @@ public class Product {
     private List<Room> rooms = new ArrayList<>();
 
     @Builder
-    public Product(Long id, String name, String address, Category category, String description,
+    public Product(Long id, String name, Address address, Category category, String description,
         float starAvg, String thumbnail) {
         this.id = id;
         this.name = name;
