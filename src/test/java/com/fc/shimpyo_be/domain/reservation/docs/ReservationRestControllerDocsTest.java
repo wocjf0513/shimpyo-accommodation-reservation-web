@@ -10,6 +10,7 @@ import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
 import com.fc.shimpyo_be.domain.reservation.facade.ReservationLockFacade;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
+import com.fc.shimpyo_be.domain.reservationproduct.dto.response.ReservationProductResponseDto;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -82,21 +83,30 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
             = new SaveReservationRequestDto(
             List.of(
                 new ReservationProductRequestDto(
-                    1L, "신라호텔", "디럭스 더블1",
-                    2, 4, "2023-11-20", "2023-11-23",
-                    "13:00", "12:00",
+                    1L, "2023-11-20", "2023-11-23",
                     "홍길동", "010-1111-1111", 300000
                 ),
                 new ReservationProductRequestDto(
-                    3L, "강릉 고즈넉한 펜션", "숲의 방",
-                    6, 9, "2023-12-10", "2023-12-12",
-                    "13:00", "12:00",
+                    3L, "2023-12-10", "2023-12-12",
                     "김갑돌", "010-2222-2222", 150000
                 )
             ), PayMethod.CREDIT_CARD, 450000
         );
 
-        SaveReservationResponseDto responseDto = new SaveReservationResponseDto(1L, requestDto);
+        SaveReservationResponseDto responseDto = new SaveReservationResponseDto(
+            1L,
+            List.of(
+                new ReservationProductResponseDto("숙소1", 1L, "객실1", 2, 3,
+                    "2023-11-20", "2023-11-23", "13:00", "12:00",
+                    "visitor1", "010-1111-1111", 150000),
+                new ReservationProductResponseDto("숙소2", 2L, "객실2", 2, 3,
+                    "2023-11-18", "2023-11-20", "13:00", "12:00",
+                    "visitor2", "010-2222-2222", 200000)
+            ),
+            requestDto.payMethod(),
+            requestDto.totalPrice(),
+            "2023-12-06 10:30:35"
+        );
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
         given(reservationLockFacade.saveReservation(anyLong(), any(SaveReservationRequestDto.class)))
@@ -115,30 +125,12 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("reservationProducts[].roomId").type(JsonFieldType.NUMBER).description("예약할 객실 식별자")
                             .attributes(key("constraints").value(
                                 reservationProductDescriptions.descriptionsForProperty("roomId"))),
-                        fieldWithPath("reservationProducts[].productName").type(JsonFieldType.STRING).description("예약할 숙소명")
-                            .attributes(key("constraints").value(
-                                reservationProductDescriptions.descriptionsForProperty("productName"))),
-                        fieldWithPath("reservationProducts[].roomName").type(JsonFieldType.STRING).description("예약할 객실명")
-                            .attributes(key("constraints").value(
-                                reservationProductDescriptions.descriptionsForProperty("roomName"))),
-                        fieldWithPath("reservationProducts[].standard").type(JsonFieldType.NUMBER).description("객실 기준 인원")
-                            .attributes(key("constraints").value(
-                                reservationProductDescriptions.descriptionsForProperty("standard"))),
-                        fieldWithPath("reservationProducts[].max").type(JsonFieldType.NUMBER).description("객실 최대 인원")
-                            .attributes(key("constraints").value(
-                                reservationProductDescriptions.descriptionsForProperty("max"))),
                         fieldWithPath("reservationProducts[].startDate").type(JsonFieldType.STRING).description("숙박 시작일")
                             .attributes(key("constraints").value(
                                 reservationProductDescriptions.descriptionsForProperty("startDate"))),
                         fieldWithPath("reservationProducts[].endDate").type(JsonFieldType.STRING).description("숙박 마지막일")
                             .attributes(key("constraints").value(
                                 reservationProductDescriptions.descriptionsForProperty("endDate"))),
-                        fieldWithPath("reservationProducts[].checkIn").type(JsonFieldType.STRING).description("체크인 시간")
-                            .attributes(key("constraints").value(
-                                reservationProductDescriptions.descriptionsForProperty("checkIn"))),
-                        fieldWithPath("reservationProducts[].checkOut").type(JsonFieldType.STRING).description("체크아웃 시간")
-                            .attributes(key("constraints").value(
-                                reservationProductDescriptions.descriptionsForProperty("checkOut"))),
                         fieldWithPath("reservationProducts[].visitorName").type(JsonFieldType.STRING).description("방문자명")
                             .attributes(key("constraints").value(
                                 reservationProductDescriptions.descriptionsForProperty("visitorName"))),
@@ -164,7 +156,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("data.reservationProducts[].productName").type(JsonFieldType.STRING).description("숙소명"),
                         fieldWithPath("data.reservationProducts[].roomName").type(JsonFieldType.STRING).description("객실명"),
                         fieldWithPath("data.reservationProducts[].standard").type(JsonFieldType.NUMBER).description("기준 인원"),
-                        fieldWithPath("data.reservationProducts[].max").type(JsonFieldType.NUMBER).description("최대 인원"),
+                        fieldWithPath("data.reservationProducts[].capacity").type(JsonFieldType.NUMBER).description("최대 인원"),
                         fieldWithPath("data.reservationProducts[].startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
                         fieldWithPath("data.reservationProducts[].endDate").type(JsonFieldType.STRING).description("숙박 마지막일"),
                         fieldWithPath("data.reservationProducts[].checkIn").type(JsonFieldType.STRING).description("체크인 시간"),
@@ -173,7 +165,8 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("data.reservationProducts[].visitorPhone").type(JsonFieldType.STRING).description("방문자 전화번호"),
                         fieldWithPath("data.reservationProducts[].price").type(JsonFieldType.NUMBER).description("객실 이용 가격"),
                         fieldWithPath("data.payMethod").type(JsonFieldType.STRING).description("결제 수단"),
-                        fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER).description("총 결제 금액")
+                        fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER).description("총 결제 금액"),
+                        fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("예약 주문 시간")
                         )
                 )
             );

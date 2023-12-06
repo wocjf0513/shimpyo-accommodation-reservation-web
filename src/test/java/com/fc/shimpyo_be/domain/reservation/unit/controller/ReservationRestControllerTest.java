@@ -11,6 +11,7 @@ import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
 import com.fc.shimpyo_be.domain.reservation.facade.ReservationLockFacade;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
+import com.fc.shimpyo_be.domain.reservationproduct.dto.response.ReservationProductResponseDto;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -80,16 +81,29 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
         SaveReservationRequestDto requestDto
             = new SaveReservationRequestDto(
             List.of(
-                getReservationProductRequestData(
+                new ReservationProductRequestDto(
                     1L, "2023-11-20", "2023-11-23",
                     "visitor1", "010-1111-1111", 150000),
-                getReservationProductRequestData(
+                new ReservationProductRequestDto(
                     2L, "2023-11-18", "2023-11-20",
                     "visitor2", "010-2222-2222", 200000)
             ), PayMethod.CREDIT_CARD, 350000
         );
 
-        SaveReservationResponseDto responseDto = new SaveReservationResponseDto(1L, requestDto);
+        SaveReservationResponseDto responseDto = new SaveReservationResponseDto(
+            1L,
+            List.of(
+                new ReservationProductResponseDto("숙소1", 1L, "객실1", 2, 3,
+                    "2023-11-20", "2023-11-23", "13:00", "12:00",
+                    "visitor1", "010-1111-1111", 150000),
+                new ReservationProductResponseDto("숙소2", 2L, "객실2", 2, 3,
+                    "2023-11-18", "2023-11-20", "13:00", "12:00",
+                    "visitor2", "010-2222-2222", 200000)
+            ),
+            requestDto.payMethod(),
+            requestDto.totalPrice(),
+            "2023-12-06 10:00:00"
+        );
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
         given(reservationLockFacade.saveReservation(anyLong(), any(SaveReservationRequestDto.class)))
@@ -160,10 +174,10 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
 
         PreoccupyRoomsRequestDto requestDto
             = new PreoccupyRoomsRequestDto(
-                List.of(
-                    new PreoccupyRoomItemRequestDto(1L, "2023-12-23", "2023-12-25"),
-                    new PreoccupyRoomItemRequestDto(2L, "2023-11-11", "2023-11-14")
-                )
+            List.of(
+                new PreoccupyRoomItemRequestDto(1L, "2023-12-23", "2023-12-25"),
+                new PreoccupyRoomItemRequestDto(2L, "2023-11-11", "2023-11-14")
+            )
         );
 
         ValidationResultResponseDto responseDto
@@ -177,10 +191,10 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
 
         // when & then
         mockMvc.perform(
-            post(requestUrl)
-                .content(objectMapper.writeValueAsString(requestDto))
-                .contentType(MediaType.APPLICATION_JSON)
-        )
+                post(requestUrl)
+                    .content(objectMapper.writeValueAsString(requestDto))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data").isEmpty());
     }
@@ -286,30 +300,5 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.code", is(200)))
             .andExpect(jsonPath("$.data").isEmpty());
-    }
-
-    private ReservationProductRequestDto getReservationProductRequestData(
-        long roomId,
-        String startDate,
-        String endDate,
-        String visitorName,
-        String visitorPhone,
-        Integer price
-    ) {
-        String defaultValue = "DEFAULT_VALUE";
-        return new ReservationProductRequestDto(
-            roomId,
-            defaultValue,
-            defaultValue,
-            2,
-            4,
-            startDate,
-            endDate,
-            "13:00",
-            "12:00",
-            visitorName,
-            visitorPhone,
-            price
-        );
     }
 }
