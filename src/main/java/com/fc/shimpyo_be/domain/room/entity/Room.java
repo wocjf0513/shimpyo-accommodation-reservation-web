@@ -1,6 +1,7 @@
 package com.fc.shimpyo_be.domain.room.entity;
 
 import com.fc.shimpyo_be.domain.product.entity.Product;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,7 +10,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,6 +54,8 @@ public class Room {
     @Column(nullable = false)
     @Comment("객실 가격")
     private int price;
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomImage> roomImages = new ArrayList<>();
 
     @Builder
     public Room(
@@ -59,9 +65,10 @@ public class Room {
         String description,
         int standard,
         int capacity,
-        int price,
         LocalTime checkIn,
-        LocalTime checkOut
+        LocalTime checkOut,
+        int price,
+        List<RoomImage> roomImages
     ) {
         this.id = id;
         this.product = product;
@@ -72,5 +79,6 @@ public class Room {
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.price = price;
+        this.roomImages = roomImages;
     }
 }
