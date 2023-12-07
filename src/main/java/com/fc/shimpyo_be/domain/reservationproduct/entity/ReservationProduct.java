@@ -20,7 +20,7 @@ public class ReservationProduct extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment(value = "예약 상품 식별자")
+    @Comment(value = "예약 숙소 식별자")
     private Long id;
     @Comment(value = "예약 주문 식별자")
     @ManyToOne(fetch = FetchType.LAZY)

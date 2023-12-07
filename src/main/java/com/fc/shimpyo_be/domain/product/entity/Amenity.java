@@ -48,10 +48,10 @@ public class Amenity {
     @Comment("공동 PC실 여부")
     private boolean publicPc;
     @Column(nullable = false)
-    @Comment("스포츠 시설 여부")
+    @Comment("사우나 여부")
     private boolean sauna;
     @Column(nullable = false)
-    @Comment("세미나실 여부")
+    @Comment("스포츠 시설 여부")
     private boolean sports;
     @Column(nullable = false)
     @Comment("세미나실 여부")

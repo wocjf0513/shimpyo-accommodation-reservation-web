@@ -41,7 +41,10 @@ public class ProductMapper {
 
         List<String> images = new ArrayList<>();
         images.add(product.getThumbnail());
-        images.addAll(product.getPhotoUrls().stream().map(ProductImage::getPhotoUrl).toList());
+
+        if(product.getPhotoUrls() != null) {
+            images.addAll(product.getPhotoUrls().stream().map(ProductImage::getPhotoUrl).toList());
+        }
 
         return ProductDetailsResponse.builder()
             .productId(product.getId())

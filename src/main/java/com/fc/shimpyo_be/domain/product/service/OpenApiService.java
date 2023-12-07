@@ -62,18 +62,18 @@ public class OpenApiService {
                 int contentId = baseItem.getInt("contentid");
                 JSONObject infoBody = getInfo(contentId);
                 if (isEmpty(infoBody)) {
-                    log.info("반복 정보 조회에 데이터가 없습니다. 다음 숙박 상품을 조회합니다.");
+                    log.info("반복 정보 조회에 데이터가 없습니다. 다음 숙박 숙소을 조회합니다.");
                     continue;
                 }
                 JSONArray info = infoBody.getJSONObject("items")
                     .getJSONArray("item");
                 if (!hasRoom(info)) {
-                    log.info("숙박 상품에 방이 없습니다. 다음 숙박 상품을 조회합니다.");
+                    log.info("숙박 숙소에 방이 없습니다. 다음 숙박 숙소을 조회합니다.");
                     continue;
                 }
                 JSONObject imageBody = getImages(contentId);
                 if (isEmpty(imageBody)) {
-                    log.info("숙박 상품에 이미지가 없습니다.다음 숙박 상품을 조회합니다.");
+                    log.info("숙박 숙소에 이미지가 없습니다.다음 숙박 숙소을 조회합니다.");
                     continue;
                 }
                 JSONArray images = imageBody
@@ -81,7 +81,7 @@ public class OpenApiService {
                     .getJSONArray("item");
                 JSONObject commonBody = getCommon(contentId);
                 if (isEmpty(commonBody)) {
-                    log.info("공통 정보 조회에 데이터가 없습니다. 다음 숙박 상품을 조회합니다.");
+                    log.info("공통 정보 조회에 데이터가 없습니다. 다음 숙박 숙소을 조회합니다.");
                     continue;
                 }
                 JSONObject common = commonBody.getJSONObject("items")
@@ -89,7 +89,7 @@ public class OpenApiService {
                     .getJSONObject(0);
                 JSONObject introBody = getIntro(contentId);
                 if (isEmpty(introBody)) {
-                    log.info("소개 정보 조회에 데이터가 없습니다. 다음 숙박 상품을 조회합니다.");
+                    log.info("소개 정보 조회에 데이터가 없습니다. 다음 숙박 숙소을 조회합니다.");
                     continue;
                 }
                 JSONObject intro = introBody
@@ -97,7 +97,7 @@ public class OpenApiService {
                     .getJSONArray("item")
                     .getJSONObject(0);
                 if (baseItem.getString("firstimage").isEmpty()) {
-                    log.info("썸네일로 사용할 이미지가 없습니다. 다음 숙박 상품을 조회합니다.");
+                    log.info("썸네일로 사용할 이미지가 없습니다. 다음 숙박 숙소을 조회합니다.");
                     continue;
                 }
                 Product product = saveProduct(baseItem, common);

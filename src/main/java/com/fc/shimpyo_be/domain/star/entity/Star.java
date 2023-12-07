@@ -29,7 +29,7 @@ public class Star {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-    @Comment(value = "별점 등록 상품 식별자")
+    @Comment(value = "별점 등록 숙소 식별자")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;

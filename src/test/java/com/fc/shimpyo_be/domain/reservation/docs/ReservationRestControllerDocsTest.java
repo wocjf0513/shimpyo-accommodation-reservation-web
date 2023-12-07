@@ -109,7 +109,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
             .andExpect(status().isCreated())
             .andDo(restDoc.document(
                     requestFields(
-                        fieldWithPath("reservationProducts").type(JsonFieldType.ARRAY).description("예약할 객실 상품 리스트")
+                        fieldWithPath("reservationProducts").type(JsonFieldType.ARRAY).description("예약할 객실 숙소 리스트")
                             .attributes(key("constraints").value(
                                 saveReservationDescriptions.descriptionsForProperty("reservationProducts"))),
                         fieldWithPath("reservationProducts[].roomId").type(JsonFieldType.NUMBER).description("예약할 객실 식별자")
@@ -159,7 +159,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                     responseFields(responseCommon()).and(
                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                         fieldWithPath("data.reservationId").type(JsonFieldType.NUMBER).description("예약 식별자"),
-                        fieldWithPath("data.reservationProducts").type(JsonFieldType.ARRAY).description("예약 상품 리스트"),
+                        fieldWithPath("data.reservationProducts").type(JsonFieldType.ARRAY).description("예약 숙소 리스트"),
                         fieldWithPath("data.reservationProducts[].roomId").type(JsonFieldType.NUMBER).description("객실 식별자"),
                         fieldWithPath("data.reservationProducts[].productName").type(JsonFieldType.STRING).description("숙소명"),
                         fieldWithPath("data.reservationProducts[].roomName").type(JsonFieldType.STRING).description("객실명"),
@@ -232,8 +232,8 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                         fieldWithPath("data.content").type(JsonFieldType.ARRAY).description("조회 데이터 리스트"),
                         fieldWithPath("data.content.[].reservationId").type(JsonFieldType.NUMBER).description("예약 식별자"),
-                        fieldWithPath("data.content.[].reservationProductId").type(JsonFieldType.NUMBER).description("예약 상품 식별자"),
-                        fieldWithPath("data.content.[].productId").type(JsonFieldType.NUMBER).description("상품 식별자"),
+                        fieldWithPath("data.content.[].reservationProductId").type(JsonFieldType.NUMBER).description("예약 숙소 식별자"),
+                        fieldWithPath("data.content.[].productId").type(JsonFieldType.NUMBER).description("숙소 식별자"),
                         fieldWithPath("data.content.[].productName").type(JsonFieldType.STRING).description("숙소명"),
                         fieldWithPath("data.content.[].productImageUrl").type(JsonFieldType.STRING).description("숙소 대표 이미지 URL"),
                         fieldWithPath("data.content.[].productAddress").type(JsonFieldType.STRING).description("숙소 주소"),
