@@ -58,7 +58,7 @@ public class RoomOption {
     private boolean cooking;
     @Column(nullable = false)
     @Comment("테이블 여부")
-    private boolean table;
+    private boolean diningTable;
     @Column(nullable = false)
     @Comment("드라이기 여부")
     private boolean hairDryer;
@@ -66,7 +66,7 @@ public class RoomOption {
     @Builder
     public RoomOption(Long id, boolean bathFacility, boolean bath, boolean homeTheater,
         boolean airCondition, boolean tv, boolean pc, boolean cable, boolean internet,
-        boolean refrigerator, boolean toiletries, boolean sofa, boolean cooking, boolean table,
+        boolean refrigerator, boolean toiletries, boolean sofa, boolean cooking, boolean diningTable,
         boolean hairDryer) {
         this.id = id;
         this.bathFacility = bathFacility;
@@ -81,7 +81,7 @@ public class RoomOption {
         this.toiletries = toiletries;
         this.sofa = sofa;
         this.cooking = cooking;
-        this.table = table;
+        this.diningTable = diningTable;
         this.hairDryer = hairDryer;
     }
 }

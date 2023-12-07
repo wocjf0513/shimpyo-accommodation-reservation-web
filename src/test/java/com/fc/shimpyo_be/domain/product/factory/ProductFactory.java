@@ -91,7 +91,7 @@ public class ProductFactory {
                 .toiletries(false)
                 .sofa(false)
                 .cooking(false)
-                .table(false)
+                .diningTable(false)
                 .hairDryer(false)
                 .build())
             .build();

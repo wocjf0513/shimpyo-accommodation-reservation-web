@@ -27,11 +27,13 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
 
@@ -127,7 +129,6 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
         ProductImage productImage2 = productImageRepository.save(
             ProductFactory.createTestProductImage(product));
 
-
         for (int i = 0; i < 5; i++) {
             Room room = roomRepository.save(ProductFactory.createTestRoom(product));
             product.getRooms().add(room);
@@ -195,7 +196,8 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
         // when
         ResultActions getProductAction = mockMvc.perform(
 
-            get("/api/products/amounts/{roomId}?startDate=2023-12-22&endDate=2023-12-23",room.getId()));
+            get("/api/products/amounts/{roomId}?startDate=2023-12-22&endDate=2023-12-23",
+                room.getId()));
 
         // then
         getProductAction
