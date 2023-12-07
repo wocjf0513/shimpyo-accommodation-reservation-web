@@ -32,7 +32,6 @@ import java.time.LocalDate;
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -123,9 +122,11 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     void addCart() throws Exception {
         //given
         LocalDate tommorrow = LocalDate.now().plusDays(1);
-        CartCreateRequest cartCreateRequest = CartCreateRequest.builder().startDate(DateTimeUtil.toString(
+        CartCreateRequest cartCreateRequest = CartCreateRequest.builder()
+            .startDate(DateTimeUtil.toString(
                 tommorrow))
-            .endDate(DateTimeUtil.toString(tommorrow.plusDays(1))).price(100000L).roomId(room.getId()).build();
+            .endDate(DateTimeUtil.toString(tommorrow.plusDays(1))).price(100000L)
+            .roomId(room.getId()).build();
         //when
         ResultActions resultActions = mockMvc.perform(
             post("/api/carts").content(objectMapper.writeValueAsString(cartCreateRequest))
