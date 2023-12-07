@@ -1,3 +1,10 @@
+
+
+spring:
+  profiles:
+    default: test
+
+---
 spring:
   config:
     activate:
@@ -19,6 +26,7 @@ spring:
     redis:
       host: localhost
       port: 6379
+
 
 jwt:
   secret: 7Yyo7Iqk7Yq47Lqg7Y287IqkIOuvuOuLiO2UhOuhnOygne2KuCAxMeyhsCDsibztkZwgSldUIOyLnO2BrOumvyDtgqQ=

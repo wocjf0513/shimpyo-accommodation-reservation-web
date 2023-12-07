@@ -48,7 +48,6 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
     @DisplayName("숙소 저장 후, 검색 조회 및 페이징할 수 있다.")
     @Test
-    @WithMockUser
     void getProducts() throws Exception {
         // given
         for (int i = 0; i < 5; i++) {
@@ -97,7 +96,6 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
     @DisplayName("숙소 상세 검색을 할 수 있다.")
     @Test
-    @WithMockUser
     void getProductDetails() throws Exception {
         // given
         Product product = productRepository.save(ProductFactory.createTestProduct());
@@ -229,7 +227,6 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
     @Test
     @DisplayName("예약 가능 여부를 확인할 수 있다.")
-    @WithMockUser
     void isAvailableForReservation() throws Exception {
         // given
         Product product = productRepository.save(ProductFactory.createTestProduct());
