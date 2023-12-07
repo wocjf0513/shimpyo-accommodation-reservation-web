@@ -1,6 +1,7 @@
 package com.fc.shimpyo_be.domain.product.factory;
 
 import com.fc.shimpyo_be.domain.product.entity.Address;
+import com.fc.shimpyo_be.domain.product.entity.Amenity;
 import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.entity.ProductImage;
@@ -38,6 +39,20 @@ public class ProductFactory {
                 .pickup(false)
                 .foodPlace("")
                 .infoCenter("000-0000-0000")
+                .build())
+            .amenity(Amenity.builder()
+                .barbecue(false)
+                .beauty(false)
+                .beverage(false)
+                .bicycle(false)
+                .campfire(false)
+                .karaoke(false)
+                .publicBath(false)
+                .publicPc(false)
+                .sauna(false)
+                .seminar(false)
+                .sports(false)
+                .fitness(false)
                 .build())
             .build();
     }

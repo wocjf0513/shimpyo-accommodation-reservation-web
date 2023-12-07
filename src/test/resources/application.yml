@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/shimpyo
+    username: root
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+  data:
+    redis:
+      host: localhost
+      port: 6379
+jwt:
+  secret: 7Yyo7Iqk7Yq47Lqg7Y287IqkIOuvuOuLiO2UhOuhnOygne2KuCAxMeyhsCDsibztkZwgSldUIOyLnO2BrOumvyDtgqQ=
+  access-token-expire-time: 3600000
+  refresh-token-expire-time: 604800000
+open-api:
+  service-key: F+zEWUXK0YK5FtuiHBJpOdqfmCV5qNXt+0F5g7X67//VQnlWbQCMUF5UlKPMetolbj9LAbfC0o7+XBe2AyzaWQ==
+logging:
+  level:
+    root: error

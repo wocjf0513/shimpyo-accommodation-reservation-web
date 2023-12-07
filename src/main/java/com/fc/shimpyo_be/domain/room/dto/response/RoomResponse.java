@@ -14,11 +14,12 @@ public class RoomResponse {
     private final Long capacity;
     private final String checkIn;
     private final String checkOut;
+    private final RoomOptionResponse roomOptionResponse;
     private Boolean reserved;
 
     @Builder
     public RoomResponse(Long roomId, String roomName, Long price, String description, Long standard,
-        Long capacity, String checkIn, String checkOut, Boolean reserved) {
+        Long capacity, String checkIn, String checkOut, Boolean reserved, RoomOptionResponse roomOptionResponse) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.price = price;
@@ -28,6 +29,7 @@ public class RoomResponse {
         this.capacity = capacity;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
+        this.roomOptionResponse = roomOptionResponse;
     }
 
     public void setReserved() {

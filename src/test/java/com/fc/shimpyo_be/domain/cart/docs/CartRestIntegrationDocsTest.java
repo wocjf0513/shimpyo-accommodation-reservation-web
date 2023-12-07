@@ -27,7 +27,9 @@ import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
+
 import java.util.concurrent.ThreadLocalRandom;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +71,9 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     void initTest() {
         //given
         member = memberRepository.save(memberRepository.save(Member.builder()
-            .email("wocjf" + ThreadLocalRandom.current().nextInt(100000) + "@naver.com")
-            .photoUrl("hello,world.jpg").name("심재철").password("1234").authority(Authority.ROLE_USER)
-            .build()));
+                .email("wocjf" + ThreadLocalRandom.current().nextInt(100000) + "@naver.com")
+                .photoUrl("hello,world.jpg").name("심재철").password("1234").authority(Authority.ROLE_USER)
+                .build()));
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
 
@@ -93,25 +95,25 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         ResultActions resultActions = mockMvc.perform(get("/api/carts"));
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
-            responseFields(responseCommon()).and(
-                fieldWithPath("data").type(JsonFieldType.ARRAY).description("응답 데이터"),
-                fieldWithPath("data[].cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
-                fieldWithPath("data[].productId").type(JsonFieldType.NUMBER).description("상품 아이디"),
-                fieldWithPath("data[].productName").type(JsonFieldType.STRING).description("상품 이름"),
-                fieldWithPath("data[].image").type(JsonFieldType.STRING).description("상품 대표 이미지"),
-                fieldWithPath("data[].roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
-                fieldWithPath("data[].roomName").type(JsonFieldType.STRING).description("방 이름"),
-                fieldWithPath("data[].price").type(JsonFieldType.NUMBER).description("총 가격"),
-                fieldWithPath("data[].description").type(JsonFieldType.STRING).description("방 설명"),
-                fieldWithPath("data[].standard").type(JsonFieldType.NUMBER).description("방 기준인원"),
-                fieldWithPath("data[].capacity").type(JsonFieldType.NUMBER).description("방 최대인원"),
-                fieldWithPath("data[].startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
-                fieldWithPath("data[].endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
-                fieldWithPath("data[].checkIn").type(JsonFieldType.STRING).description("방 체크인 시간"),
-                fieldWithPath("data[].checkOut").type(JsonFieldType.STRING)
-                    .description("방 체크아웃 시간"),
-                fieldWithPath("data[].reserved").type(JsonFieldType.BOOLEAN)
-                    .description("예약 가능 여부"))));
+                responseFields(responseCommon()).and(
+                        fieldWithPath("data").type(JsonFieldType.ARRAY).description("응답 데이터"),
+                        fieldWithPath("data[].cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
+                        fieldWithPath("data[].productId").type(JsonFieldType.NUMBER).description("상품 아이디"),
+                        fieldWithPath("data[].productName").type(JsonFieldType.STRING).description("상품 이름"),
+                        fieldWithPath("data[].image").type(JsonFieldType.STRING).description("상품 대표 이미지"),
+                        fieldWithPath("data[].roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+                        fieldWithPath("data[].roomName").type(JsonFieldType.STRING).description("방 이름"),
+                        fieldWithPath("data[].price").type(JsonFieldType.NUMBER).description("총 가격"),
+                        fieldWithPath("data[].description").type(JsonFieldType.STRING).description("방 설명"),
+                        fieldWithPath("data[].standard").type(JsonFieldType.NUMBER).description("방 기준인원"),
+                        fieldWithPath("data[].capacity").type(JsonFieldType.NUMBER).description("방 최대인원"),
+                        fieldWithPath("data[].startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
+                        fieldWithPath("data[].endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
+                        fieldWithPath("data[].checkIn").type(JsonFieldType.STRING).description("방 체크인 시간"),
+                        fieldWithPath("data[].checkOut").type(JsonFieldType.STRING)
+                                .description("방 체크아웃 시간"),
+                        fieldWithPath("data[].reserved").type(JsonFieldType.BOOLEAN)
+                                .description("예약 가능 여부"))));
 
     }
 
@@ -120,38 +122,38 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     void addCart() throws Exception {
         //given
         CartCreateRequest cartCreateRequest = CartCreateRequest.builder().startDate("2023-12-27")
-            .endDate("2023-12-30").price(100000L).roomId(room.getId()).build();
+                .endDate("2023-12-30").price(100000L).roomId(room.getId()).build();
         //when
         ResultActions resultActions = mockMvc.perform(
-            post("/api/carts").content(objectMapper.writeValueAsString(cartCreateRequest))
-                .contentType(MediaType.APPLICATION_JSON));
+                post("/api/carts").content(objectMapper.writeValueAsString(cartCreateRequest))
+                        .contentType(MediaType.APPLICATION_JSON));
 
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
-            requestFields(fieldWithPath("roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
-                fieldWithPath("startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
-                fieldWithPath("endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
-                fieldWithPath("price").type(JsonFieldType.NUMBER).description("장바구니 가격")),
-            responseFields(responseCommon()).and(
-                fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
-                fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
-                fieldWithPath("data.productId").type(JsonFieldType.NUMBER).description("상품 아이디"),
-                fieldWithPath("data.productName").type(JsonFieldType.STRING).description("상품 이름"),
-                fieldWithPath("data.image").type(JsonFieldType.STRING).description("상품 대표 이미지"),
-                fieldWithPath("data.roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
-                fieldWithPath("data.roomName").type(JsonFieldType.STRING).description("방 이름"),
-                fieldWithPath("data.price").type(JsonFieldType.NUMBER).description("총 가격"),
-                fieldWithPath("data.description").type(JsonFieldType.STRING).description("방 설명"),
-                fieldWithPath("data.standard").type(JsonFieldType.NUMBER).description("방 기준인원"),
-                fieldWithPath("data.capacity").type(JsonFieldType.NUMBER).description("방 최대인원"),
-                fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
-                fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
-                fieldWithPath("data.checkIn").type(JsonFieldType.STRING).description("방 체크인 시간"),
-                fieldWithPath("data.checkOut").type(JsonFieldType.STRING).description("방 체크아웃 시간"),
-                fieldWithPath(("data.checkOut")).type(JsonFieldType.STRING)
-                    .description("방 체크아웃 시간"),
-                fieldWithPath("data.reserved").type(JsonFieldType.BOOLEAN)
-                    .description("예약 가능 여부"))));
+                requestFields(fieldWithPath("roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+                        fieldWithPath("startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
+                        fieldWithPath("endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
+                        fieldWithPath("price").type(JsonFieldType.NUMBER).description("장바구니 가격")),
+                responseFields(responseCommon()).and(
+                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                        fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
+                        fieldWithPath("data.productId").type(JsonFieldType.NUMBER).description("상품 아이디"),
+                        fieldWithPath("data.productName").type(JsonFieldType.STRING).description("상품 이름"),
+                        fieldWithPath("data.image").type(JsonFieldType.STRING).description("상품 대표 이미지"),
+                        fieldWithPath("data.roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+                        fieldWithPath("data.roomName").type(JsonFieldType.STRING).description("방 이름"),
+                        fieldWithPath("data.price").type(JsonFieldType.NUMBER).description("총 가격"),
+                        fieldWithPath("data.description").type(JsonFieldType.STRING).description("방 설명"),
+                        fieldWithPath("data.standard").type(JsonFieldType.NUMBER).description("방 기준인원"),
+                        fieldWithPath("data.capacity").type(JsonFieldType.NUMBER).description("방 최대인원"),
+                        fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
+                        fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
+                        fieldWithPath("data.checkIn").type(JsonFieldType.STRING).description("방 체크인 시간"),
+                        fieldWithPath("data.checkOut").type(JsonFieldType.STRING).description("방 체크아웃 시간"),
+                        fieldWithPath(("data.checkOut")).type(JsonFieldType.STRING)
+                                .description("방 체크아웃 시간"),
+                        fieldWithPath("data.reserved").type(JsonFieldType.BOOLEAN)
+                                .description("예약 가능 여부"))));
 
     }
 
@@ -164,12 +166,12 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         ResultActions resultActions = mockMvc.perform(delete("/api/carts/{cartId}", 1L));
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
-            pathParameters(parameterWithName("cartId").description("삭제할 장바구니 아이디")),
-            responseFields(responseCommon()).and(
-                fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
-                fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
-                fieldWithPath("data.roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
-                fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
-                fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("숙박 종료일"))));
+                pathParameters(parameterWithName("cartId").description("삭제할 장바구니 아이디")),
+                responseFields(responseCommon()).and(
+                        fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
+                        fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
+                        fieldWithPath("data.roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+                        fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
+                        fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("숙박 종료일"))));
     }
 }
