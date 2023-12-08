@@ -34,10 +34,13 @@ public class Room {
     @JoinColumn(name = "product_id")
     @Comment("숙소 식별자")
     private Product product;
-    @Column(length = 30)
+    @Column(nullable = false)
+    @Comment("객실 코드")
+    private long code;
+    @Column(nullable = false)
     @Comment("객실 이름")
     private String name;
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     @Comment("객실 설명")
     private String description;
     @Column(columnDefinition = "TINYINT")
@@ -59,13 +62,14 @@ public class Room {
     @Comment("객실 옵션 식별자")
     private RoomOption roomOption;
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Comment("객실 이미지 식별자")
     private List<RoomImage> roomImages = new ArrayList<>();
-
 
     @Builder
     public Room(
         Long id,
         Product product,
+        long code,
         String name,
         String description,
         int standard,
@@ -78,6 +82,7 @@ public class Room {
     ) {
         this.id = id;
         this.product = product;
+        this.code = code;
         this.name = name;
         this.description = description;
         this.standard = standard;
@@ -88,6 +93,4 @@ public class Room {
         this.roomOption = roomOption;
         this.roomImages = roomImages;
     }
-
-
 }
