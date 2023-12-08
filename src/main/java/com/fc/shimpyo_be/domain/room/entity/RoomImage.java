@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.room.entity;
 
+import com.fc.shimpyo_be.domain.product.entity.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,11 +31,15 @@ public class RoomImage {
     @Column(nullable = false)
     @Comment("객실 이미지 URL")
     private String photoUrl;
+    @Column(nullable = false)
+    @Comment("객실 이미지 설명")
+    private String description;
 
     @Builder
-    public RoomImage(Long id, Room room, String photoUrl) {
+    public RoomImage(Long id, Room room, String photoUrl, String description) {
         this.id = id;
         this.room = room;
         this.photoUrl = photoUrl;
+        this.description = description;
     }
 }
