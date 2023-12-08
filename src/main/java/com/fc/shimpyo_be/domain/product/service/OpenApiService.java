@@ -64,7 +64,7 @@ public class OpenApiService {
                 .getJSONObject("items")
                 .getJSONArray("item");
             for (int j = 0; j < base.length(); j++) {
-//                try {
+                try {
                 JSONObject baseItem = base.getJSONObject(j);
                 int contentId = baseItem.getInt("contentid");
 
@@ -129,9 +129,9 @@ public class OpenApiService {
                 Product product = saveProduct(baseItem, common, intro);
                 saveProductImages(product, images);
                 saveRooms(product, intro, info);
-//                } catch (Exception e) {
-//                    log.info("데이터가 형식에 맞지 않습니다. 다음 숙소를 조회합니다.");
-//                }
+                } catch (Exception e) {
+                    log.info("데이터가 형식에 맞지 않습니다. 다음 숙소를 조회합니다.");
+                }
             }
         } catch (Exception e) {
             log.error(e.getMessage());
