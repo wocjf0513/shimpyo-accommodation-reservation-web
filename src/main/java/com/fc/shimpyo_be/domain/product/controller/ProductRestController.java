@@ -46,7 +46,7 @@ public class ProductRestController {
             .productName(productName).address(address).category(category).build();
 
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.OK,
-            productService.getProducts(searchKeywordRequest, pageable), "상품 목록을 성공적으로 조회했습니다."));
+            productService.getProducts(searchKeywordRequest, pageable), "숙소 목록을 성공적으로 조회했습니다."));
     }
 
 
@@ -62,7 +62,7 @@ public class ProductRestController {
         }
 
         return ResponseEntity.ok(ResponseDto.res(HttpStatus.OK,
-            productService.getProductDetails(productId, startDate, endDate), "상품을 성공적으로 조회했습니다."));
+            productService.getProductDetails(productId, startDate, endDate), "숙소을 성공적으로 조회했습니다."));
     }
 
     @GetMapping("/amounts/{roomId}")

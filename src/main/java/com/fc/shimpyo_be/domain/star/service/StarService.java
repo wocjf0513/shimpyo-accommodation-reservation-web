@@ -41,14 +41,14 @@ public class StarService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(MemberNotFoundException::new);
 
-        // 예약 상품 조회
+        // 예약 숙소 조회
         ReservationProduct reservationProduct = reservationProductRepository.findByIdWithRoom(request.reservationProductId())
             .orElseThrow(ReservationProductNotFoundException::new);
 
         // 별점 등록 가능 기간인지 검증
         validateRegisterDate(LocalDateTime.now(), reservationProduct.getEndDate(), reservationProduct.getRoom().getCheckOut());
 
-        // 상품 조회
+        // 숙소 조회
         Product product = productRepository.findById(request.productId())
             .orElseThrow(ProductNotFoundException::new);
 

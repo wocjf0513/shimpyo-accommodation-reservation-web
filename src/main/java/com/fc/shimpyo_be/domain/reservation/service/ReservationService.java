@@ -58,7 +58,7 @@ public class ReservationService {
         Member member = memberRepository.findById(memberId)
             .orElseThrow(MemberNotFoundException::new);
 
-        // 객실 엔티티 조회 후, 예약 상품 리스트 생성
+        // 객실 엔티티 조회 후, 예약 숙소 리스트 생성
         List<ReservationProduct> reservationProducts = new ArrayList<>();
         for (ReservationProductRequestDto reservationProductDto : request.reservationProducts()) {
             Room room = roomRepository.findById(reservationProductDto.roomId())
@@ -111,7 +111,7 @@ public class ReservationService {
                         product.getId(),
                         product.getName(),
                         product.getThumbnail(),
-                        product.getAddress(),
+                        product.getAddress().getAddress() + " " + product.getAddress().getDetailAddress(),
                         room.getId(),
                         room.getName(),
                         dateFormatter.format(reservationProduct.getStartDate()),

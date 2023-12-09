@@ -29,6 +29,6 @@ public class ReservationProductRestController {
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(ResponseDto.res(HttpStatus.OK, "예약 상품이 정상적으로 취소 처리되었습니다."));
+            .body(ResponseDto.res(HttpStatus.OK, "예약 숙소이 정상적으로 취소 처리되었습니다."));
     }
 }

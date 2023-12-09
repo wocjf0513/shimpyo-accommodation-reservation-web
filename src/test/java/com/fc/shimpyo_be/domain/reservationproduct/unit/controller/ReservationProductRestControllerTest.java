@@ -45,7 +45,7 @@ public class ReservationProductRestControllerTest extends AbstractContainersSupp
     }
 
     @WithMockUser(roles = "USER")
-    @DisplayName("[api][DELETE][정상] 예약 주문 상품 취소 API 테스트")
+    @DisplayName("[api][DELETE][정상] 예약 주문 숙소 취소 API 테스트")
     @Test
     void saveReservation_Api_test() throws Exception {
         //given

@@ -14,6 +14,7 @@ import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.domain.room.entity.RoomPrice;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,12 @@ public class ReservationServiceTest {
             .id(1L)
             .name("room1")
             .description("description")
-            .price(50000)
+            .price(RoomPrice.builder()
+                .offWeekDaysMinFee(50000)
+                .offWeekendMinFee(60000)
+                .peakWeekDaysMinFee(100000)
+                .peakWeekendMinFee(110000)
+                .build())
             .build();
 
         SaveReservationRequestDto requestDto
