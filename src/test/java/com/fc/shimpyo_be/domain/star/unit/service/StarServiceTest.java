@@ -4,6 +4,7 @@ import com.fc.shimpyo_be.domain.member.entity.Authority;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.exception.MemberNotFoundException;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
+import com.fc.shimpyo_be.domain.product.entity.Address;
 import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.exception.ProductNotFoundException;
@@ -13,6 +14,7 @@ import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
 import com.fc.shimpyo_be.domain.reservationproduct.entity.ReservationProduct;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.domain.room.entity.RoomPrice;
 import com.fc.shimpyo_be.domain.star.dto.request.StarRegisterRequestDto;
 import com.fc.shimpyo_be.domain.star.dto.response.StarResponseDto;
 import com.fc.shimpyo_be.domain.star.entity.Star;
@@ -83,7 +85,12 @@ public class StarServiceTest {
             .category(Category.TOURIST_HOTEL)
             .thumbnail("thumbnail url")
             .starAvg(3.5f)
-            .address("숙소 주소")
+            .address(Address.builder()
+                .address("숙소 주소")
+                .detailAddress("숙소 상세 주소")
+                .mapX(1.0)
+                .mapY(1.0)
+                .build())
             .build();
 
         Reservation reservation = Reservation.builder()
@@ -96,7 +103,12 @@ public class StarServiceTest {
             .id(2L)
             .reservation(reservation)
             .room(Room.builder()
-                .price(50000)
+                .price(RoomPrice.builder()
+                    .offWeekDaysMinFee(50000)
+                    .offWeekendMinFee(60000)
+                    .peakWeekDaysMinFee(100000)
+                    .peakWeekendMinFee(110000)
+                    .build())
                 .description("객실정보")
                 .product(product)
                 .checkOut(LocalTime.of(12, 0))
@@ -109,7 +121,12 @@ public class StarServiceTest {
             .id(3L)
             .reservation(reservation)
             .room(Room.builder()
-                .price(50000)
+                .price(RoomPrice.builder()
+                    .offWeekDaysMinFee(50000)
+                    .offWeekendMinFee(60000)
+                    .peakWeekDaysMinFee(100000)
+                    .peakWeekendMinFee(110000)
+                    .build())
                 .description("객실정보")
                 .product(product)
                 .checkOut(LocalTime.of(12, 0))

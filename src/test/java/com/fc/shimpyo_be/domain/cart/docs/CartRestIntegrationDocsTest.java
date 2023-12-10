@@ -26,20 +26,22 @@ import com.fc.shimpyo_be.domain.product.factory.ProductFactory;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
+import java.time.LocalDate;
 import java.util.concurrent.ThreadLocalRandom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-@AutoConfigureMockMvc
+@ActiveProfiles("test")
 class CartRestIntegrationDocsTest extends RestDocsSupport {
 
     @MockBean
@@ -96,9 +98,9 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
             responseFields(responseCommon()).and(
                 fieldWithPath("data").type(JsonFieldType.ARRAY).description("응답 데이터"),
                 fieldWithPath("data[].cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
-                fieldWithPath("data[].productId").type(JsonFieldType.NUMBER).description("상품 아이디"),
-                fieldWithPath("data[].productName").type(JsonFieldType.STRING).description("상품 이름"),
-                fieldWithPath("data[].image").type(JsonFieldType.STRING).description("상품 대표 이미지"),
+                fieldWithPath("data[].productId").type(JsonFieldType.NUMBER).description("숙소 아이디"),
+                fieldWithPath("data[].productName").type(JsonFieldType.STRING).description("숙소 이름"),
+                fieldWithPath("data[].image").type(JsonFieldType.STRING).description("숙소 대표 이미지"),
                 fieldWithPath("data[].roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
                 fieldWithPath("data[].roomName").type(JsonFieldType.STRING).description("방 이름"),
                 fieldWithPath("data[].price").type(JsonFieldType.NUMBER).description("총 가격"),
@@ -119,8 +121,12 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     @WithMockUser
     void addCart() throws Exception {
         //given
-        CartCreateRequest cartCreateRequest = CartCreateRequest.builder().startDate("2023-12-27")
-            .endDate("2023-12-30").price(100000L).roomId(room.getId()).build();
+        LocalDate tommorrow = LocalDate.now().plusDays(1);
+        CartCreateRequest cartCreateRequest = CartCreateRequest.builder()
+            .startDate(DateTimeUtil.toString(
+                tommorrow))
+            .endDate(DateTimeUtil.toString(tommorrow.plusDays(1))).price(100000L)
+            .roomId(room.getId()).build();
         //when
         ResultActions resultActions = mockMvc.perform(
             post("/api/carts").content(objectMapper.writeValueAsString(cartCreateRequest))
@@ -135,9 +141,9 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
             responseFields(responseCommon()).and(
                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                 fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
-                fieldWithPath("data.productId").type(JsonFieldType.NUMBER).description("상품 아이디"),
-                fieldWithPath("data.productName").type(JsonFieldType.STRING).description("상품 이름"),
-                fieldWithPath("data.image").type(JsonFieldType.STRING).description("상품 대표 이미지"),
+                fieldWithPath("data.productId").type(JsonFieldType.NUMBER).description("숙소 아이디"),
+                fieldWithPath("data.productName").type(JsonFieldType.STRING).description("숙소 이름"),
+                fieldWithPath("data.image").type(JsonFieldType.STRING).description("숙소 대표 이미지"),
                 fieldWithPath("data.roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
                 fieldWithPath("data.roomName").type(JsonFieldType.STRING).description("방 이름"),
                 fieldWithPath("data.price").type(JsonFieldType.NUMBER).description("총 가격"),

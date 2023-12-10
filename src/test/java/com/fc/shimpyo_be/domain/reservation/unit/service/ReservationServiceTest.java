@@ -9,6 +9,10 @@ import com.fc.shimpyo_be.domain.reservation.entity.PayMethod;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
 import lombok.extern.slf4j.Slf4j;
+import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
+import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.domain.room.entity.RoomPrice;
+import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,18 @@ public class ReservationServiceTest extends AbstractContainersSupport {
         long memberId = 1L;
         long roomId1 = 1L;
         long roomId2 = 2L;
+
+        Room room = Room.builder()
+            .id(1L)
+            .name("room1")
+            .description("description")
+            .price(RoomPrice.builder()
+                .offWeekDaysMinFee(50000)
+                .offWeekendMinFee(60000)
+                .peakWeekDaysMinFee(100000)
+                .peakWeekendMinFee(110000)
+                .build())
+            .build();
 
         SaveReservationRequestDto requestDto
             = new SaveReservationRequestDto(

@@ -36,7 +36,7 @@ class ReservationProductServiceTest {
     @Mock
     private ReservationProductRepository reservationProductRepository;
 
-    @DisplayName("예약 상품을 취소할 수 있다.")
+    @DisplayName("예약 숙소을 취소할 수 있다.")
     @Test
     void cancel_test() {
         //given
@@ -79,7 +79,7 @@ class ReservationProductServiceTest {
         verify(reservationProductRepository, times(1)).findByIdWithReservation(anyLong());
     }
 
-    @DisplayName("예약 상품 정보가 존재하지 않으면, 예약 상품을 취소할 수 있다.")
+    @DisplayName("예약 숙소 정보가 존재하지 않으면, 예약 숙소을 취소할 수 있다.")
     @Test
     void cancel_reservationProductNotFound_test() {
         //given
@@ -96,7 +96,7 @@ class ReservationProductServiceTest {
         verify(reservationProductRepository, times(1)).findByIdWithReservation(anyLong());
     }
 
-    @DisplayName("예약 상품 주문자 정보와 현재 인증 객체 정보가 일치하지 않으며, 예약 상품을 취소할 수 없다.")
+    @DisplayName("예약 숙소 주문자 정보와 현재 인증 객체 정보가 일치하지 않으며, 예약 숙소을 취소할 수 없다.")
     @Test
     void cancel_forbidden_test() {
         //given
