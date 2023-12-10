@@ -2,6 +2,7 @@ package com.fc.shimpyo_be.domain.reservation.unit.service;
 
 import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.config.DatabaseCleanUp;
+import com.fc.shimpyo_be.config.TestDBCleanerConfig;
 import com.fc.shimpyo_be.domain.member.entity.Authority;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
@@ -35,6 +37,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
+@Import(TestDBCleanerConfig.class)
 @SpringBootTest
 public class GetReservationListServiceTest extends AbstractContainersSupport {
 
