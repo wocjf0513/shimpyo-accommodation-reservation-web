@@ -7,6 +7,7 @@ public record ReservationInfoResponseDto(
     String productName,
     String productImageUrl,
     String productAddress,
+    String productDetailAddress,
     Long roomId,
     String roomName,
     String startDate,
