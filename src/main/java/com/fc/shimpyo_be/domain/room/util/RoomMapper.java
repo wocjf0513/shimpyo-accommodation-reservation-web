@@ -3,6 +3,7 @@ package com.fc.shimpyo_be.domain.room.util;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomOptionResponse;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomResponse;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.domain.room.entity.RoomImage;
 import com.fc.shimpyo_be.domain.room.entity.RoomOption;
 import com.fc.shimpyo_be.global.util.PricePickerByDateUtil;
 
@@ -24,10 +25,11 @@ public class RoomMapper {
             .checkIn(room.getCheckIn().toString())
             .checkOut(room.getCheckOut().toString())
             .roomOptionResponse(toRoomOptionResponse(room.getRoomOption()))
+            .roomImages(room.getRoomImages().stream().map(RoomImage::getPhotoUrl).toList())
             .build();
     }
 
-    public static RoomOptionResponse toRoomOptionResponse(RoomOption roomOption) {
+    private static RoomOptionResponse toRoomOptionResponse(RoomOption roomOption) {
         return RoomOptionResponse.builder()
             .airCondition(roomOption.isAirCondition())
             .pc(roomOption.isPc())

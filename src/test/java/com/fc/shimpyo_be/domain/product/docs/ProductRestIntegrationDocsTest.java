@@ -132,6 +132,16 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                         .description("숙소 식별자"),
                     fieldWithPath("data.productAmenityResponse").type(JsonFieldType.OBJECT)
                         .description("숙소 어메니티"),
+                    fieldWithPath("data.address").type(JsonFieldType.OBJECT)
+                        .description("숙소 주소"),
+                    fieldWithPath("data.address.address").type(JsonFieldType.STRING)
+                        .description("숙소 주소"),
+                    fieldWithPath("data.address.detailAddress").type(JsonFieldType.STRING)
+                        .description("숙소 상세 주소"),
+                    fieldWithPath("data.address.mapX").type(JsonFieldType.NUMBER)
+                        .description("숙소 x좌표"),
+                    fieldWithPath("data.address.mapY").type(JsonFieldType.NUMBER)
+                        .description("숙소 y좌표"),
                     fieldWithPath("data.productAmenityResponse.barbecue").type(
                             JsonFieldType.BOOLEAN)
                         .description("숙소 바베큐장 여부"),
@@ -176,7 +186,6 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                         .description("숙소 문의 및 안내 번호"),
                     fieldWithPath("data.category").type(JsonFieldType.STRING)
                         .description("숙소 카테고리(호텔, 모텔, 풀빌라, 펜션)"),
-                    fieldWithPath("data.address").type(JsonFieldType.STRING).description("숙소 주소"),
                     fieldWithPath("data.productName").type(JsonFieldType.STRING)
                         .description("숙소 이름"),
                     fieldWithPath("data.description").type(JsonFieldType.STRING)
@@ -186,6 +195,8 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                     fieldWithPath("data.images").type(JsonFieldType.ARRAY).description("숙소 관련 이미지"),
                     fieldWithPath("data.rooms").type(JsonFieldType.ARRAY)
                         .description("숙소 하위 방 데이터"),
+                    fieldWithPath("data.rooms[].roomImages[]").type(JsonFieldType.ARRAY)
+                        .description("객실 이미지"),
                     fieldWithPath("data.rooms[].roomOptionResponse").type(JsonFieldType.OBJECT)
                         .description("방 옵션"),
                     fieldWithPath("data.rooms[].roomOptionResponse.bathFacility").type(
