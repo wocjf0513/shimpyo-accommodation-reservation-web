@@ -10,14 +10,13 @@ public class RoomMapper {
 
     public static RoomResponse toRoomResponse(Room room) {
 
-        boolean isPeakTime = PricePickerByDateUtil.isPeakTime();
-        boolean isWeekend = PricePickerByDateUtil.isWeekend();
+        long price = PricePickerByDateUtil.getPrice(room);
+        price = price == 0 ? 100000 : price;
 
         return RoomResponse.builder()
             .roomId(room.getId())
             .roomName(room.getName())
-            // TODO 날짜에 따라 가격이 달라지므로 로직 수정이 필요함
-            .price((PricePickerByDateUtil.getPrice(room)))
+            .price(price)
             .standard((long) (room.getStandard()))
             .capacity((long) room.getCapacity())
             .description(room.getDescription())

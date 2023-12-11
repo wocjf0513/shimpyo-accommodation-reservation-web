@@ -18,17 +18,19 @@ public class ProductMapper {
 
     public static ProductResponse toProductResponse(Product product) {
 
+        List<Room> rooms = product.getRooms();
+        long price = rooms.isEmpty() ? 0 : rooms.stream().map(PricePickerByDateUtil::getPrice)
+            .min((o1, o2) -> Math.toIntExact(
+                o1 - o2)).orElseThrow();
+        price = price == 0 ? 100000 : price;
+
         return ProductResponse.builder().productId(product.getId()).productName(product.getName())
             .address(
                 product.getAddress().getAddress() + " " + product.getAddress().getDetailAddress())
             .category(product.getCategory().getName())
             .image(product.getThumbnail())
             .starAvg(product.getStarAvg())
-            .price(product.getRooms().isEmpty()
-                ? 0 :
-                product.getRooms().stream().map(PricePickerByDateUtil::getPrice)
-                    .min((o1, o2) -> Math.toIntExact(o1 - o2))
-                    .orElseThrow())
+            .price(price)
             .capacity(product.getRooms().isEmpty()
                 ? 0 : Long.valueOf(
                 product.getRooms().stream().map(Room::getCapacity).min((o1, o2) -> o2 - o1)
@@ -42,7 +44,7 @@ public class ProductMapper {
         List<String> images = new ArrayList<>();
         images.add(product.getThumbnail());
 
-        if(product.getPhotoUrls() != null) {
+        if (product.getPhotoUrls() != null) {
             images.addAll(product.getPhotoUrls().stream().map(ProductImage::getPhotoUrl).toList());
         }
 
