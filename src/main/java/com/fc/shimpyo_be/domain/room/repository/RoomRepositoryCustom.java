@@ -1,10 +1,10 @@
 package com.fc.shimpyo_be.domain.room.repository;
 
-import com.fc.shimpyo_be.domain.room.dto.response.RoomWithProductResponseDto;
+import com.fc.shimpyo_be.domain.room.entity.Room;
 
 import java.util.List;
 
 public interface RoomRepositoryCustom {
 
-    List<RoomWithProductResponseDto> findAllInRoomIdsResponseDto(List<Long> roomIds);
+    List<Room> findAllInIdsWithProductAndPrice(List<Long> roomIds);
 }
