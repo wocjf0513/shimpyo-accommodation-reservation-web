@@ -1,30 +1,9 @@
 package com.fc.shimpyo_be.domain.reservation.docs;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
-import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.fc.shimpyo_be.config.RestDocsSupport;
-import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomItemRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomsRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.request.*;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
-import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.entity.PayMethod;
 import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
 import com.fc.shimpyo_be.domain.reservation.facade.ReservationLockFacade;
@@ -32,8 +11,6 @@ import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.response.ReservationProductResponseDto;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,6 +21,22 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ReservationRestControllerDocsTest extends RestDocsSupport {
 
@@ -85,33 +78,70 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
         String requestUrl = "/api/reservations";
 
         SaveReservationRequestDto requestDto
-            = new SaveReservationRequestDto(
-            List.of(
-                new ReservationProductRequestDto(
-                    1L, "2023-11-20", "2023-11-23",
-                    "홍길동", "010-1111-1111", 300000
-                ),
-                new ReservationProductRequestDto(
-                    3L, "2023-12-10", "2023-12-12",
-                    "김갑돌", "010-2222-2222", 150000
+            = SaveReservationRequestDto.builder()
+            .reservationProducts(
+                List.of(
+                    ReservationProductRequestDto.builder()
+                        .roomId(1L)
+                        .startDate("2023-11-20")
+                        .endDate("2023-11-23")
+                        .visitorName("visitor1")
+                        .visitorPhone("010-1111-1111")
+                        .price(300000)
+                        .build(),
+                    ReservationProductRequestDto.builder()
+                        .roomId(2L)
+                        .startDate("2023-12-10")
+                        .endDate("2023-12-12")
+                        .visitorName("visitor2")
+                        .visitorPhone("010-2222-2222")
+                        .price(150000)
+                        .build()
                 )
-            ), PayMethod.CREDIT_CARD, 450000
-        );
+            )
+            .payMethod(PayMethod.CREDIT_CARD)
+            .totalPrice(450000)
+            .build();
 
-        SaveReservationResponseDto responseDto = new SaveReservationResponseDto(
-            1L,
-            List.of(
-                new ReservationProductResponseDto("숙소1", 1L, "객실1", 2, 3,
-                    "2023-11-20", "2023-11-23", "13:00", "12:00",
-                    "visitor1", "010-1111-1111", 150000),
-                new ReservationProductResponseDto("숙소2", 2L, "객실2", 2, 3,
-                    "2023-11-18", "2023-11-20", "13:00", "12:00",
-                    "visitor2", "010-2222-2222", 200000)
-            ),
-            requestDto.payMethod(),
-            requestDto.totalPrice(),
-            "2023-12-06 10:30:35"
-        );
+        SaveReservationResponseDto responseDto
+            = SaveReservationResponseDto.builder()
+            .reservationId(1L)
+            .reservationProducts(
+                List.of(
+                    ReservationProductResponseDto.builder()
+                        .productName("숙소1")
+                        .roomId(1L)
+                        .roomName("객실1")
+                        .standard(2)
+                        .capacity(3)
+                        .startDate("2023-11-20")
+                        .endDate("2023-11-23")
+                        .checkIn("13:00")
+                        .checkOut("12:00")
+                        .visitorName("visitor1")
+                        .visitorPhone("010-1111-1111")
+                        .price(300000)
+                        .build(),
+                    ReservationProductResponseDto.builder()
+                        .productName("숙소2")
+                        .roomId(2L)
+                        .roomName("객실2")
+                        .standard(2)
+                        .capacity(3)
+                        .startDate("2023-12-10")
+                        .endDate("2023-12-1")
+                        .checkIn("13:00")
+                        .checkOut("12:00")
+                        .visitorName("visitor2")
+                        .visitorPhone("010-2222-2222")
+                        .price(150000)
+                        .build()
+                )
+            )
+            .payMethod(requestDto.payMethod())
+            .totalPrice(requestDto.totalPrice())
+            .createdAt("2023-12-06 10:30:35")
+            .build();
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
         given(reservationLockFacade.saveReservation(anyLong(), any(SaveReservationRequestDto.class)))
@@ -172,7 +202,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("data.payMethod").type(JsonFieldType.STRING).description("결제 수단"),
                         fieldWithPath("data.totalPrice").type(JsonFieldType.NUMBER).description("총 결제 금액"),
                         fieldWithPath("data.createdAt").type(JsonFieldType.STRING).description("예약 주문 시간")
-                        )
+                    )
                 )
             );
 
@@ -189,26 +219,27 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
         int page = 0;
         PageRequest pageRequest = PageRequest.of(page, size);
 
-        List<ReservationInfoResponseDto> content
-            = List.of(
-            new ReservationInfoResponseDto(
-                2L,
-                3L,
-                5L,
-                "호텔1",
-                "호텔1 photoUrl",
-                "호텔1 주소",
-                "호텔 상세 주소",
-                1L,
-                "객실1",
-                "2023-11-23",
-                "2023-11-26",
-                "14:00",
-                "12:00",
-                220000,
-                "CREDIT_CARD"
-            )
-        );
+        List<ReservationInfoResponseDto> content =
+            List.of(
+                ReservationInfoResponseDto.builder()
+                    .reservationId(2L)
+                    .reservationProductId(3L)
+                    .productId(5L)
+                    .productName("호텔1")
+                    .productImageUrl("호텔1 photo URL")
+                    .productAddress("호텔1 주소")
+                    .productDetailAddress("호텔 상세 주소")
+                    .roomId(1L)
+                    .roomName("객실1")
+                    .startDate("2023-11-23")
+                    .endDate("2023-11-26")
+                    .checkIn("14:00")
+                    .checkOut("12:00")
+                    .price(220000)
+                    .payMethod("CREDIT_CARD")
+                    .createdAt("2023-11-20 10:00:00")
+                    .build()
+            );
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
         given(reservationService.getReservationInfoList(anyLong(), any(Pageable.class)))
@@ -245,6 +276,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("data.content.[].checkOut").type(JsonFieldType.STRING).description("체크아웃 시간"),
                         fieldWithPath("data.content.[].price").type(JsonFieldType.NUMBER).description("결제 금액"),
                         fieldWithPath("data.content.[].payMethod").type(JsonFieldType.STRING).description("결제 수단"),
+                        fieldWithPath("data.content.[].createdAt").type(JsonFieldType.STRING).description("예약 결제 완료 일시"),
 
                         fieldWithPath("data.pageable.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬 여부"),
                         fieldWithPath("data.pageable.sort.empty").type(JsonFieldType.BOOLEAN).description("데이터가 비었는지 여부"),
@@ -280,16 +312,19 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
         // given
         String requestUrl = "/api/reservations/preoccupy";
 
-        PreoccupyRoomsRequestDto requestDto
-            = new PreoccupyRoomsRequestDto(
-            List.of(
-                new PreoccupyRoomItemRequestDto(1L, "2023-12-23", "2023-12-25"),
-                new PreoccupyRoomItemRequestDto(2L, "2023-11-11", "2023-11-14")
-            )
-        );
-
-        ValidationResultResponseDto responseDto
-            = new ValidationResultResponseDto(true, new ArrayList<>());
+        PreoccupyRoomsRequestDto requestDto =
+            PreoccupyRoomsRequestDto.builder()
+                .rooms(
+                    List.of(
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(1L).startDate("2023-12-23").endDate("2023-12-25")
+                            .build(),
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(2L).startDate("2023-11-11").endDate("2023-11-14")
+                            .build()
+                    )
+                )
+                .build();
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
@@ -333,13 +368,22 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
         // given
         String requestUrl = "/api/reservations/release";
 
-        ReleaseRoomsRequestDto requestDto = new ReleaseRoomsRequestDto(
-            List.of(
-                new ReleaseRoomItemRequestDto(1L, "2023-12-23", "2023-12-25"),
-                new ReleaseRoomItemRequestDto(2L, "2023-11-11", "2023-11-14"),
-                new ReleaseRoomItemRequestDto(3L, "2023-11-15", "2023-11-16")
-            )
-        );
+        ReleaseRoomsRequestDto requestDto =
+            ReleaseRoomsRequestDto.builder()
+                .rooms(
+                    List.of(
+                        ReleaseRoomItemRequestDto.builder()
+                            .roomId(1L).startDate("2023-12-23").endDate("2023-12-25")
+                            .build(),
+                        ReleaseRoomItemRequestDto.builder()
+                            .roomId(2L).startDate("2023-11-11").endDate("2023-11-14")
+                            .build(),
+                        ReleaseRoomItemRequestDto.builder()
+                            .roomId(3L).startDate("2023-11-15").endDate("2023-11-16")
+                            .build()
+                    )
+                )
+                .build();
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);

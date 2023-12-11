@@ -5,7 +5,6 @@ import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.reservation.dto.request.*;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
-import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.entity.PayMethod;
 import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
 import com.fc.shimpyo_be.domain.reservation.facade.ReservationLockFacade;
@@ -28,7 +27,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -79,31 +77,70 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
         String requestUrl = "/api/reservations";
 
         SaveReservationRequestDto requestDto
-            = new SaveReservationRequestDto(
-            List.of(
-                new ReservationProductRequestDto(
-                    1L, "2023-11-20", "2023-11-23",
-                    "visitor1", "010-1111-1111", 150000),
-                new ReservationProductRequestDto(
-                    2L, "2023-11-18", "2023-11-20",
-                    "visitor2", "010-2222-2222", 200000)
-            ), PayMethod.CREDIT_CARD, 350000
-        );
+            = SaveReservationRequestDto.builder()
+            .reservationProducts(
+                List.of(
+                    ReservationProductRequestDto.builder()
+                        .roomId(1L)
+                        .startDate("2023-11-20")
+                        .endDate("2023-11-23")
+                        .visitorName("visitor1")
+                        .visitorPhone("010-1111-1111")
+                        .price(300000)
+                        .build(),
+                    ReservationProductRequestDto.builder()
+                        .roomId(3L)
+                        .startDate("2023-12-10")
+                        .endDate("2023-12-12")
+                        .visitorName("visitor2")
+                        .visitorPhone("010-2222-2222")
+                        .price(150000)
+                        .build()
+                )
+            )
+            .payMethod(PayMethod.CREDIT_CARD)
+            .totalPrice(450000)
+            .build();
 
-        SaveReservationResponseDto responseDto = new SaveReservationResponseDto(
-            1L,
-            List.of(
-                new ReservationProductResponseDto("숙소1", 1L, "객실1", 2, 3,
-                    "2023-11-20", "2023-11-23", "13:00", "12:00",
-                    "visitor1", "010-1111-1111", 150000),
-                new ReservationProductResponseDto("숙소2", 2L, "객실2", 2, 3,
-                    "2023-11-18", "2023-11-20", "13:00", "12:00",
-                    "visitor2", "010-2222-2222", 200000)
-            ),
-            requestDto.payMethod(),
-            requestDto.totalPrice(),
-            "2023-12-06 10:00:00"
-        );
+        SaveReservationResponseDto responseDto =
+            SaveReservationResponseDto.builder()
+                .reservationId(1L)
+                .reservationProducts(
+                    List.of(
+                        ReservationProductResponseDto.builder()
+                            .productName("숙소1")
+                            .roomId(1L)
+                            .roomName("객실1")
+                            .standard(2)
+                            .capacity(3)
+                            .startDate("2023-11-20")
+                            .endDate("2023-11-23")
+                            .checkIn("13:00")
+                            .checkOut("12:00")
+                            .visitorName("visitor1")
+                            .visitorPhone("010-1111-1111")
+                            .price(300000)
+                            .build(),
+                        ReservationProductResponseDto.builder()
+                            .productName("숙소2")
+                            .roomId(3L)
+                            .roomName("객실3")
+                            .standard(2)
+                            .capacity(3)
+                            .startDate("2023-12-10")
+                            .endDate("2023-12-12")
+                            .checkIn("13:00")
+                            .checkOut("12:00")
+                            .visitorName("visitor2")
+                            .visitorPhone("010-2222-2222")
+                            .price(150000)
+                            .build()
+                    )
+                )
+                .payMethod(requestDto.payMethod())
+                .totalPrice(requestDto.totalPrice())
+                .createdAt("2023-12-06 10:30:35")
+                .build();
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
         given(reservationLockFacade.saveReservation(anyLong(), any(SaveReservationRequestDto.class)))
@@ -132,23 +169,24 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
         PageRequest pageRequest = PageRequest.of(page, size);
         List<ReservationInfoResponseDto> content
             = List.of(
-            new ReservationInfoResponseDto(
-                2L,
-                3L,
-                5L,
-                "호텔2",
-                "호텔 photoUrl",
-                "호텔 주소",
-                "호텔 상세 주소",
-                1L,
-                "객실1",
-                "2023-11-23",
-                "2023-11-26",
-                "14:00",
-                "12:00",
-                220000,
-                "CREDIT_CARD"
-            )
+            ReservationInfoResponseDto.builder()
+                .reservationId(2L)
+                .reservationProductId(3L)
+                .productId(5L)
+                .productName("호텔1")
+                .productImageUrl("호텔1 photo URL")
+                .productAddress("호텔1 주소")
+                .productDetailAddress("호텔 상세 주소")
+                .roomId(1L)
+                .roomName("객실1")
+                .startDate("2023-11-23")
+                .endDate("2023-11-26")
+                .checkIn("14:00")
+                .checkOut("12:00")
+                .price(220000)
+                .payMethod("CREDIT_CARD")
+                .createdAt("2023-11-20 10:00:00")
+                .build()
         );
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
@@ -173,16 +211,23 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
         // given
         String requestUrl = "/api/reservations/preoccupy";
 
-        PreoccupyRoomsRequestDto requestDto
-            = new PreoccupyRoomsRequestDto(
-            List.of(
-                new PreoccupyRoomItemRequestDto(1L, "2023-12-23", "2023-12-25"),
-                new PreoccupyRoomItemRequestDto(2L, "2023-11-11", "2023-11-14")
-            )
-        );
-
-        ValidationResultResponseDto responseDto
-            = new ValidationResultResponseDto(true, new ArrayList<>());
+        PreoccupyRoomsRequestDto requestDto =
+            PreoccupyRoomsRequestDto.builder()
+                .rooms(
+                    List.of(
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(1L)
+                            .startDate("2023-12-23")
+                            .endDate("2023-12-25")
+                            .build(),
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(2L)
+                            .startDate("2023-11-11")
+                            .endDate("2023-11-14")
+                            .build()
+                    )
+                )
+                .build();
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
@@ -207,18 +252,25 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
         // given
         String requestUrl = "/api/reservations/preoccupy";
 
-        PreoccupyRoomsRequestDto requestDto
-            = new PreoccupyRoomsRequestDto(
-            List.of(
-                new PreoccupyRoomItemRequestDto(1L, "2023-12-23", "2023-12-25"),
-                new PreoccupyRoomItemRequestDto(2L, "2023-11-11", "2023-11-14"),
-                new PreoccupyRoomItemRequestDto(3L, "2023-11-11", "2023-11-14"),
-                new PreoccupyRoomItemRequestDto(4L, "2023-11-11", "2023-11-14")
-            )
-        );
-
-        ValidationResultResponseDto responseDto
-            = new ValidationResultResponseDto(true, new ArrayList<>());
+        PreoccupyRoomsRequestDto requestDto =
+            PreoccupyRoomsRequestDto.builder()
+                .rooms(
+                    List.of(
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(1L).startDate("2023-12-23").endDate("2023-12-25")
+                            .build(),
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(2L).startDate("2023-11-11").endDate("2023-11-14")
+                            .build(),
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(3L).startDate("2023-11-11").endDate("2023-11-14")
+                            .build(),
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(4L).startDate("2023-11-16").endDate("2023-11-18")
+                            .build()
+                    )
+                )
+                .build();
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
@@ -243,17 +295,22 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
         // given
         String requestUrl = "/api/reservations/preoccupy";
 
-        PreoccupyRoomsRequestDto requestDto
-            = new PreoccupyRoomsRequestDto(
-            List.of(
-                new PreoccupyRoomItemRequestDto(1L, "202-12-23", "2023-12-25"),
-                new PreoccupyRoomItemRequestDto(2L, "2023-11-11", "2023-11-14"),
-                new PreoccupyRoomItemRequestDto(3L, "2023-11-11", "2023-11-14")
-            )
-        );
-
-        ValidationResultResponseDto responseDto
-            = new ValidationResultResponseDto(true, new ArrayList<>());
+        PreoccupyRoomsRequestDto requestDto =
+            PreoccupyRoomsRequestDto.builder()
+                .rooms(
+                    List.of(
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(1L).startDate("202-12-23").endDate("2023-12-25")
+                            .build(),
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(2L).startDate("2023-11-11").endDate("2023-11-14")
+                            .build(),
+                        PreoccupyRoomItemRequestDto.builder()
+                            .roomId(3L).startDate("2023-11-11").endDate("2023-11-14")
+                            .build()
+                    )
+                )
+                .build();
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
@@ -278,13 +335,22 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
         // given
         String requestUrl = "/api/reservations/release";
 
-        ReleaseRoomsRequestDto requestDto = new ReleaseRoomsRequestDto(
-            List.of(
-                new ReleaseRoomItemRequestDto(1L, "2023-12-23", "2023-12-25"),
-                new ReleaseRoomItemRequestDto(2L, "2023-11-11", "2023-11-14"),
-                new ReleaseRoomItemRequestDto(3L, "2023-11-15", "2023-11-16")
-            )
-        );
+        ReleaseRoomsRequestDto requestDto =
+            ReleaseRoomsRequestDto.builder()
+                .rooms(
+                    List.of(
+                        ReleaseRoomItemRequestDto.builder()
+                            .roomId(1L).startDate("2023-12-23").endDate("2023-12-25")
+                            .build(),
+                        ReleaseRoomItemRequestDto.builder()
+                            .roomId(2L).startDate("2023-11-11").endDate("2023-11-14")
+                            .build(),
+                        ReleaseRoomItemRequestDto.builder()
+                            .roomId(3L).startDate("2023-11-15").endDate("2023-11-16")
+                            .build()
+                    )
+                )
+                .build();
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
