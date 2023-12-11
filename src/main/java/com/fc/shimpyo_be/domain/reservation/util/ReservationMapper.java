@@ -19,54 +19,57 @@ public class ReservationMapper {
         Room room = reservationProduct.getRoom();
         Product product = room.getProduct();
 
-        return new ReservationInfoResponseDto(
-            reservation.getId(),
-            reservationProduct.getId(),
-            product.getId(),
-            product.getName(),
-            product.getThumbnail(),
-            product.getAddress().getAddress(),
-            product.getAddress().getDetailAddress(),
-            room.getId(),
-            room.getName(),
-            DateTimeUtil.toString(reservationProduct.getStartDate()),
-            DateTimeUtil.toString(reservationProduct.getEndDate()),
-            DateTimeUtil.toString(room.getCheckIn()),
-            DateTimeUtil.toString(room.getCheckOut()),
-            reservationProduct.getPrice(),
-            reservation.getPayMethod().name()
-        );
+        return ReservationInfoResponseDto.builder()
+            .reservationId(reservation.getId())
+            .reservationProductId(reservationProduct.getId())
+            .productId(product.getId())
+            .productName(product.getName())
+            .productImageUrl(product.getThumbnail())
+            .productAddress(product.getAddress().getAddress())
+            .productDetailAddress(product.getAddress().getDetailAddress())
+            .roomId(room.getId())
+            .roomName(room.getName())
+            .startDate(DateTimeUtil.toString(reservationProduct.getStartDate()))
+            .endDate(DateTimeUtil.toString(reservationProduct.getEndDate()))
+            .checkIn(DateTimeUtil.toString(room.getCheckIn()))
+            .checkOut(DateTimeUtil.toString(room.getCheckOut()))
+            .price(reservationProduct.getPrice())
+            .payMethod(reservation.getPayMethod().name())
+            .createdAt(DateTimeUtil.toString(reservation.getCreatedAt()))
+            .build();
     }
 
     public static SaveReservationResponseDto from(Reservation reservation) {
         List<ReservationProductResponseDto> reservationProductDtos = new ArrayList<>();
         for (ReservationProduct reservationProduct : reservation.getReservationProducts()) {
+
             Room room = reservationProduct.getRoom();
             Product product = room.getProduct();
+
             reservationProductDtos.add(
-                new ReservationProductResponseDto(
-                    product.getName(),
-                    room.getId(),
-                    room.getName(),
-                    room.getStandard(),
-                    room.getCapacity(),
-                    DateTimeUtil.toString(reservationProduct.getStartDate()),
-                    DateTimeUtil.toString(reservationProduct.getEndDate()),
-                    DateTimeUtil.toString(room.getCheckIn()),
-                    DateTimeUtil.toString(room.getCheckOut()),
-                    reservationProduct.getVisitorName(),
-                    reservationProduct.getVisitorPhone(),
-                    reservationProduct.getPrice()
-                )
+                ReservationProductResponseDto.builder()
+                    .productName(product.getName())
+                    .roomId(room.getId())
+                    .roomName(room.getName())
+                    .standard(room.getStandard())
+                    .capacity(room.getCapacity())
+                    .startDate(DateTimeUtil.toString(reservationProduct.getStartDate()))
+                    .endDate(DateTimeUtil.toString(reservationProduct.getEndDate()))
+                    .checkIn(DateTimeUtil.toString(room.getCheckIn()))
+                    .checkOut(DateTimeUtil.toString(room.getCheckOut()))
+                    .visitorName(reservationProduct.getVisitorName())
+                    .visitorPhone(reservationProduct.getVisitorPhone())
+                    .price(reservationProduct.getPrice())
+                    .build()
             );
         }
 
-        return new SaveReservationResponseDto(
-            reservation.getId(),
-            reservationProductDtos,
-            reservation.getPayMethod(),
-            reservation.getTotalPrice(),
-            DateTimeUtil.toString(reservation.getCreatedAt())
-        );
+        return SaveReservationResponseDto.builder()
+            .reservationId(reservation.getId())
+            .reservationProducts(reservationProductDtos)
+            .payMethod(reservation.getPayMethod())
+            .totalPrice(reservation.getTotalPrice())
+            .createdAt(DateTimeUtil.toString(reservation.getCreatedAt()))
+            .build();
     }
 }
