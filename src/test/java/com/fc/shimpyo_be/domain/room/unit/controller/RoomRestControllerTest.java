@@ -59,12 +59,48 @@ public class RoomRestControllerTest extends AbstractContainersSupport {
         GetRoomListWithProductInfoRequestDto requestDto = new GetRoomListWithProductInfoRequestDto(roomIds);
 
         List<RoomWithProductResponseDto> rooms = List.of(
-            new RoomWithProductResponseDto(1L, "호텔1", "호텔1 썸네일", "호텔1 주소",
-                1L, "객실1", 2, 4, "14:00", "12:00", 100000),
-            new RoomWithProductResponseDto(2L, "호텔2", "호텔2 썸네일", "호텔2 주소",
-                3L, "객실3", 2, 4, "14:00", "11:30", 120000),
-            new RoomWithProductResponseDto(3L, "호텔3", "호텔3 썸네일", "호텔3 주소",
-                4L, "객실4", 2, 4, "13:00", "11:00", 95000)
+            RoomWithProductResponseDto.builder()
+                .productId(1L)
+                .productName("호텔1")
+                .productThumbnail("호텔1 썸네일")
+                .productAddress("호텔1 주소")
+                .productDetailAddress("호텔1 상세 주소")
+                .roomId(1L)
+                .roomName("객실1")
+                .standard(2)
+                .capacity(4)
+                .checkIn("14:00")
+                .checkOut("12:00")
+                .price(80000L)
+                .build(),
+            RoomWithProductResponseDto.builder()
+                .productId(2L)
+                .productName("호텔2")
+                .productThumbnail("호텔2 썸네일")
+                .productAddress("호텔2 주소")
+                .productDetailAddress("호텔2 상세 주소")
+                .roomId(3L)
+                .roomName("객실3")
+                .standard(2)
+                .capacity(4)
+                .checkIn("14:00")
+                .checkOut("11:30")
+                .price(95000L)
+                .build(),
+            RoomWithProductResponseDto.builder()
+                .productId(3L)
+                .productName("호텔3")
+                .productThumbnail("호텔3 썸네일")
+                .productAddress("호텔3 주소")
+                .productDetailAddress("호텔3 상세 주소")
+                .roomId(4L)
+                .roomName("객실4")
+                .standard(2)
+                .capacity(4)
+                .checkIn("13:00")
+                .checkOut("11:00")
+                .price(95000L)
+                .build()
         );
 
         given(roomService.getRoomsWithProductInfo(roomIds))

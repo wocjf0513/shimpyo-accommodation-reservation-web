@@ -1,6 +1,10 @@
 package com.fc.shimpyo_be.domain.room.unit.service;
 
+import com.fc.shimpyo_be.domain.product.entity.*;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomWithProductResponseDto;
+import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.domain.room.entity.RoomOption;
+import com.fc.shimpyo_be.domain.room.entity.RoomPrice;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import com.fc.shimpyo_be.domain.room.service.RoomService;
 import org.junit.jupiter.api.DisplayName;
@@ -10,9 +14,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -26,23 +32,96 @@ public class RoomServiceTest {
     @Mock
     private RoomRepository roomRepository;
 
-    @DisplayName("")
+    @DisplayName("객실 식별자 리스트에 해당하는 객실과 숙소 정보를 리스트로 반환한다.")
     @Test
     void getRoomsWithProductInfo_test() {
         //given
         List<Long> roomIds = List.of(1L, 3L, 4L);
 
-        List<RoomWithProductResponseDto> rooms = List.of(
-            new RoomWithProductResponseDto(1L, "호텔1", "호텔1 썸네일", "호텔1 주소",
-                1L, "객실1", 2, 4, "14:00", "12:00", 100000),
-            new RoomWithProductResponseDto(2L, "호텔2", "호텔2 썸네일", "호텔2 주소",
-                3L, "객실3", 2, 4, "14:00", "11:30", 120000),
-            new RoomWithProductResponseDto(3L, "호텔3", "호텔3 썸네일", "호텔3 주소",
-                4L, "객실4", 2, 4, "13:00", "11:00", 95000)
-        );
+        Product product = Product.builder()
+            .name("호텔")
+            .thumbnail("호텔 썸네일 url")
+            .description("호텔 설명")
+            .starAvg(4.2f)
+            .category(Category.TOURIST_HOTEL)
+            .address(
+                Address.builder()
+                    .address("호텔 주소")
+                    .detailAddress("호텔 상세 주소")
+                    .mapX(1.0)
+                    .mapY(1.5)
+                    .build()
+            )
+            .productOption(
+                ProductOption.builder()
+                    .cooking(true)
+                    .foodPlace("음료 가능")
+                    .parking(true)
+                    .pickup(false)
+                    .infoCenter("1500-0000")
+                    .build()
+            )
+            .amenity(
+                Amenity.builder()
+                    .barbecue(false)
+                    .beauty(true)
+                    .beverage(true)
+                    .fitness(true)
+                    .bicycle(false)
+                    .campfire(false)
+                    .karaoke(true)
+                    .publicBath(true)
+                    .publicPc(true)
+                    .seminar(false)
+                    .sports(false)
+                    .build()
+            )
+            .build();
 
-        given(roomRepository.findAllInRoomIdsResponseDto(roomIds))
-            .willReturn(rooms);
+        List<Room> rooms = new ArrayList<>();
+
+        for (int i = 1; i <= 3; i++) {
+            String roomName = "호텔 객실" + i;
+            rooms.add(
+                Room.builder()
+                    .product(product)
+                    .name(roomName)
+                    .description(roomName + " 설명")
+                    .standard(2)
+                    .capacity(4)
+                    .checkIn(LocalTime.of(14, 0))
+                    .checkOut(LocalTime.of(12, 0))
+                    .price(
+                        RoomPrice.builder()
+                            .offWeekDaysMinFee(75000)
+                            .offWeekendMinFee(85000)
+                            .peakWeekDaysMinFee(100000)
+                            .peakWeekendMinFee(120000)
+                            .build()
+                    )
+                    .roomOption(
+                        RoomOption.builder()
+                            .cooking(true)
+                            .airCondition(true)
+                            .bath(true)
+                            .bathFacility(true)
+                            .pc(false)
+                            .diningTable(true)
+                            .hairDryer(true)
+                            .homeTheater(false)
+                            .internet(true)
+                            .cable(false)
+                            .refrigerator(true)
+                            .sofa(true)
+                            .toiletries(true)
+                            .tv(true)
+                            .build()
+                    )
+                    .build()
+            );
+        }
+
+        given(roomRepository.findAllInIdsWithProductAndPrice(roomIds)).willReturn(rooms);
 
         //when
         List<RoomWithProductResponseDto> result = roomService.getRoomsWithProductInfo(roomIds);
@@ -50,6 +129,6 @@ public class RoomServiceTest {
         //then
         assertThat(result).hasSize(3);
 
-        verify(roomRepository, times(1)).findAllInRoomIdsResponseDto(roomIds);
+        verify(roomRepository, times(1)).findAllInIdsWithProductAndPrice(roomIds);
     }
 }
