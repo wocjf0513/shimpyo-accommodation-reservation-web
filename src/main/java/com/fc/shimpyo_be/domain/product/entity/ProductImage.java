@@ -24,18 +24,18 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Comment("숙소 이미지 식별자")
     private Long id;
-    @Column(nullable = false, columnDefinition = "TEXT")
-    @Comment("숙소 사진 URL")
-    private String photoUrl;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "product_id")
     @Comment("숙소 식별자")
     private Product product;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    @Comment("숙소 사진 URL")
+    private String photoUrl;
 
     @Builder
-    public ProductImage(Long id, String photoUrl, Product product) {
+    public ProductImage(Long id, Product product, String photoUrl) {
         this.id = id;
-        this.photoUrl = photoUrl;
         this.product = product;
+        this.photoUrl = photoUrl;
     }
 }

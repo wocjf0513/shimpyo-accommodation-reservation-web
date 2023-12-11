@@ -1,6 +1,5 @@
-package com.fc.shimpyo_be.domain.star.entity;
+package com.fc.shimpyo_be.domain.room.entity;
 
-import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,29 +18,28 @@ import org.hibernate.annotations.Comment;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Star {
+public class RoomImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Comment(value = "별점 식별자")
+    @Comment("객실 이미지 식별자")
     private Long id;
-    @Comment(value = "회원 식별자")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-    @Comment(value = "별점 등록 숙소 식별자")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
-    @Comment(value = "별점 점수")
+    @JoinColumn(nullable = false, name = "room_id")
+    @Comment("객실 식별자")
+    private Room room;
     @Column(nullable = false)
-    private float score;
+    @Comment("객실 이미지 URL")
+    private String photoUrl;
+    @Column(nullable = false)
+    @Comment("객실 이미지 설명")
+    private String description;
 
     @Builder
-    public Star(Long id, Member member, Product product, float score) {
+    public RoomImage(Long id, Room room, String photoUrl, String description) {
         this.id = id;
-        this.member = member;
-        this.product = product;
-        this.score = score;
+        this.room = room;
+        this.photoUrl = photoUrl;
+        this.description = description;
     }
 }
