@@ -3,7 +3,9 @@ package com.fc.shimpyo_be.domain.reservationproduct.dto.request;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
+@Builder
 public record ReservationProductRequestDto(
     @NotNull
     Long roomId,

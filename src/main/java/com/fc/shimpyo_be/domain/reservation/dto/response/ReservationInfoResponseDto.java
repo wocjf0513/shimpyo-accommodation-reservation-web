@@ -1,5 +1,8 @@
 package com.fc.shimpyo_be.domain.reservation.dto.response;
 
+import lombok.Builder;
+
+@Builder
 public record ReservationInfoResponseDto(
     Long reservationId,
     Long reservationProductId,
@@ -15,6 +18,7 @@ public record ReservationInfoResponseDto(
     String checkIn,
     String checkOut,
     Integer price,
-    String payMethod
+    String payMethod,
+    String createdAt
 ) {
 }

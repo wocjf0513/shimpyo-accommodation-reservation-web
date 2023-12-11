@@ -1,5 +1,8 @@
 package com.fc.shimpyo_be.domain.reservationproduct.dto.response;
 
+import lombok.Builder;
+
+@Builder
 public record ReservationProductResponseDto(
     String productName,
     Long roomId,
