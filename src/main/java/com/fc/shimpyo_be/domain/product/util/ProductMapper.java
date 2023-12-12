@@ -62,7 +62,7 @@ public class ProductMapper {
             .productOptionResponse(toProductOptionResponse(product.getProductOption()))
             .favorites(false)
             .images(images)
-            .rooms(product.getRooms().stream().map(RoomMapper::toRoomResponse).toList())
+            .rooms(product.getRooms().stream().map(RoomMapper::toRoomResponse).distinct().toList())
             .build();
     }
 

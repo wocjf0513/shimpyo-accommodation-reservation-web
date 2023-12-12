@@ -10,6 +10,8 @@ import java.util.List;
 public interface RoomRepository
     extends JpaRepository<Room, Long>, RoomRepositoryCustom {
 
+    List<Room> findByCode(long code);
+
     @Query("select r.id from Room r where r.code = :code")
     List<Long> findIdsByCode(@Param("code") Long code);
 }

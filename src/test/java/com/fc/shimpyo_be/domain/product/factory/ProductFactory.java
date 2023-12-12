@@ -62,7 +62,7 @@ public class ProductFactory {
             .build();
     }
 
-    public static Room createTestRoom(Product product) {
+    public static Room createTestRoom(Product product, Long code) {
 
         int stadard = ThreadLocalRandom.current().nextInt(10);
         int fee = ThreadLocalRandom.current().nextInt(100000);
@@ -78,6 +78,7 @@ public class ProductFactory {
             .name(product.getCategory().getName() + " 방").standard(stadard)
             .capacity(stadard + ThreadLocalRandom.current().nextInt(10))
             .roomImages(new ArrayList<>())
+            .code(code)
             .roomOption(RoomOption.builder()
                 .bathFacility(false)
                 .bath(false)
