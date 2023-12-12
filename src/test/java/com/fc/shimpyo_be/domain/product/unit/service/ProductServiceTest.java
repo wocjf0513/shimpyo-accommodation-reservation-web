@@ -6,11 +6,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 
 import com.fc.shimpyo_be.domain.product.dto.request.SearchKeywordRequest;
+import com.fc.shimpyo_be.domain.product.dto.response.PaginatedProductResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.factory.ProductFactory;
+import com.fc.shimpyo_be.domain.product.repository.ProductCustomRepository;
+import com.fc.shimpyo_be.domain.product.repository.ProductCustomRepositoryImpl;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.domain.product.util.ProductMapper;
@@ -26,13 +29,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
     @Mock
     private ProductRepository productRepository;
+
+    @Mock
+    private ProductCustomRepositoryImpl productCustomRepository;
 
     @Spy
     @InjectMocks
@@ -46,21 +51,18 @@ class ProductServiceTest {
             .productName("강릉 세인트 호텔").category(Category.MOTEL.getName()).address("강원도 강릉시 창해로 307")
             .build();
 
-        Specification<Product> spec = (root, query, criteriaBuilder) -> null;
-
         List<Product> expectedProducts = ProductFactory.createTestProducts();
         Pageable pageable = Pageable.ofSize(10);
         Page<Product> productPage = new PageImpl<>(expectedProducts);
-        given(productRepository.findAll(any(Specification.class), any(Pageable.class))).willReturn(
+        given(productCustomRepository.findAllBySearchKeywordRequest(any(SearchKeywordRequest.class),
+            any(Pageable.class))).willReturn(
             productPage);
 
-        //when
-        List<ProductResponse> result = productService.getProducts(searchKeywordRequest, pageable);
+        PaginatedProductResponse result = productService.getProducts(searchKeywordRequest, pageable);
 
         //then
-        assertThat(result).usingRecursiveAssertion().isEqualTo(
-            productPage.getContent().stream().map(ProductMapper::toProductResponse).toList());
-
+            assertThat(result.productResponses()).usingRecursiveAssertion().isEqualTo(
+                productPage.getContent().stream().map(ProductMapper::toProductResponse).toList());
     }
 
     @Test

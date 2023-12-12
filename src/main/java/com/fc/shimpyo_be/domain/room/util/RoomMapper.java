@@ -6,6 +6,7 @@ import com.fc.shimpyo_be.domain.room.dto.response.RoomOptionResponse;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomResponse;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomWithProductResponseDto;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.domain.room.entity.RoomImage;
 import com.fc.shimpyo_be.domain.room.entity.RoomOption;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import com.fc.shimpyo_be.global.util.PricePickerByDateUtil;
@@ -14,14 +15,13 @@ public class RoomMapper {
 
     public static RoomResponse toRoomResponse(Room room) {
 
-        boolean isPeakTime = PricePickerByDateUtil.isPeakTime();
-        boolean isWeekend = PricePickerByDateUtil.isWeekend();
+        long price = PricePickerByDateUtil.getPrice(room);
+        price = price == 0 ? 100000 : price;
 
         return RoomResponse.builder()
             .roomId(room.getId())
             .roomName(room.getName())
-            // TODO 날짜에 따라 가격이 달라지므로 로직 수정이 필요함
-            .price((PricePickerByDateUtil.getPrice(room)))
+            .price(price)
             .standard((long) (room.getStandard()))
             .capacity((long) room.getCapacity())
             .description(room.getDescription())
@@ -29,10 +29,11 @@ public class RoomMapper {
             .checkIn(room.getCheckIn().toString())
             .checkOut(room.getCheckOut().toString())
             .roomOptionResponse(toRoomOptionResponse(room.getRoomOption()))
+            .roomImages(room.getRoomImages().stream().map(RoomImage::getPhotoUrl).toList())
             .build();
     }
 
-    public static RoomOptionResponse toRoomOptionResponse(RoomOption roomOption) {
+    private static RoomOptionResponse toRoomOptionResponse(RoomOption roomOption) {
         return RoomOptionResponse.builder()
             .airCondition(roomOption.isAirCondition())
             .pc(roomOption.isPc())
