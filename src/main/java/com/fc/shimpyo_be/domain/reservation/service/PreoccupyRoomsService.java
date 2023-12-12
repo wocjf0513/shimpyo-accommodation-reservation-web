@@ -3,6 +3,8 @@ package com.fc.shimpyo_be.domain.reservation.service;
 import com.fc.shimpyo_be.domain.reservation.dto.CheckAvailableRoomsResultDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidatePreoccupyRoomResponseDto;
+import com.fc.shimpyo_be.domain.room.service.RoomService;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,53 +21,109 @@ import java.util.*;
 @Service
 public class PreoccupyRoomsService {
 
+    private final RoomService roomService;
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String REDIS_KEY_FORMAT = "roomId:%d:%s";
+    private static final String CHECK_DUPLICATE_FORMAT = "%d:%s:%s";
 
     public CheckAvailableRoomsResultDto checkAvailable(Long memberId, PreoccupyRoomsRequestDto request) {
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
 
         boolean isAvailable = true;
-        List<Long> unavailableIds = new LinkedList<>();
-        Map<Long, Map<String, String>> recordMap = new HashMap<>();
         String memberIdValue = String.valueOf(memberId);
 
+        Map<Long, Map<String, String>> preoccupyMap = new HashMap<>();
+        Set<String> checkSet = new HashSet<>();
+        List<ValidatePreoccupyRoomResponseDto> roomResults = new ArrayList<>();
+
+        // 각 요청 데이터 처리
         for (PreoccupyRoomItemRequestDto room : request.rooms()) {
 
-            LocalDate targetDate = DateTimeUtil.toLocalDate(room.startDate());
+            LocalDate startDate = DateTimeUtil.toLocalDate(room.startDate());
             LocalDate endDate = DateTimeUtil.toLocalDate(room.endDate());
+            Long roomCode = room.roomCode();
 
-            while(targetDate.isBefore(endDate)) {
+            List<Long> roomIds = roomService.getRoomIdsByCode(roomCode);
 
-                String key = String.format(REDIS_KEY_FORMAT, room.roomId(), targetDate);
-                Object value = opsForValue.get(key);
+            // roomId 돌면서 되는지 확인
+            // 되는 경우
+            boolean roomIdCheck = false;
+            for (Long roomId : roomIds) {
 
-                log.info("roomId: {}, targetDate: {}, value: {}", room.roomId(), targetDate, value);
-                if(Objects.nonNull(value)) {
-                    isAvailable = false;
-                    unavailableIds.add(room.roomId());
-                    break;
+                if(checkSet.contains(String.format(CHECK_DUPLICATE_FORMAT, roomId, startDate, endDate))) {
+                    continue;
                 }
 
-                recordMap
-                    .computeIfAbsent(room.roomId(), k -> new LinkedHashMap<>())
-                    .put(key, memberIdValue);
+                boolean dateCheck = true;
+                LocalDate targetDate = startDate;
+                while(targetDate.isBefore(endDate)) {
 
-                targetDate = targetDate.plusDays(1);
+                    String key = String.format(REDIS_KEY_FORMAT, roomId, targetDate);
+                    Object value = opsForValue.get(key);
+
+                    log.info("roomId: {}, targetDate: {}, value: {}", roomId, targetDate, value);
+                    if(Objects.nonNull(value)) {
+                        dateCheck = false;
+                        preoccupyMap.remove(roomId);
+                        break;
+                    }
+
+                    preoccupyMap
+                        .computeIfAbsent(roomId, k -> new LinkedHashMap<>())
+                        .put(key, memberIdValue);
+
+                    targetDate = targetDate.plusDays(1);
+                }
+
+                if(dateCheck) {
+                    roomIdCheck = true;
+
+                    roomResults.add(
+                        ValidatePreoccupyRoomResponseDto.builder()
+                            .roomCode(roomCode)
+                            .startDate(DateTimeUtil.toString(startDate))
+                            .endDate(DateTimeUtil.toString(endDate))
+                            .roomId(roomId)
+                            .build()
+                    );
+
+                    checkSet.add(String.format(CHECK_DUPLICATE_FORMAT, roomId, startDate, endDate));
+
+                    break;
+                }
+            }
+
+            if (!roomIdCheck) {
+                isAvailable = false;
+
+                roomResults.add(
+                    ValidatePreoccupyRoomResponseDto.builder()
+                        .roomCode(roomCode)
+                        .startDate(DateTimeUtil.toString(startDate))
+                        .endDate(DateTimeUtil.toString(endDate))
+                        .roomId(-1L)
+                        .build()
+                );
             }
         }
 
-        return new CheckAvailableRoomsResultDto(isAvailable, unavailableIds, recordMap);
+        return CheckAvailableRoomsResultDto.builder()
+            .isAvailable(isAvailable)
+            .roomResults(roomResults)
+            .preoccupyMap(preoccupyMap)
+            .build();
     }
 
-    public void preoccupy(PreoccupyRoomsRequestDto request, Map<Long, Map<String, String>> preoccupyMap) {
+    public void preoccupy(CheckAvailableRoomsResultDto resultDto) {
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
 
-        for (PreoccupyRoomItemRequestDto room : request.rooms()) {
-            Map<String, String> map = preoccupyMap.get(room.roomId());
+        Map<Long, Map<String, String>> preoccupyMap = resultDto.preoccupyMap();
+
+        for (ValidatePreoccupyRoomResponseDto roomResult : resultDto.roomResults()) {
+            Map<String, String> map = preoccupyMap.get(roomResult.roomId());
             opsForValue.multiSet(map);
 
-            Date expireDate = convertLocalDateToDate(DateTimeUtil.toLocalDate(room.endDate()));
+            Date expireDate = convertLocalDateToDate(DateTimeUtil.toLocalDate(roomResult.endDate()));
             for (String key : map.keySet()) {
                 redisTemplate.expireAt(key, expireDate);
             }
