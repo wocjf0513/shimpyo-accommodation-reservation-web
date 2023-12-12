@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record ValidationResultResponseDto(
+public record ValidateReservationResultResponseDto(
     boolean isAvailable,
     List<Long> unavailableIds
 ) {
