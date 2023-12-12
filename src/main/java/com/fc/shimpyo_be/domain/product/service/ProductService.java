@@ -56,12 +56,12 @@ public class ProductService {
             product);
         productDetailsResponse.rooms().forEach(
             roomResponse -> roomResponse.setRemaining(
-                isAvailableForReservationUsingRoomCode(roomResponse.getRoomCode(), startDate,
+                countAvailableForReservationUsingRoomCode(roomResponse.getRoomCode(), startDate,
                     endDate)));
         return productDetailsResponse;
     }
 
-    public long isAvailableForReservationUsingRoomCode(final Long roomCode, final String startDate,
+    public long countAvailableForReservationUsingRoomCode(final Long roomCode, final String startDate,
         final String endDate) {
         AtomicLong remaining = new AtomicLong();
         List<Room> rooms = Optional.of(roomRepository.findByCode(roomCode)).orElseThrow();

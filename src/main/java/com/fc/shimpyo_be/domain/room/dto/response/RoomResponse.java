@@ -2,6 +2,7 @@ package com.fc.shimpyo_be.domain.room.dto.response;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -49,14 +50,16 @@ public class RoomResponse {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         RoomResponse otherRoomResponse = (RoomResponse) obj;
-        return this.roomCode.equals(otherRoomResponse.getRoomCode());
+        return Objects.equals(roomCode, otherRoomResponse.roomCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(roomCode);
     }
 
     public void setRemaining(long remaining) {

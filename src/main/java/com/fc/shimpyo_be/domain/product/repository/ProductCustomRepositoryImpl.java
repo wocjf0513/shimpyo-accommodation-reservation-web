@@ -67,7 +67,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
         if (searchKeywordRequest.address() != null) {
             expressions.add(
-                address1.detailAddress.containsIgnoreCase(searchKeywordRequest.address()));
+                address1.address.containsIgnoreCase(searchKeywordRequest.address()));
         }
 
         if (searchKeywordRequest.category() != null && !searchKeywordRequest.category().isEmpty()) {

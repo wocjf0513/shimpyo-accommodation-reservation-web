@@ -43,8 +43,9 @@ public class CartService {
             securityUtil.getCurrentMemberId()).orElseThrow();
 
         return carts.stream().map(this::getCartResponse).filter(
-            cartResponse -> !isNotAvailableReservation(cartResponse.getRoomCode(),
-                cartResponse.getStartDate(), cartResponse.getEndDate())).distinct().toList();
+                cartResponse ->
+                    productService.countAvailableForReservationUsingRoomCode(cartResponse.getRoomCode(),
+                        cartResponse.getStartDate(), cartResponse.getEndDate()) > 0).toList();
     }
 
     @Transactional
@@ -53,8 +54,14 @@ public class CartService {
         Member member = memberRepository.findById(securityUtil.getCurrentMemberId())
             .orElseThrow(MemberNotFoundException::new);
 
-        if (isNotAvailableReservation(cartCreateRequest.roomCode(), cartCreateRequest.startDate(),
-            cartCreateRequest.endDate())) {
+        Long countAvailableForReservation = productService.countAvailableForReservationUsingRoomCode(
+            cartCreateRequest.roomCode(),
+            cartCreateRequest.startDate(),
+            cartCreateRequest.endDate());
+
+        if (countAvailableForReservation <= 0
+            || cartRepository.countByRoomCode(cartCreateRequest.roomCode()) + 1
+            > countAvailableForReservation) {
             throw new RoomNotReserveException();
         }
 
@@ -79,12 +86,6 @@ public class CartService {
             .orElseThrow();
 
         return CartMapper.toCartResponse(cart, rooms.get(0));
-    }
-
-    private Boolean isNotAvailableReservation(final Long roomCode, final String startDate,
-        final String endDate) {
-        return productService.isAvailableForReservationUsingRoomCode(roomCode,
-            startDate, endDate) <= 0;
     }
 
 

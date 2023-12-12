@@ -78,11 +78,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
 
         product = productRepository.save(ProductFactory.createTestProduct());
-        room = roomRepository.save(ProductFactory.createTestRoom(product));
-
-        for (int i = 0; i < 5; i++) {
-            Cart cart = cartRepository.save(CartFactory.createCartTest(room, member));
-        }
+        room = roomRepository.save(ProductFactory.createTestRoom(product,0l));
 
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
     }
@@ -91,6 +87,9 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     @WithMockUser
     void getCarts() throws Exception {
         //given
+        for (int i = 0; i < 5; i++) {
+            Cart cart = cartRepository.save(CartFactory.createCartTest(room, member));
+        }
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/carts"));
         //then
@@ -101,7 +100,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
                 fieldWithPath("data[].productId").type(JsonFieldType.NUMBER).description("숙소 아이디"),
                 fieldWithPath("data[].productName").type(JsonFieldType.STRING).description("숙소 이름"),
                 fieldWithPath("data[].image").type(JsonFieldType.STRING).description("숙소 대표 이미지"),
-                fieldWithPath("data[].roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+                fieldWithPath("data[].roomCode").type(JsonFieldType.NUMBER).description("방 코드"),
                 fieldWithPath("data[].roomName").type(JsonFieldType.STRING).description("방 이름"),
                 fieldWithPath("data[].price").type(JsonFieldType.NUMBER).description("총 가격"),
                 fieldWithPath("data[].description").type(JsonFieldType.STRING).description("방 설명"),
@@ -111,9 +110,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
                 fieldWithPath("data[].endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
                 fieldWithPath("data[].checkIn").type(JsonFieldType.STRING).description("방 체크인 시간"),
                 fieldWithPath("data[].checkOut").type(JsonFieldType.STRING)
-                    .description("방 체크아웃 시간"),
-                fieldWithPath("data[].reserved").type(JsonFieldType.BOOLEAN)
-                    .description("예약 가능 여부"))));
+                    .description("방 체크아웃 시간"))));
 
     }
 
@@ -126,7 +123,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
             .startDate(DateTimeUtil.toString(
                 tommorrow))
             .endDate(DateTimeUtil.toString(tommorrow.plusDays(1))).price(100000L)
-            .roomId(room.getId()).build();
+            .roomCode(room.getCode()).build();
         //when
         ResultActions resultActions = mockMvc.perform(
             post("/api/carts").content(objectMapper.writeValueAsString(cartCreateRequest))
@@ -134,7 +131,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
 
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
-            requestFields(fieldWithPath("roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+            requestFields(fieldWithPath("roomCode").type(JsonFieldType.NUMBER).description("방 코드"),
                 fieldWithPath("startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
                 fieldWithPath("endDate").type(JsonFieldType.STRING).description("숙박 종료일"),
                 fieldWithPath("price").type(JsonFieldType.NUMBER).description("장바구니 가격")),
@@ -144,7 +141,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
                 fieldWithPath("data.productId").type(JsonFieldType.NUMBER).description("숙소 아이디"),
                 fieldWithPath("data.productName").type(JsonFieldType.STRING).description("숙소 이름"),
                 fieldWithPath("data.image").type(JsonFieldType.STRING).description("숙소 대표 이미지"),
-                fieldWithPath("data.roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+                fieldWithPath("data.roomCode").type(JsonFieldType.NUMBER).description("방 코드"),
                 fieldWithPath("data.roomName").type(JsonFieldType.STRING).description("방 이름"),
                 fieldWithPath("data.price").type(JsonFieldType.NUMBER).description("총 가격"),
                 fieldWithPath("data.description").type(JsonFieldType.STRING).description("방 설명"),
@@ -155,9 +152,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
                 fieldWithPath("data.checkIn").type(JsonFieldType.STRING).description("방 체크인 시간"),
                 fieldWithPath("data.checkOut").type(JsonFieldType.STRING).description("방 체크아웃 시간"),
                 fieldWithPath(("data.checkOut")).type(JsonFieldType.STRING)
-                    .description("방 체크아웃 시간"),
-                fieldWithPath("data.reserved").type(JsonFieldType.BOOLEAN)
-                    .description("예약 가능 여부"))));
+                    .description("방 체크아웃 시간"))));
 
     }
 
@@ -174,7 +169,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
             responseFields(responseCommon()).and(
                 fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                 fieldWithPath("data.cartId").type(JsonFieldType.NUMBER).description("장바구니 아이디"),
-                fieldWithPath("data.roomId").type(JsonFieldType.NUMBER).description("방 아이디"),
+                fieldWithPath("data.roomCode").type(JsonFieldType.NUMBER).description("방 코드"),
                 fieldWithPath("data.startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
                 fieldWithPath("data.endDate").type(JsonFieldType.STRING).description("숙박 종료일"))));
     }
