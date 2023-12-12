@@ -6,6 +6,7 @@ import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.entity.ProductImage;
 import com.fc.shimpyo_be.domain.product.entity.ProductOption;
+import com.fc.shimpyo_be.domain.product.exception.InvalidDataException;
 import com.fc.shimpyo_be.domain.product.exception.OpenApiException;
 import com.fc.shimpyo_be.domain.product.repository.ProductImageRepository;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
@@ -15,6 +16,7 @@ import com.fc.shimpyo_be.domain.room.entity.RoomOption;
 import com.fc.shimpyo_be.domain.room.entity.RoomPrice;
 import com.fc.shimpyo_be.domain.room.repository.RoomImageRepository;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
+import jakarta.annotation.PostConstruct;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -28,7 +30,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,81 +60,44 @@ public class OpenApiService {
 
     private HttpEntity<String> httpEntity;
 
+    @PostConstruct
+    public void init() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        httpEntity = new HttpEntity<>(headers);
+    }
+
     @Transactional
     public void getData(int pageSize, int pageNum) throws JSONException {
         try {
-            JSONObject accommodation = getAccommodation(pageSize, pageNum);
-            JSONArray base = accommodation
-                .getJSONObject("items")
+            JSONArray stayArr = getAccommodation(pageSize, pageNum).getJSONObject("items")
                 .getJSONArray("item");
-            for (int j = 0; j < base.length(); j++) {
+
+            for (int j = 0; j < stayArr.length(); j++) {
                 try {
-                JSONObject baseItem = base.getJSONObject(j);
-                int contentId = baseItem.getInt("contentid");
-
-                JSONObject infoBody = getInfo(contentId);
-                if (isEmpty(infoBody)) {
-                    log.info("반복 정보 조회에 데이터가 없습니다. 다음 숙소를 조회합니다.");
-                    continue;
-                }
-
-                JSONArray info = infoBody.getJSONObject("items")
-                    .getJSONArray("item");
-                if (!hasRoom(info)) {
-                    log.info("숙박 숙소에 방이 없습니다. 다음 숙소를 조회합니다.");
-                    continue;
-                }
-
-                JSONObject imageBody = getImages(contentId);
-                if (isEmpty(imageBody)) {
-                    log.info("숙박 숙소에 이미지가 없습니다.다음 숙소를 조회합니다.");
-                    continue;
-                }
-                JSONArray images = imageBody
-                    .getJSONObject("items")
-                    .getJSONArray("item");
-
-                JSONObject commonBody = getCommon(contentId);
-                if (isEmpty(commonBody)) {
-                    log.info("공통 정보 조회에 데이터가 없습니다. 다음 숙소를 조회합니다.");
-                    continue;
-                }
-                JSONObject common = commonBody.getJSONObject("items")
-                    .getJSONArray("item")
-                    .getJSONObject(0);
-
-                JSONObject introBody = getIntro(contentId);
-                if (isEmpty(introBody)) {
-                    log.info("소개 정보 조회에 데이터가 없습니다. 다음 숙소를 조회합니다.");
-                    continue;
-                }
-                JSONObject intro = introBody
-                    .getJSONObject("items")
-                    .getJSONArray("item")
-                    .getJSONObject(0);
-
-                if (intro.getString("checkintime").trim().isEmpty() || intro.getString(
-                    "checkouttime").trim().isEmpty()) {
-                    log.info("체크인 체크아웃 데이터가 없습니다. 다음 숙소를 조회합니다. ");
-                    continue;
-                }
-
-                if (intro.getString("checkintime").split(":|;|시").length != 2
-                    || intro.getString("checkouttime").split(":|;|시").length != 2) {
-                    log.info("체크인 체크아웃 데이터가 형식에 맞지 않습니다. 다음 숙소를 조회합니다.");
-                    continue;
-                }
-
-                if (baseItem.getString("firstimage").isEmpty()) {
-                    log.info("썸네일로 사용할 이미지가 없습니다. 다음 숙소를 조회합니다.");
-                    continue;
-                }
-
-                Product product = saveProduct(baseItem, common, intro);
-                saveProductImages(product, images);
-                saveRooms(product, intro, info);
-                } catch (Exception e) {
-                    log.info("데이터가 형식에 맞지 않습니다. 다음 숙소를 조회합니다.");
+                    JSONObject stay = stayArr.getJSONObject(j);
+                    int contentId = stay.getInt("contentid");
+                    JSONObject info = getInfo(contentId);
+                    checkInfo(info);
+                    JSONArray rooms = getItems(info);
+                    checkRoom(rooms);
+                    JSONObject image = getImages(contentId);
+                    checkImage(image);
+                    JSONArray images = getItems(image);
+                    JSONObject common = getCommon(contentId);
+                    checkCommon(common);
+                    JSONObject commonItem = getItems(common).getJSONObject(0);
+                    JSONObject intro = getIntro(contentId);
+                    checkIntro(intro);
+                    JSONObject introItem = getItems(intro).getJSONObject(0);
+                    checkIntroItem(introItem);
+                    checkStay(stay);
+                    Product product = saveProduct(stay, commonItem, introItem);
+                    saveProductImages(product, images);
+                    saveRooms(product, introItem, rooms);
+                } catch (InvalidDataException e) {
+                    log.error(e.getMessage());
+                    log.info("다음 숙소를 조회합니다.");
                 }
             }
         } catch (Exception e) {
@@ -228,6 +195,10 @@ public class OpenApiService {
         return new JSONObject(imageResponse.getBody())
             .getJSONObject("response")
             .getJSONObject("body");
+    }
+
+    private JSONArray getItems(JSONObject jsonObject) {
+        return jsonObject.getJSONObject("items").getJSONArray("item");
     }
 
     private boolean hasRoom(JSONArray info) throws JSONException {
@@ -375,5 +346,52 @@ public class OpenApiService {
         int minute =
             stringTime.length == 1 ? 0 : Integer.parseInt(stringTime[1].trim().substring(0, 2));
         return LocalTime.of(hour, minute);
+    }
+
+    private void checkInfo(JSONObject info) {
+        if (isEmpty(info)) {
+            throw new InvalidDataException("반복 정보 조회에 데이터가 없습니다. 다음 숙소를 조회합니다.");
+        }
+    }
+
+    private void checkRoom(JSONArray rooms) {
+        if (!hasRoom(rooms)) {
+            throw new InvalidDataException("숙박 숙소에 방이 없습니다. 다음 숙소를 조회합니다.");
+        }
+    }
+
+    private void checkImage(JSONObject image) {
+        if (isEmpty(image)) {
+            throw new InvalidDataException("숙박 숙소에 이미지가 없습니다.다음 숙소를 조회합니다.");
+        }
+    }
+
+    private void checkCommon(JSONObject common) {
+        if (isEmpty(common)) {
+            throw new InvalidDataException("공통 정보 조회에 데이터가 없습니다. 다음 숙소를 조회합니다.");
+        }
+    }
+
+    private void checkIntro(JSONObject intro) {
+        if (isEmpty(intro)) {
+            throw new InvalidDataException("소개 정보 조회에 데이터가 없습니다. 다음 숙소를 조회합니다.");
+        }
+    }
+
+    private void checkIntroItem(JSONObject introItem) {
+        if (introItem.getString("checkintime").trim().isEmpty() || introItem.getString(
+            "checkouttime").trim().isEmpty()) {
+            throw new InvalidDataException("체크인 체크아웃 데이터가 없습니다. 다음 숙소를 조회합니다. ");
+        }
+        if (introItem.getString("checkintime").split(":|;|시").length != 2
+            || introItem.getString("checkouttime").split(":|;|시").length != 2) {
+            throw new InvalidDataException("체크인 체크아웃 데이터가 형식에 맞지 않습니다. 다음 숙소를 조회합니다.");
+        }
+    }
+
+    private void checkStay(JSONObject stay) {
+        if (stay.getString("firstimage").isEmpty()) {
+            throw new InvalidDataException("썸네일로 사용할 이미지가 없습니다. 다음 숙소를 조회합니다.");
+        }
     }
 }
