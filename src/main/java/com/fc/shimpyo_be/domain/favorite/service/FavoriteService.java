@@ -31,7 +31,7 @@ public class FavoriteService {
         Product product = productRepository.findById(productId).orElseThrow(
             ProductNotFoundException::new);
         Optional<Favorite> favorite = favoriteRepository.findByMemberAndProduct(member, product);
-        if (favorite.isEmpty()) {
+        if (favorite.isPresent()) {
             throw new FavoriteAlreadyRegisterException();
         }
         return FavoriteResponseDto.of(favoriteRepository.save(Favorite.builder()
