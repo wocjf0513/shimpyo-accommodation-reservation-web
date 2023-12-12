@@ -47,7 +47,7 @@ public enum ErrorCode {
 
     // 즐겨찾기
     FAVORITE_ALREADY_REGISTER(HttpStatus.BAD_REQUEST, "이미 즐겨찾기에 등록한 숙소입니다."),
-    FAVORITE_NOT_REGISTERED(HttpStatus.BAD_REQUEST, "즐겨찾기 하지 않았습니다.");
+    FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "즐겨찾기 정보를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String simpleMessage;
