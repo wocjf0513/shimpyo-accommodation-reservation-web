@@ -36,7 +36,6 @@ public class PreoccupyRoomsService {
         Set<String> checkSet = new HashSet<>();
         List<ValidatePreoccupyRoomResponseDto> roomResults = new ArrayList<>();
 
-        // 각 요청 데이터 처리
         for (PreoccupyRoomItemRequestDto room : request.rooms()) {
 
             LocalDate startDate = DateTimeUtil.toLocalDate(room.startDate());
@@ -45,8 +44,6 @@ public class PreoccupyRoomsService {
 
             List<Long> roomIds = roomService.getRoomIdsByCode(roomCode);
 
-            // roomId 돌면서 되는지 확인
-            // 되는 경우
             boolean roomIdCheck = false;
             for (Long roomId : roomIds) {
 
