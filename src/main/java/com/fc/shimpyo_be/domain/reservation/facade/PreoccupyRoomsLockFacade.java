@@ -2,9 +2,9 @@ package com.fc.shimpyo_be.domain.reservation.facade;
 
 import com.fc.shimpyo_be.domain.reservation.dto.CheckAvailableRoomsResultDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
-import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidatePreoccupyResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.exception.RedissonLockFailException;
-import com.fc.shimpyo_be.domain.reservation.exception.UnavailableRoomsException;
+import com.fc.shimpyo_be.domain.reservation.exception.PreoccupyNotAvailableException;
 import com.fc.shimpyo_be.domain.reservation.service.PreoccupyRoomsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +23,7 @@ public class PreoccupyRoomsLockFacade {
     private final RedissonClient redissonClient;
     private final PreoccupyRoomsService preoccupyRoomsService;
 
-
-    public void checkAvailableAndPreoccupy(Long memberId, PreoccupyRoomsRequestDto request) {
+    public ValidatePreoccupyResultResponseDto checkAvailableAndPreoccupy(Long memberId, PreoccupyRoomsRequestDto request) {
         RLock lock = redissonClient.getLock("check-preoccupy");
         String currentWorker = Thread.currentThread().getName();
 
@@ -37,15 +36,25 @@ public class PreoccupyRoomsLockFacade {
             }
 
             CheckAvailableRoomsResultDto resultDto = preoccupyRoomsService.checkAvailable(memberId, request);
+
             if(!resultDto.isAvailable()) {
-                log.info("[{}][check available rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, false, resultDto.unavailableIds());
-                throw new UnavailableRoomsException(
-                    new ValidationResultResponseDto(false, resultDto.unavailableIds())
+                log.debug("[{}][check available rooms result] isAvailable = {}, results = {}", currentWorker, false, resultDto.roomResults());
+                throw new PreoccupyNotAvailableException(
+                    ValidatePreoccupyResultResponseDto.builder()
+                        .isAvailable(false)
+                        .roomResults(resultDto.roomResults())
+                        .build()
                 );
             }
 
-            log.info("[{}][check available rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, true, resultDto.unavailableIds());
-            preoccupyRoomsService.preoccupy(request, resultDto.recordMap());
+            log.debug("[{}][check available rooms result] isAvailable = {}, results = {}", currentWorker, true, resultDto.roomResults());
+            log.debug("[{}][check available rooms result] preoccupyMap = {}", currentWorker, resultDto.preoccupyMap());
+            preoccupyRoomsService.preoccupy(resultDto);
+
+            return ValidatePreoccupyResultResponseDto.builder()
+                .isAvailable(true)
+                .roomResults(resultDto.roomResults())
+                .build();
 
         } catch (InterruptedException exception) {
             log.error("exception : {}, message : {}", exception.getClass().getSimpleName(), exception.getMessage());

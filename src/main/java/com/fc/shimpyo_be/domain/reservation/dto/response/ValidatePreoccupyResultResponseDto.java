@@ -5,8 +5,8 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record ValidationResultResponseDto(
+public record ValidatePreoccupyResultResponseDto(
     boolean isAvailable,
-    List<Long> unavailableIds
+    List<ValidatePreoccupyRoomResponseDto> roomResults
 ) {
 }

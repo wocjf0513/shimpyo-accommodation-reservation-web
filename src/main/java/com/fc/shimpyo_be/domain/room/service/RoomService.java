@@ -27,4 +27,10 @@ public class RoomService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<Long> getRoomIdsByCode(Long roomCode) {
+        log.debug("{} ::: {}", getClass().getSimpleName(), "getRoomIdListByRoomCode");
+
+        return roomRepository.findIdsByCode(roomCode);
+    }
 }

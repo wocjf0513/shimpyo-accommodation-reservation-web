@@ -2,9 +2,9 @@ package com.fc.shimpyo_be.domain.reservation.facade;
 
 import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
-import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidateReservationResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.exception.RedissonLockFailException;
-import com.fc.shimpyo_be.domain.reservation.exception.UnavailableRoomsException;
+import com.fc.shimpyo_be.domain.reservation.exception.ReserveNotAvailableException;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,15 +34,19 @@ public class ReservationLockFacade {
                 throw new RedissonLockFailException();
             }
 
-            ValidationResultResponseDto resultDto = reservationService.validate(memberId, request.reservationProducts());
+            ValidateReservationResultResponseDto resultDto = reservationService.validate(memberId, request.reservationProducts());
 
             if(!resultDto.isAvailable()) {
-                log.info("[{}][validate rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, false, resultDto.unavailableIds());
-                throw new UnavailableRoomsException(
-                    new ValidationResultResponseDto(false, resultDto.unavailableIds())
+                log.debug("[{}][validate rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, false, resultDto.unavailableIds());
+
+                throw new ReserveNotAvailableException(
+                    ValidateReservationResultResponseDto.builder()
+                        .isAvailable(false)
+                        .unavailableIds(resultDto.unavailableIds())
+                        .build()
                 );
             }
-            log.info("[{}][validate rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, true, resultDto.unavailableIds());
+            log.debug("[{}][validate rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, true, resultDto.unavailableIds());
 
             return reservationService.saveReservation(memberId, request);
 
