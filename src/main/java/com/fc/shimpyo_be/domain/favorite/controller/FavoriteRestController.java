@@ -1,13 +1,16 @@
 package com.fc.shimpyo_be.domain.favorite.controller;
 
 import com.fc.shimpyo_be.domain.favorite.dto.FavoriteResponseDto;
+import com.fc.shimpyo_be.domain.favorite.dto.FavoritesResponseDto;
+import com.fc.shimpyo_be.domain.favorite.entity.Favorite;
 import com.fc.shimpyo_be.domain.favorite.service.FavoriteService;
-import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
+import com.fc.shimpyo_be.domain.product.util.model.PageableConstraint;
 import com.fc.shimpyo_be.global.common.ResponseDto;
 import com.fc.shimpyo_be.global.util.SecurityUtil;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,10 +38,12 @@ public class FavoriteRestController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<List<ProductResponse>>> getFavorites(){
+    public ResponseEntity<ResponseDto<FavoritesResponseDto>> getFavorites(
+        @PageableConstraint(Favorite.class) @PageableDefault(size = 10, page = 0) Pageable pageable) {
         log.debug("memberId: {}", securityUtil.getCurrentMemberId());
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.res(HttpStatus.OK, favoriteService.getFavorites(
-            securityUtil.getCurrentMemberId()), "성공적으로 즐겨찾기 목록을 조회했습니다."));
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(ResponseDto.res(HttpStatus.OK, favoriteService.getFavorites(
+                securityUtil.getCurrentMemberId(), pageable), "성공적으로 즐겨찾기 목록을 조회했습니다."));
     }
 
     @DeleteMapping("/{productId}")
