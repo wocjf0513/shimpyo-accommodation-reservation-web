@@ -42,8 +42,12 @@ public enum ErrorCode {
     HTTP_CLIENT_CONNECTION_ERROR(HttpStatus.UNAUTHORIZED, "외부 API 연결에 실패했습니다."),
     OPEN_API_ERROR(HttpStatus.NOT_FOUND, "오픈 API에서 데이터를 불러오는데 실패했습니다."),
 
-    //Common
-    INVALID_DATE(HttpStatus.BAD_REQUEST,"잘못된 날짜 데이터입니다.");
+    // Common
+    INVALID_DATE(HttpStatus.BAD_REQUEST,"잘못된 날짜 데이터입니다."),
+
+    // 즐겨찾기
+    FAVORITE_ALREADY_REGISTER(HttpStatus.BAD_REQUEST, "이미 즐겨찾기에 등록한 숙소입니다."),
+    FAVORITE_NOT_FOUND(HttpStatus.NOT_FOUND, "즐겨찾기 정보를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String simpleMessage;
