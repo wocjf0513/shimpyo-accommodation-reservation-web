@@ -68,36 +68,47 @@ class ReservationLockFacadeTest extends AbstractContainersSupport {
 
         SaveReservationRequestDto request1 = new SaveReservationRequestDto(
             List.of(
-                getReservationProductRequestData(2L, "2023-11-20", "2023-11-23"),
-                getReservationProductRequestData(3L, "2023-11-24", "2023-11-26")
+                new ReservationProductRequestDto(2L, "2023-11-20", "2023-11-23",
+                    "visitor1", "010-1111-1111", 100000),
+                new ReservationProductRequestDto(3L, "2023-11-24", "2023-11-26",
+                    "visitor2", "010-2222-2222", 150000)
             ), PayMethod.KAKAO_PAY, 250000
         );
 
         SaveReservationRequestDto request2 = new SaveReservationRequestDto(
-            List.of(getReservationProductRequestData(4L, "2023-10-10", "2023-10-14")),
+            List.of(new ReservationProductRequestDto(4L, "2023-10-10", "2023-10-14",
+                "visitor3", "010-3333-3333", 125000)),
             PayMethod.CREDIT_CARD, 125000
         );
 
         SaveReservationRequestDto request3 = new SaveReservationRequestDto(
             List.of(
-                getReservationProductRequestData(2L, "2023-11-10", "2023-11-14"),
-                getReservationProductRequestData(5L, "2023-10-17", "2023-10-20"),
-                getReservationProductRequestData(3L, "2023-10-10", "2023-10-14")
+                new ReservationProductRequestDto(2L, "2023-11-10", "2023-11-14",
+                    "visitor", "010-1111-1111", 90000),
+                new ReservationProductRequestDto(5L, "2023-10-17", "2023-10-20",
+                    "visitor", "010-1111-1111", 110000),
+                new ReservationProductRequestDto(3L, "2023-10-10", "2023-10-14",
+                    "visitor", "010-1111-1111", 100000)
             ), PayMethod.NAVER_PAY, 300000
         );
 
         SaveReservationRequestDto request4 = new SaveReservationRequestDto(
             List.of(
-                getReservationProductRequestData(4L, "2023-10-05", "2023-10-07"),
-                getReservationProductRequestData(5L, "2023-10-10", "2023-10-14")
-            ), PayMethod.KAKAO_PAY, 250000
+                new ReservationProductRequestDto(4L, "2023-10-05", "2023-10-07",
+                    "visitor", "010-1111-1111", 125000),
+                new ReservationProductRequestDto(5L, "2023-10-10", "2023-10-14",
+                    "visitor", "010-1111-1111", 125000)
+                ), PayMethod.KAKAO_PAY, 250000
         );
 
         SaveReservationRequestDto request5 = new SaveReservationRequestDto(
             List.of(
-                getReservationProductRequestData(1L, "2023-10-10", "2023-10-14"),
-                getReservationProductRequestData(2L, "2023-12-11", "2023-12-15"),
-                getReservationProductRequestData(4L, "2023-11-11", "2023-11-14")
+                new ReservationProductRequestDto(1L, "2023-10-10", "2023-10-14",
+                    "visitor4", "010-4444-4444", 150000),
+                new ReservationProductRequestDto(2L, "2023-12-11", "2023-12-15",
+                    "visitor4", "010-4444-4444", 150000),
+                new ReservationProductRequestDto(4L, "2023-11-11", "2023-11-14",
+                    "visitor4", "010-4444-4444", 100000)
                 ), PayMethod.PAYPAL, 400000
         );
 
@@ -188,23 +199,5 @@ class ReservationLockFacadeTest extends AbstractContainersSupport {
             valueOperations.set(key, String.valueOf(memberId), 50, TimeUnit.SECONDS);
             start = start.plusDays(1);
         }
-    }
-
-    private ReservationProductRequestDto getReservationProductRequestData(long roomId, String startDate, String endDate) {
-        String defaultValue = "DEFAULT_VALUE";
-        return new ReservationProductRequestDto(
-            roomId,
-            defaultValue,
-            defaultValue,
-            2,
-            4,
-            startDate,
-            endDate,
-            defaultValue,
-            defaultValue,
-            defaultValue,
-            defaultValue,
-            100000
-        );
     }
 }

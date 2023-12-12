@@ -2,7 +2,9 @@ package com.fc.shimpyo_be.domain.reservation.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
+@Builder
 public record ReleaseRoomItemRequestDto(
     @NotNull
     Long roomId,

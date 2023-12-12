@@ -3,7 +3,6 @@ package com.fc.shimpyo_be.domain.reservation.service;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.exception.MemberNotFoundException;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
-import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.exception.RoomNotFoundException;
 import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomItemRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomsRequestDto;
@@ -14,6 +13,7 @@ import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultRespons
 import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
 import com.fc.shimpyo_be.domain.reservation.exception.InvalidRequestException;
 import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
+import com.fc.shimpyo_be.domain.reservation.util.ReservationMapper;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
 import com.fc.shimpyo_be.domain.reservationproduct.entity.ReservationProduct;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,16 +76,16 @@ public class ReservationService {
         }
 
         // 예약 저장
-        Long reservationId
-            = reservationRepository.save(
-                Reservation.builder()
-                    .member(member)
-                    .reservationProducts(reservationProducts)
-                    .payMethod(request.payMethod())
-                    .totalPrice(request.totalPrice())
-                    .build()).getId();
+        Reservation reservation = reservationRepository.save(
+            Reservation.builder()
+                .member(member)
+                .reservationProducts(reservationProducts)
+                .payMethod(request.payMethod())
+                .totalPrice(request.totalPrice())
+                .build()
+        );
 
-        return new SaveReservationResponseDto(reservationId, request);
+        return ReservationMapper.from(reservation);
     }
 
     @Transactional(readOnly = true)
@@ -94,35 +93,10 @@ public class ReservationService {
         log.info("{} ::: {}", getClass().getSimpleName(), "getReservationInfoList");
 
         List<Long> reservationIds = reservationRepository.findIdsByMemberId(memberId);
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         return reservationProductRepository
             .findAllInReservationIds(reservationIds, pageable)
-            .map(
-                reservationProduct -> {
-                    Reservation reservation = reservationProduct.getReservation();
-                    Room room = reservationProduct.getRoom();
-                    Product product = room.getProduct();
-
-                    return new ReservationInfoResponseDto(
-                        reservation.getId(),
-                        reservationProduct.getId(),
-                        product.getId(),
-                        product.getName(),
-                        product.getThumbnail(),
-                        product.getAddress().getAddress() + " " + product.getAddress().getDetailAddress(),
-                        room.getId(),
-                        room.getName(),
-                        dateFormatter.format(reservationProduct.getStartDate()),
-                        dateFormatter.format(reservationProduct.getEndDate()),
-                        timeFormatter.format(room.getCheckIn()),
-                        timeFormatter.format(room.getCheckOut()),
-                        reservationProduct.getPrice(),
-                        reservation.getPayMethod().name()
-                    );
-                }
-            );
+            .map(ReservationMapper::from);
     }
 
     public ValidationResultResponseDto validate(Long memberId, List<ReservationProductRequestDto> reservationProducts) {
@@ -137,7 +111,7 @@ public class ReservationService {
             LocalDate endDate = DateTimeUtil.toLocalDate(reservationProduct.endDate());
 
             List<String> keys = new LinkedList<>();
-            while(targetDate.isBefore(endDate)) {
+            while (targetDate.isBefore(endDate)) {
                 keys.add(String.format(REDIS_ROOM_KEY_FORMAT, reservationProduct.roomId(), targetDate));
                 targetDate = targetDate.plusDays(1);
             }
@@ -145,12 +119,12 @@ public class ReservationService {
             List<Object> values = opsForValue.multiGet(keys);
             String memberIdValue = String.valueOf(memberId);
 
-            if(ObjectUtils.isEmpty(values)) {
+            if (ObjectUtils.isEmpty(values)) {
                 throw new InvalidRequestException(ErrorCode.INVALID_RESERVATION_REQUEST);
             }
 
             for (Object value : values) {
-                if(!memberIdValue.equals(value)) {
+                if (!memberIdValue.equals(value)) {
                     isValid = false;
                     invalidRoomIds.add(Long.valueOf((String) value));
                     break;
