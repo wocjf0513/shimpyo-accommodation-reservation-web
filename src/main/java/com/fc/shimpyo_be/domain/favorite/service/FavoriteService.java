@@ -3,6 +3,8 @@ package com.fc.shimpyo_be.domain.favorite.service;
 import com.fc.shimpyo_be.domain.favorite.dto.FavoriteResponseDto;
 import com.fc.shimpyo_be.domain.favorite.entity.Favorite;
 import com.fc.shimpyo_be.domain.favorite.exception.FavoriteAlreadyRegisterException;
+import com.fc.shimpyo_be.domain.favorite.exception.FavoriteNotFoundException;
+import com.fc.shimpyo_be.domain.favorite.exception.FavoriteNotRegisteredException;
 import com.fc.shimpyo_be.domain.favorite.repository.FavoriteRepository;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.service.MemberService;
@@ -47,5 +49,16 @@ public class FavoriteService {
             productResponses.add(ProductMapper.toProductResponse(favorite.getProduct()));
         }
         return productResponses;
+    }
+
+    public FavoriteResponseDto deleteFavorite(long memberId, long productId) {
+        Member member = memberService.getMemberById(memberId);
+        Product product = productRepository.findById(productId).orElseThrow(
+            ProductNotFoundException::new);
+        Favorite favorite = favoriteRepository.findByMemberAndProduct(member, product)
+            .orElseThrow(FavoriteNotFoundException::new);
+        FavoriteResponseDto favoriteResponseDto = FavoriteResponseDto.of(favorite);
+        favoriteRepository.delete(favorite);
+        return favoriteResponseDto;
     }
 }
