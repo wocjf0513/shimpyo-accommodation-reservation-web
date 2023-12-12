@@ -43,7 +43,7 @@ public class FavoriteService {
     public List<ProductResponse> getFavorites(long memberId) {
         List<ProductResponse> productResponses = new ArrayList<>();
         Member member = memberService.getMemberById(memberId);
-        List<Favorite> favorites = favoriteRepository.findByMember(member);
+        List<Favorite> favorites = favoriteRepository.findAllByMember(member);
         for (Favorite favorite : favorites) {
             productResponses.add(ProductMapper.toProductResponse(favorite.getProduct()));
         }
