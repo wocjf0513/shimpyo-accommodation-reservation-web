@@ -54,7 +54,8 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
             .where(buildSearchConditions(searchKeywordRequest));
 
         List<Product> content = query.fetch();
-        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetch().size());
+
+        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
     }
 
     private BooleanExpression buildSearchConditions(SearchKeywordRequest searchKeywordRequest) {
@@ -66,7 +67,7 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
 
         if (searchKeywordRequest.address() != null) {
             expressions.add(
-                address1.detailAddress.containsIgnoreCase(searchKeywordRequest.address()));
+                address1.address.containsIgnoreCase(searchKeywordRequest.address()));
         }
 
         if (searchKeywordRequest.category() != null && !searchKeywordRequest.category().isEmpty()) {

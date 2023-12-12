@@ -9,7 +9,7 @@ import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
-import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidateReservationResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
 import com.fc.shimpyo_be.domain.reservation.exception.InvalidRequestException;
 import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
@@ -51,7 +51,7 @@ public class ReservationService {
 
     @Transactional
     public SaveReservationResponseDto saveReservation(Long memberId, SaveReservationRequestDto request) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "saveReservation");
+        log.debug("{} ::: {}", getClass().getSimpleName(), "saveReservation");
 
         // 회원 엔티티 조회
         Member member = memberRepository.findById(memberId)
@@ -90,7 +90,7 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public Page<ReservationInfoResponseDto> getReservationInfoList(Long memberId, Pageable pageable) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "getReservationInfoList");
+        log.debug("{} ::: {}", getClass().getSimpleName(), "getReservationInfoList");
 
         List<Long> reservationIds = reservationRepository.findIdsByMemberId(memberId);
 
@@ -99,8 +99,8 @@ public class ReservationService {
             .map(ReservationMapper::from);
     }
 
-    public ValidationResultResponseDto validate(Long memberId, List<ReservationProductRequestDto> reservationProducts) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "validate");
+    public ValidateReservationResultResponseDto validate(Long memberId, List<ReservationProductRequestDto> reservationProducts) {
+        log.debug("{} ::: {}", getClass().getSimpleName(), "validate");
 
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
 
@@ -132,11 +132,14 @@ public class ReservationService {
             }
         }
 
-        return new ValidationResultResponseDto(isValid, invalidRoomIds);
+        return ValidateReservationResultResponseDto.builder()
+            .isAvailable(isValid)
+            .unavailableIds(invalidRoomIds)
+            .build();
     }
 
     public void releaseRooms(Long memberId, ReleaseRoomsRequestDto request) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "releaseRooms");
+        log.debug("{} ::: {}", getClass().getSimpleName(), "releaseRooms");
 
         String memberIdValue = String.valueOf(memberId);
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();

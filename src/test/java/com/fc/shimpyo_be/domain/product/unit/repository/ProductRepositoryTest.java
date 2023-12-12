@@ -41,7 +41,7 @@ public class ProductRepositoryTest {
     public void getProducts() {
         //given
         Product product = ProductFactory.createTestProduct();
-        Room room = ProductFactory.createTestRoom(product);
+        Room room = ProductFactory.createTestRoom(product,0l);
 
         productRepository.save(product);
         roomRepository.save(room);
