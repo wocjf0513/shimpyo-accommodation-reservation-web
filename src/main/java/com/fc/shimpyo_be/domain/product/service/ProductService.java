@@ -8,11 +8,13 @@ import com.fc.shimpyo_be.domain.product.exception.ProductNotFoundException;
 import com.fc.shimpyo_be.domain.product.repository.ProductCustomRepositoryImpl;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.product.util.ProductMapper;
-import com.fc.shimpyo_be.domain.room.dto.response.RoomResponse;
+import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,11 +54,24 @@ public class ProductService {
             .orElseThrow(ProductNotFoundException::new);
         ProductDetailsResponse productDetailsResponse = ProductMapper.toProductDetailsResponse(
             product);
-        productDetailsResponse.rooms().stream().filter(
-                roomResponse -> !isAvailableForReservation(roomResponse.getRoomId(), startDate,
-                    endDate))
-            .forEach(RoomResponse::setReserved);
+        productDetailsResponse.rooms().forEach(
+            roomResponse -> roomResponse.setRemaining(
+                isAvailableForReservationUsingRoomCode(roomResponse.getRoomCode(), startDate,
+                    endDate)));
         return productDetailsResponse;
+    }
+
+    public long isAvailableForReservationUsingRoomCode(final Long roomCode, final String startDate,
+        final String endDate) {
+        AtomicLong remaining = new AtomicLong();
+        List<Room> rooms = Optional.of(roomRepository.findByCode(roomCode)).orElseThrow();
+        rooms.forEach(room -> {
+            if (isAvailableForReservation(room.getId(), startDate, endDate)) {
+                remaining.getAndIncrement();
+            }
+        });
+
+        return remaining.get();
     }
 
     public boolean isAvailableForReservation(final Long roomId, final String startDate,

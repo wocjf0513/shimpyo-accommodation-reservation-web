@@ -54,7 +54,8 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
             .where(buildSearchConditions(searchKeywordRequest));
 
         List<Product> content = query.fetch();
-        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetch().size());
+
+        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetchCount());
     }
 
     private BooleanExpression buildSearchConditions(SearchKeywordRequest searchKeywordRequest) {

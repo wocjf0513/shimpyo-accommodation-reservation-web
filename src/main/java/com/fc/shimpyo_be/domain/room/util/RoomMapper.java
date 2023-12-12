@@ -15,17 +15,17 @@ public class RoomMapper {
         price = price == 0 ? 100000 : price;
 
         return RoomResponse.builder()
-            .roomId(room.getId())
+            .roomCode(room.getCode())
             .roomName(room.getName())
             .price(price)
             .standard((long) (room.getStandard()))
             .capacity((long) room.getCapacity())
             .description(room.getDescription())
-            .reserved(false)
             .checkIn(room.getCheckIn().toString())
             .checkOut(room.getCheckOut().toString())
             .roomOptionResponse(toRoomOptionResponse(room.getRoomOption()))
             .roomImages(room.getRoomImages().stream().map(RoomImage::getPhotoUrl).toList())
+            .remaining(0L)
             .build();
     }
 
