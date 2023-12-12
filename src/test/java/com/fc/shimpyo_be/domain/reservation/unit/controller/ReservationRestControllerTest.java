@@ -5,6 +5,8 @@ import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.reservation.dto.request.*;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidatePreoccupyResultResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidatePreoccupyRoomResponseDto;
 import com.fc.shimpyo_be.domain.reservation.entity.PayMethod;
 import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
 import com.fc.shimpyo_be.domain.reservation.facade.ReservationLockFacade;
@@ -29,7 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -216,12 +218,12 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                 .rooms(
                     List.of(
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomId(1L)
+                            .roomCode(1001L)
                             .startDate("2023-12-23")
                             .endDate("2023-12-25")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomId(2L)
+                            .roomCode(1003L)
                             .startDate("2023-11-11")
                             .endDate("2023-11-14")
                             .build()
@@ -229,11 +231,31 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                 )
                 .build();
 
+        ValidatePreoccupyResultResponseDto responseDto =
+            ValidatePreoccupyResultResponseDto.builder()
+                .isAvailable(true)
+                .roomResults(
+                    List.of(
+                        ValidatePreoccupyRoomResponseDto.builder()
+                            .roomCode(1001L)
+                            .startDate("2023-12-23")
+                            .endDate("2023-12-25")
+                            .roomId(1L)
+                            .build(),
+                        ValidatePreoccupyRoomResponseDto.builder()
+                            .roomCode(1003L)
+                            .startDate("2023-11-11")
+                            .endDate("2023-11-14")
+                            .roomId(3L)
+                            .build()
+                    )
+                )
+                .build();
+
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
-        willDoNothing()
-            .given(preoccupyRoomsLockFacade)
-            .checkAvailableAndPreoccupy(1L, requestDto);
+        given(preoccupyRoomsLockFacade.checkAvailableAndPreoccupy(1L, requestDto))
+            .willReturn(responseDto);
 
         // when & then
         mockMvc.perform(
@@ -242,7 +264,7 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                     .contentType(MediaType.APPLICATION_JSON)
             )
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data").isEmpty());
+            .andExpect(jsonPath("$.data.isAvailable", is(true)));
     }
 
     @WithMockUser(roles = "USER")
@@ -257,16 +279,16 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                 .rooms(
                     List.of(
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomId(1L).startDate("2023-12-23").endDate("2023-12-25")
+                            .startDate("2023-12-23").endDate("2023-12-25")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomId(2L).startDate("2023-11-11").endDate("2023-11-14")
+                            .roomCode(1002L).startDate("2023-11-11").endDate("2023-11-14")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomId(3L).startDate("2023-11-11").endDate("2023-11-14")
+                            .roomCode(1003L).startDate("2023-11-11").endDate("2023-11-14")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomId(4L).startDate("2023-11-16").endDate("2023-11-18")
+                            .roomCode(1004L).startDate("2023-11-16").endDate("2023-11-18")
                             .build()
                     )
                 )
@@ -274,9 +296,6 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
-        willDoNothing()
-            .given(preoccupyRoomsLockFacade)
-            .checkAvailableAndPreoccupy(1L, requestDto);
 
         // when & then
         mockMvc.perform(
@@ -300,13 +319,13 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                 .rooms(
                     List.of(
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomId(1L).startDate("202-12-23").endDate("2023-12-25")
+                            .roomCode(1001L).startDate("202-12-23").endDate("2023-12-25")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomId(2L).startDate("2023-11-11").endDate("2023-11-14")
+                            .roomCode(1002L).startDate("2023-11-11").endDate("2023-11-14")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomId(3L).startDate("2023-11-11").endDate("2023-11-14")
+                            .roomCode(1003L).startDate("2023-11-11").endDate("2023-11-14")
                             .build()
                     )
                 )
@@ -314,9 +333,6 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
 
         given(securityUtil.getCurrentMemberId())
             .willReturn(1L);
-        willDoNothing()
-            .given(preoccupyRoomsLockFacade)
-            .checkAvailableAndPreoccupy(1L, requestDto);
 
         // when & then
         mockMvc.perform(
