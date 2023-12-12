@@ -36,7 +36,8 @@ public enum ErrorCode {
     CART_NOT_DELETE(HttpStatus.FORBIDDEN, "해당 장바구니를 삭제할 권한이 없습니다"),
 
     // 별점
-    REGISTER_BEFORE_CHECKOUT(HttpStatus.BAD_REQUEST, "별점 등록 가능 기간이 아닙니다."),
+    REGISTER_BEFORE_CHECKOUT(HttpStatus.BAD_REQUEST, "별점 등록은 체크아웃 이후에 가능합니다."),
+    EXPIRED_STAR_REGISTER_DATE(HttpStatus.BAD_REQUEST, "별점 등록 가능 기간이 만료되었습니다.(체크아웃 후 2주 이내)"),
 
     // Open API
     HTTP_CLIENT_CONNECTION_ERROR(HttpStatus.UNAUTHORIZED, "외부 API 연결에 실패했습니다."),
