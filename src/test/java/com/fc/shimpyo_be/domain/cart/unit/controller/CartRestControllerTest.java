@@ -50,11 +50,11 @@ public class CartRestControllerTest extends AbstractContainersSupport {
     public static void initTest() {
         //given
         Product product = ProductFactory.createTestProduct();
-        room = ProductFactory.createTestRoom(product);
+        room = ProductFactory.createTestRoom(product,0l);
         member = Member.builder().email("wocjf0513@naver.com").photoUrl("hello,world.jpg")
             .name("심재철").password("1234").authority(Authority.ROLE_USER).build();
         cart = CartFactory.createCartTest(room, member);
-        cartResponse = CartMapper.toCartResponse(cart);
+        cartResponse = CartMapper.toCartResponse(cart,room);
         cartResponses.add(cartResponse);
     }
 
@@ -73,7 +73,7 @@ public class CartRestControllerTest extends AbstractContainersSupport {
     @Test
     void successToAddCart() {
         //given
-        CartCreateRequest cartCreateRequest = CartCreateRequest.builder().roomId(room.getId()).price(cartResponse.getPrice())
+        CartCreateRequest cartCreateRequest = CartCreateRequest.builder().roomCode(room.getCode()).price(cartResponse.getPrice())
             .startDate(cartResponse.getStartDate()).endDate(cartResponse.getEndDate())
             .build();
 

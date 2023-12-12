@@ -2,21 +2,22 @@ package com.fc.shimpyo_be.domain.product.unit.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 
 import com.fc.shimpyo_be.domain.product.dto.request.SearchKeywordRequest;
 import com.fc.shimpyo_be.domain.product.dto.response.PaginatedProductResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
-import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.factory.ProductFactory;
-import com.fc.shimpyo_be.domain.product.repository.ProductCustomRepository;
 import com.fc.shimpyo_be.domain.product.repository.ProductCustomRepositoryImpl;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.domain.product.util.ProductMapper;
+import com.fc.shimpyo_be.domain.room.dto.response.RoomResponse;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import java.util.List;
 import java.util.Optional;
@@ -58,29 +59,35 @@ class ProductServiceTest {
             any(Pageable.class))).willReturn(
             productPage);
 
-        PaginatedProductResponse result = productService.getProducts(searchKeywordRequest, pageable);
+        PaginatedProductResponse result = productService.getProducts(searchKeywordRequest,
+            pageable);
 
         //then
-            assertThat(result.productResponses()).usingRecursiveAssertion().isEqualTo(
-                productPage.getContent().stream().map(ProductMapper::toProductResponse).toList());
+        assertThat(result.productResponses()).usingRecursiveAssertion().isEqualTo(
+            productPage.getContent().stream().map(ProductMapper::toProductResponse).toList());
     }
 
     @Test
     void getProductDetails() {
         //given
         Product product = ProductFactory.createTestProduct();
-        Room room = ProductFactory.createTestRoom(product);
+        Room room = ProductFactory.createTestRoom(product,0L);
         product.getRooms().add(room);
         given(productRepository.findById(product.getId())).willReturn(Optional.ofNullable(product));
-        doReturn(true).when(
-            productService).isAvailableForReservation(product.getId(), "2023-11-27", "2023-11-28");
+        doReturn(1L).when(
+                productService)
+            .countAvailableForReservationUsingRoomCode(anyLong(), anyString(), anyString());
+
         //when
         ProductDetailsResponse result = productService.getProductDetails(product.getId(),
             "2023-11-27", "2023-11-28");
         //then
         for (int i = 0; i < result.rooms().size(); i++) {
+            RoomResponse roomResponse = ProductMapper.toProductDetailsResponse(product).rooms()
+                .get(i);
+            roomResponse.setRemaining(1L);
             assertThat(result.rooms().get(i)).usingRecursiveComparison()
-                .isEqualTo(ProductMapper.toProductDetailsResponse(product).rooms().get(i));
+                .isEqualTo(roomResponse);
         }
 
     }

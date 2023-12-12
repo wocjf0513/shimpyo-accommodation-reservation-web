@@ -51,7 +51,7 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
         // given
         for (int i = 0; i < 5; i++) {
             Product product = productRepository.save(ProductFactory.createTestProduct());
-            Room room = roomRepository.save(ProductFactory.createTestRoom(product));
+            Room room = roomRepository.save(ProductFactory.createTestRoom(product, 0L));
             product.getRooms().add(room);
         }
 
@@ -111,7 +111,13 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
             ProductFactory.createTestProductImage(product));
 
         for (int i = 0; i < 5; i++) {
-            Room room = roomRepository.save(ProductFactory.createTestRoom(product));
+            Room room = roomRepository.save(ProductFactory.createTestRoom(product, 0L));
+            product.getRooms().add(room);
+
+        }
+
+        for (int i = 0; i < 5; i++) {
+            Room room = roomRepository.save(ProductFactory.createTestRoom(product, 1L));
             product.getRooms().add(room);
         }
 
@@ -195,6 +201,10 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                     fieldWithPath("data.images").type(JsonFieldType.ARRAY).description("숙소 관련 이미지"),
                     fieldWithPath("data.rooms").type(JsonFieldType.ARRAY)
                         .description("숙소 하위 방 데이터"),
+                    fieldWithPath("data.rooms[].roomCode").type(JsonFieldType.NUMBER)
+                        .description("객실 코드"),
+                    fieldWithPath("data.rooms[].remaining").type(JsonFieldType.NUMBER)
+                        .description("객실 남은수량"),
                     fieldWithPath("data.rooms[].roomImages[]").type(JsonFieldType.ARRAY)
                         .description("객실 이미지"),
                     fieldWithPath("data.rooms[].roomOptionResponse").type(JsonFieldType.OBJECT)
@@ -239,8 +249,6 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                     fieldWithPath("data.rooms[].roomOptionResponse.hairDryer").type(
                             JsonFieldType.BOOLEAN)
                         .description("객실 내 드라이기 여부"),
-                    fieldWithPath("data.rooms[].roomId").type(JsonFieldType.NUMBER)
-                        .description("방 아이디"),
                     fieldWithPath("data.rooms[].roomName").type(JsonFieldType.STRING)
                         .description("방 이름"),
                     fieldWithPath("data.rooms[].price").type(JsonFieldType.NUMBER)
@@ -254,9 +262,7 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                     fieldWithPath("data.rooms[].checkIn").type(JsonFieldType.STRING)
                         .description("체크인 시간"),
                     fieldWithPath("data.rooms[].checkOut").type(JsonFieldType.STRING)
-                        .description("체크아웃 시간"),
-                    fieldWithPath("data.rooms[].reserved").type(JsonFieldType.BOOLEAN)
-                        .description("예약 여부"))));
+                        .description("체크아웃 시간"))));
 
     }
 
@@ -265,7 +271,7 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
     void isAvailableForReservation() throws Exception {
         // given
         Product product = productRepository.save(ProductFactory.createTestProduct());
-        Room room = roomRepository.save(ProductFactory.createTestRoom(product));
+        Room room = roomRepository.save(ProductFactory.createTestRoom(product, 0L));
         product.getRooms().add(room);
         ValueOperations<String, Object> values = restTemplate.opsForValue();
         values.set("roomId:" + room.getId() + ":" + "2023-12-22", "OK");
