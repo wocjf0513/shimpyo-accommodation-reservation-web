@@ -3,15 +3,10 @@ package com.fc.shimpyo_be.domain.product.repository;
 
 import static com.fc.shimpyo_be.domain.product.entity.QAddress.address1;
 import static com.fc.shimpyo_be.domain.product.entity.QProduct.product;
-import static com.fc.shimpyo_be.domain.reservation.entity.QReservation.reservation;
-import static com.fc.shimpyo_be.domain.reservationproduct.entity.QReservationProduct.reservationProduct;
 import static com.fc.shimpyo_be.domain.room.entity.QRoom.room;
 
 import com.fc.shimpyo_be.domain.product.dto.request.SearchKeywordRequest;
 import com.fc.shimpyo_be.domain.product.entity.Product;
-import com.fc.shimpyo_be.domain.product.entity.QAddress;
-import com.fc.shimpyo_be.domain.product.entity.QProduct;
-import com.fc.shimpyo_be.domain.room.entity.QRoom;
 import com.fc.shimpyo_be.global.util.QueryDslUtil;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -44,15 +39,22 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         JPAQuery<Product> query = queryFactory
             .selectDistinct(product)
             .from(product)
-            .leftJoin(product.rooms, room).fetchJoin()
-            .leftJoin(product.address, address1).fetchJoin()
+            .leftJoin(product.rooms, room)
+            .leftJoin(product.address, address1)
             .where(buildSearchConditions(searchKeywordRequest))
             .offset(pageable.getOffset())
             .orderBy(getAllOrderSpecifiers(pageable).toArray(OrderSpecifier[]::new))
             .limit(pageable.getPageSize());
 
+        JPAQuery<Product> countQuery = queryFactory
+            .selectDistinct(product)
+            .from(product)
+            .leftJoin(product.rooms, room)
+            .leftJoin(product.address, address1)
+            .where(buildSearchConditions(searchKeywordRequest));
+
         List<Product> content = query.fetch();
-        return PageableExecutionUtils.getPage(content, pageable, query::fetchCount);
+        return PageableExecutionUtils.getPage(content, pageable, () -> countQuery.fetch().size());
     }
 
     private BooleanExpression buildSearchConditions(SearchKeywordRequest searchKeywordRequest) {
@@ -63,7 +65,8 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
         }
 
         if (searchKeywordRequest.address() != null) {
-            expressions.add(address1.detailAddress.containsIgnoreCase(searchKeywordRequest.address()));
+            expressions.add(
+                address1.detailAddress.containsIgnoreCase(searchKeywordRequest.address()));
         }
 
         if (searchKeywordRequest.category() != null && !searchKeywordRequest.category().isEmpty()) {
@@ -87,14 +90,15 @@ public class ProductCustomRepositoryImpl implements ProductCustomRepository {
                 Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
                 switch (order.getProperty()) {
                     case "starAvg" -> {
-                        OrderSpecifier<?> orderId = QueryDslUtil.getSortedColumn(direction, product, "starAvg");
+                        OrderSpecifier<?> orderId = QueryDslUtil.getSortedColumn(direction, product,
+                            "starAvg");
                         ORDERS.add(orderId);
                     }
                 }
             }
         }
 
-        if(ORDERS.isEmpty()) {
+        if (ORDERS.isEmpty()) {
             ORDERS.add(QueryDslUtil.getSortedColumn(Order.DESC, product, "starAvg"));
         }
 
