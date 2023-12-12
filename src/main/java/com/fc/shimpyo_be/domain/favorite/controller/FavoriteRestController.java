@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,5 +39,13 @@ public class FavoriteRestController {
         log.debug("memberId: {}", securityUtil.getCurrentMemberId());
         return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.res(HttpStatus.OK, favoriteService.getFavorites(
             securityUtil.getCurrentMemberId()), "성공적으로 즐겨찾기 목록을 조회했습니다."));
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<ResponseDto<FavoriteResponseDto>> cancel(@PathVariable long productId) {
+        log.debug("memberId: {}, productId: {}", securityUtil.getCurrentMemberId(), productId);
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseDto.res(HttpStatus.OK,
+            favoriteService.delete(securityUtil.getCurrentMemberId(), productId),
+            "성공적으로 즐겨찾기를 취소했습니다."));
     }
 }
