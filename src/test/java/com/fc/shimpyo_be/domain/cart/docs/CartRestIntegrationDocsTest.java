@@ -90,6 +90,8 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         for (int i = 0; i < 5; i++) {
             Cart cart = cartRepository.save(CartFactory.createCartTest(room, member));
         }
+
+        given(securityUtil.getCurrentMemberId()).willReturn(member.getId());
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/carts"));
 
