@@ -53,7 +53,7 @@ class StarRestControllerTest extends AbstractContainersSupport {
     }
 
     @WithMockUser(roles = "USER")
-    @DisplayName("[api][POST] 별점 등록 API 성공 테스트")
+    @DisplayName("[api][POST][정상] 별점 등록 API 테스트")
     @Test
     void register_success_test() throws Exception {
         // given
