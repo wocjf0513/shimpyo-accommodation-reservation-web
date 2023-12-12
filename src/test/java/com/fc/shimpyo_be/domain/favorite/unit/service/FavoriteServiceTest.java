@@ -193,7 +193,7 @@ public class FavoriteServiceTest {
                 .build();
 
             given(memberService.getMemberById(any(Long.TYPE))).willReturn(member);
-            given(favoriteRepository.findByMember(any(Member.class))).willReturn(List.of(favorite));
+            given(favoriteRepository.findAllByMember(any(Member.class))).willReturn(List.of(favorite));
 
             // when
             List<ProductResponse> result = favoriteService.getFavorites(1L);
@@ -202,7 +202,7 @@ public class FavoriteServiceTest {
             assertNotNull(result);
 
             verify(memberService, times(1)).getMemberById(any(Long.TYPE));
-            verify(favoriteRepository, times(1)).findByMember(any(Member.class));
+            verify(favoriteRepository, times(1)).findAllByMember(any(Member.class));
         }
     }
 
