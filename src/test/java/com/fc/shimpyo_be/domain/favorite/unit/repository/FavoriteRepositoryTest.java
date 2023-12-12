@@ -18,7 +18,6 @@ import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +28,8 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @DataJpaTest
 @Import({TestJpaConfig.class, TestQuerydslConfig.class})
@@ -154,8 +155,8 @@ public class FavoriteRepositoryTest {
     }
 
     @Nested
-    @DisplayName("findAllByMember()는")
-    class Context_findAllByMember {
+    @DisplayName("findAllByMemberId()는")
+    class Context_findAllByMemberId {
 
         @Test
         @DisplayName("회원으로 즐겨찾기 정보 목록을 조회할 수 있다.")
@@ -164,15 +165,19 @@ public class FavoriteRepositoryTest {
             Member member = saveMember();
             Product product = saveProduct();
             saveFavorite(member, product);
+            Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 10);
 
             // when
-            List<Favorite> result = favoriteRepository.findAllByMember(member);
+            Page<Favorite> result = favoriteRepository.findAllByMemberId(member.getId(), pageable);
 
             // then
             assertThat(result.isEmpty()).isFalse();
-            assertThat(result.get(0).getId()).isNotNull();
-            assertThat(result.get(0).getMember().getId()).isEqualTo(member.getId());
-            assertThat(result.get(0).getProduct().getId()).isEqualTo(product.getId());
+            assertThat(result.getTotalPages()).isEqualTo(1);
+            assertThat(result.isLast()).isTrue();
+            assertThat(result.get().toList().get(0).getId()).isNotNull();
+            assertThat(result.get().toList().get(0).getMember().getId()).isEqualTo(member.getId());
+            assertThat(result.get().toList().get(0).getProduct().getId()).isEqualTo(
+                product.getId());
         }
     }
 }
