@@ -21,7 +21,8 @@ public class RoomResponse {
     private Long remaining;
 
     @Builder
-    public RoomResponse(Long roomCode, String roomName, Long price, String description, Long standard,
+    public RoomResponse(Long roomCode, String roomName, Long price, String description,
+        Long standard,
         Long capacity, String checkIn, String checkOut, Long remaining,
         RoomOptionResponse roomOptionResponse,
         List<String> roomImages) {
@@ -57,6 +58,7 @@ public class RoomResponse {
         RoomResponse otherRoomResponse = (RoomResponse) obj;
         return this.roomCode.equals(otherRoomResponse.getRoomCode());
     }
+
     public void setRemaining(long remaining) {
         this.remaining = remaining;
     }

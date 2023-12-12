@@ -1,7 +1,6 @@
 package com.fc.shimpyo_be.domain.cart.entity;
 
 import com.fc.shimpyo_be.domain.member.entity.Member;
-import com.fc.shimpyo_be.domain.room.entity.Room;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,10 +29,9 @@ public class Cart {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
-    @Comment(value = "객실 식별자")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
-    private Room room;
+    @Comment(value = "객실 코드")
+    @Column(nullable = false)
+    private Long roomCode;
     @Comment(value = "총 이용 금액")
     @Column(nullable = false)
     private Long price;
@@ -46,8 +44,8 @@ public class Cart {
     private LocalDate endDate;
 
     @Builder
-    public Cart(Room room, Member member, Long price, LocalDate startDate, LocalDate endDate) {
-        this.room = room;
+    public Cart(Long roomCode, Member member, Long price, LocalDate startDate, LocalDate endDate) {
+        this.roomCode = roomCode;
         this.member = member;
         this.price = price;
         this.startDate = startDate;

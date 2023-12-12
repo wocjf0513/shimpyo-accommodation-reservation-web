@@ -11,7 +11,7 @@ public class CartResponse {
     private final Long productId;
     private final String productName;
     private final String image;
-    private final Long roomId;
+    private final Long roomCode;
     private final String roomName;
     private final Long price;
     private final String description;
@@ -21,21 +21,17 @@ public class CartResponse {
     private final String endDate;
     private final String checkIn;
     private final String checkOut;
-    private Boolean reserved = false;
-
-    public void setReserved(){
-        reserved = true;
-    }
 
     @Builder
-    public CartResponse(Long cartId, Long productId, String productName, String image, Long roomId,
+    public CartResponse(Long cartId, Long productId, String productName, String image,
+        Long roomCode,
         String roomName, Long price, String description, Long standard, Long capacity,
-        String startDate, String endDate, String checkIn, String checkOut, Boolean reserved) {
+        String startDate, String endDate, String checkIn, String checkOut) {
         this.cartId = cartId;
         this.productId = productId;
         this.productName = productName;
         this.image = image;
-        this.roomId = roomId;
+        this.roomCode = roomCode;
         this.roomName = roomName;
         this.price = price;
         this.description = description;
@@ -45,5 +41,21 @@ public class CartResponse {
         this.endDate = endDate;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        CartResponse otherCartResponse = (CartResponse) obj;
+        return this.roomCode.equals(otherCartResponse.getRoomCode());
     }
 }

@@ -11,12 +11,11 @@ import com.fc.shimpyo_be.global.util.DateTimeUtil;
 
 public class CartMapper {
 
-    public static CartResponse toCartResponse(Cart cart) {
-        Room room = cart.getRoom();
+    public static CartResponse toCartResponse(Cart cart, Room room) {
         Product product = room.getProduct();
 
         return CartResponse.builder().cartId(cart.getId()).productId(product.getId())
-            .productName(product.getName()).image(product.getThumbnail()).roomId(room.getId())
+            .productName(product.getName()).image(product.getThumbnail()).roomCode(room.getCode())
             .roomName(room.getName()).price(cart.getPrice()).description(room.getDescription())
             .standard((long) room.getStandard()).capacity((long) room.getCapacity())
             .startDate(DateTimeUtil.toString(cart.getStartDate()))
@@ -25,14 +24,14 @@ public class CartMapper {
     }
 
     public static CartDeleteResponse toCartDeleteResponse(Cart cart) {
-        return CartDeleteResponse.builder().cartId(cart.getId()).roomId(cart.getRoom().getId())
+        return CartDeleteResponse.builder().cartId(cart.getId()).roomCode(cart.getRoomCode())
             .startDate(DateTimeUtil.toString(cart.getStartDate()))
             .endDate(DateTimeUtil.toString(cart.getEndDate())).build();
     }
 
-    public static Cart toCart(CartCreateRequest cartCreateRequest, Room room, Member member) {
+    public static Cart toCart(CartCreateRequest cartCreateRequest, Member member) {
         return Cart.builder()
-            .room(room)
+            .roomCode(cartCreateRequest.roomCode())
             .member(member)
             .price(cartCreateRequest.price())
             .startDate(DateTimeUtil.toLocalDate(cartCreateRequest.startDate()))
