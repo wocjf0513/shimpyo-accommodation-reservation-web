@@ -41,7 +41,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-@ActiveProfiles("test")
+
 class CartRestIntegrationDocsTest extends RestDocsSupport {
 
     @MockBean
@@ -70,15 +70,15 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
     @BeforeEach
     void initTest() {
         //given
-        member = memberRepository.save(memberRepository.save(Member.builder()
+        member = memberRepository.save(Member.builder()
             .email("wocjf" + ThreadLocalRandom.current().nextInt(100000) + "@naver.com")
             .photoUrl("hello,world.jpg").name("심재철").password("1234").authority(Authority.ROLE_USER)
-            .build()));
+            .build());
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
 
         product = productRepository.save(ProductFactory.createTestProduct());
-        room = roomRepository.save(ProductFactory.createTestRoom(product,0l));
+        room = roomRepository.save(ProductFactory.createTestRoom(product,0L));
 
         objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
     }
@@ -92,6 +92,7 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         }
         //when
         ResultActions resultActions = mockMvc.perform(get("/api/carts"));
+
         //then
         resultActions.andExpect(status().isOk()).andDo(restDoc.document(
             responseFields(responseCommon()).and(
@@ -111,7 +112,6 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
                 fieldWithPath("data[].checkIn").type(JsonFieldType.STRING).description("방 체크인 시간"),
                 fieldWithPath("data[].checkOut").type(JsonFieldType.STRING)
                     .description("방 체크아웃 시간"))));
-
     }
 
     @Test
