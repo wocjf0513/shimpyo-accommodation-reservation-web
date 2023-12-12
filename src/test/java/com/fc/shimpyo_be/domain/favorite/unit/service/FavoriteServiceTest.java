@@ -9,13 +9,13 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.fc.shimpyo_be.domain.favorite.dto.FavoriteResponseDto;
+import com.fc.shimpyo_be.domain.favorite.dto.FavoritesResponseDto;
 import com.fc.shimpyo_be.domain.favorite.entity.Favorite;
 import com.fc.shimpyo_be.domain.favorite.repository.FavoriteRepository;
 import com.fc.shimpyo_be.domain.favorite.service.FavoriteService;
 import com.fc.shimpyo_be.domain.member.entity.Authority;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.service.MemberService;
-import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Address;
 import com.fc.shimpyo_be.domain.product.entity.Amenity;
 import com.fc.shimpyo_be.domain.product.entity.Category;
@@ -32,6 +32,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -191,18 +193,21 @@ public class FavoriteServiceTest {
                 .member(member)
                 .product(product)
                 .build();
+            Pageable pageable = org.springframework.data.domain.PageRequest.of(0, 10);
 
             given(memberService.getMemberById(any(Long.TYPE))).willReturn(member);
-            given(favoriteRepository.findAllByMember(any(Member.class))).willReturn(List.of(favorite));
+            given(favoriteRepository.findAllByMemberId(any(Long.class), any(Pageable.class)))
+                .willReturn(new PageImpl<>(List.of(favorite)));
 
             // when
-            List<ProductResponse> result = favoriteService.getFavorites(1L);
+            FavoritesResponseDto result = favoriteService.getFavorites(1L, pageable);
 
             // then
             assertNotNull(result);
 
             verify(memberService, times(1)).getMemberById(any(Long.TYPE));
-            verify(favoriteRepository, times(1)).findAllByMember(any(Member.class));
+            verify(favoriteRepository, times(1)).findAllByMemberId(any(Long.class),
+                any(Pageable.class));
         }
     }
 
