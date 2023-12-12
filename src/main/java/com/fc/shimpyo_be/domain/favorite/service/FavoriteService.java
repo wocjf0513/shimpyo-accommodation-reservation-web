@@ -1,6 +1,7 @@
 package com.fc.shimpyo_be.domain.favorite.service;
 
 import com.fc.shimpyo_be.domain.favorite.dto.FavoriteResponseDto;
+import com.fc.shimpyo_be.domain.favorite.dto.FavoritesResponseDto;
 import com.fc.shimpyo_be.domain.favorite.entity.Favorite;
 import com.fc.shimpyo_be.domain.favorite.exception.FavoriteAlreadyRegisterException;
 import com.fc.shimpyo_be.domain.favorite.exception.FavoriteNotFoundException;
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,14 +43,18 @@ public class FavoriteService {
             .build()));
     }
 
-    public List<ProductResponse> getFavorites(long memberId) {
+    public FavoritesResponseDto getFavorites(long memberId, Pageable pageable) {
         List<ProductResponse> productResponses = new ArrayList<>();
         Member member = memberService.getMemberById(memberId);
-        List<Favorite> favorites = favoriteRepository.findAllByMember(member);
+        Page<Favorite> favorites = favoriteRepository.findAllByMemberId(member.getId(), pageable);
         for (Favorite favorite : favorites) {
             productResponses.add(ProductMapper.toProductResponse(favorite.getProduct()));
         }
-        return productResponses;
+        return FavoritesResponseDto.builder()
+            .pageCount(favorites.getTotalPages())
+            .isLast(favorites.isLast())
+            .products(productResponses)
+            .build();
     }
 
     public FavoriteResponseDto delete(long memberId, long productId) {
