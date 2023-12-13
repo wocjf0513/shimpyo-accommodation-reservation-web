@@ -12,6 +12,7 @@ import com.fc.shimpyo_be.domain.cart.dto.response.CartDeleteResponse;
 import com.fc.shimpyo_be.domain.cart.dto.response.CartResponse;
 import com.fc.shimpyo_be.domain.cart.entity.Cart;
 import com.fc.shimpyo_be.domain.cart.factory.CartFactory;
+import com.fc.shimpyo_be.domain.cart.repository.CartCustomRepositoryImpl;
 import com.fc.shimpyo_be.domain.cart.repository.CartRepository;
 import com.fc.shimpyo_be.domain.cart.service.CartService;
 import com.fc.shimpyo_be.domain.cart.util.CartMapper;
@@ -52,6 +53,9 @@ public class CartRestServiceTest {
     private RoomRepository roomRepository;
     @Mock
     private CartRepository cartRepository;
+
+    @Mock
+    private CartCustomRepositoryImpl cartCustomRepository;
     @Mock
     private SecurityUtil securityUtil;
     @InjectMocks
@@ -100,7 +104,7 @@ public class CartRestServiceTest {
         Cart expectedCart = CartMapper.toCart(cartCreateRequest, member);
         CartResponse expectedCartResponse = CartMapper.toCartResponse(expectedCart, room);
         given(cartRepository.save(any())).willReturn(expectedCart);
-        given(cartRepository.countByRoomCode(any())).willReturn(0L);
+        given(cartCustomRepository.countByRoomCodeAndMemberIdContainsDate(any(), anyLong())).willReturn(0L);
         given(securityUtil.getCurrentMemberId()).willReturn(member.getId());
         given(roomRepository.findByCode(cartCreateRequest.roomCode())).willReturn(List.of(room));
         given(memberRepository.findById(member.getId())).willReturn(Optional.ofNullable(member));

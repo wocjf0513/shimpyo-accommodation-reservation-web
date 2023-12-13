@@ -124,8 +124,10 @@ class CartRestIntegrationDocsTest extends RestDocsSupport {
         CartCreateRequest cartCreateRequest = CartCreateRequest.builder()
             .startDate(DateTimeUtil.toString(
                 tommorrow))
-            .endDate(DateTimeUtil.toString(tommorrow.plusDays(1))).price(100000L)
+            .endDate(DateTimeUtil.toString(tommorrow.plusDays(2))).price(100000L)
             .roomCode(room.getCode()).build();
+
+        cartRepository.save(Cart.builder().roomCode(0L).price(10000L).member(member).startDate(tommorrow.plusDays(2)).endDate(tommorrow.plusDays(3)).build());
         //when
         ResultActions resultActions = mockMvc.perform(
             post("/api/carts").content(objectMapper.writeValueAsString(cartCreateRequest))
