@@ -19,8 +19,10 @@ import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.domain.product.util.ProductMapper;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomResponse;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.global.util.SecurityUtil;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +37,9 @@ import org.springframework.data.domain.Pageable;
 class ProductServiceTest {
 
     @Mock
+    private SecurityUtil securityUtil;
+
+    @Mock
     private ProductRepository productRepository;
 
     @Mock
@@ -44,6 +49,10 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
+    @BeforeEach
+    void init() {
+        given(securityUtil.getNullableCurrentMemberId()).willReturn(null);
+    }
 
     @Test
     void getProducts() {
