@@ -1,14 +1,11 @@
 package com.fc.shimpyo_be.domain.room.docs;
 
 import com.fc.shimpyo_be.config.RestDocsSupport;
-import com.fc.shimpyo_be.domain.room.dto.request.GetRoomListWithProductInfoRequestDto;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomWithProductResponseDto;
 import com.fc.shimpyo_be.domain.room.service.RoomService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.security.test.context.support.WithMockUser;
 
@@ -18,9 +15,11 @@ import java.util.List;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,17 +28,14 @@ public class RoomRestControllerDocsTest extends RestDocsSupport {
     @MockBean
     private RoomService roomService;
 
-    private final ConstraintDescriptions getRoomListWithProductInfoDescriptions
-        = new ConstraintDescriptions(GetRoomListWithProductInfoRequestDto.class);
-
     @WithMockUser(roles = "USER")
     @DisplayName("getRoomsWithProductInfo()는 숙소 정보를 포함한 객실 정보 리스트를 조회할 수 있다.")
     @Test
     void getRoomsWithProductInfo() throws Exception {
         //given
         String requestUrl = "/api/rooms";
+        String roomIdParamList = "1,3,4";
         List<Long> roomIds = List.of(1L, 3L, 4L);
-        GetRoomListWithProductInfoRequestDto requestDto = new GetRoomListWithProductInfoRequestDto(roomIds);
 
         List<RoomWithProductResponseDto> rooms = List.of(
             RoomWithProductResponseDto.builder()
@@ -92,16 +88,19 @@ public class RoomRestControllerDocsTest extends RestDocsSupport {
         //when & then
         mockMvc.perform(
                 get(requestUrl)
-                    .content(objectMapper.writeValueAsString(requestDto))
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .queryParam("roomIds", roomIdParamList)
                     .characterEncoding(StandardCharsets.UTF_8)
             )
             .andExpect(status().isOk())
             .andDo(restDoc.document(
-                    requestFields(
-                        fieldWithPath("roomIds").type(JsonFieldType.ARRAY).description("조회할 객실 식별자 리스트")
+                    queryParameters(
+                        parameterWithName("roomIds").description("숙소/객실 정보를 조회할 객실 식별자 리스트")
                             .attributes(key("constraints").value(
-                                getRoomListWithProductInfoDescriptions.descriptionsForProperty("roomIds")))
+                                List.of(
+                                    "최소 1개, 최대 3개의 객실 식별자 정보가 필요합니다.",
+                                    "객실 식별자는 최소 1 이상이어야 합니다."
+                                )
+                            ))
                     ),
                     responseFields(responseCommon()).and(
                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
