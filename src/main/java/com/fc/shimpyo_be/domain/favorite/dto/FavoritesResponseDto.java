@@ -11,13 +11,11 @@ import lombok.NoArgsConstructor;
 public class FavoritesResponseDto {
 
     private int pageCount;
-    private Boolean isLast;
     private List<ProductResponse> products;
 
     @Builder
-    public FavoritesResponseDto(int pageCount, Boolean isLast, List<ProductResponse> products) {
+    public FavoritesResponseDto(int pageCount, List<ProductResponse> products) {
         this.pageCount = pageCount;
-        this.isLast = isLast;
         this.products = products;
     }
 }

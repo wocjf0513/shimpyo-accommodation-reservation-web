@@ -173,7 +173,6 @@ public class FavoriteRepositoryTest {
             // then
             assertThat(result.isEmpty()).isFalse();
             assertThat(result.getTotalPages()).isEqualTo(1);
-            assertThat(result.isLast()).isTrue();
             assertThat(result.get().toList().get(0).getId()).isNotNull();
             assertThat(result.get().toList().get(0).getMember().getId()).isEqualTo(member.getId());
             assertThat(result.get().toList().get(0).getProduct().getId()).isEqualTo(

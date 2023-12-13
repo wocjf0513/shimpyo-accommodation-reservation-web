@@ -71,7 +71,6 @@ public class FavoriteRestControllerDocsTest extends RestDocsSupport {
         // given
         FavoritesResponseDto favoritesResponseDto = FavoritesResponseDto.builder()
             .pageCount(10)
-            .isLast(true)
             .products(List.of(ProductResponse.builder()
                 .productId(1L)
                 .productName("OO 호텔")
@@ -103,8 +102,6 @@ public class FavoriteRestControllerDocsTest extends RestDocsSupport {
                     fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                     fieldWithPath("data.pageCount").type(JsonFieldType.NUMBER)
                         .description("총 페이지 개수"),
-                    fieldWithPath("data.isLast").type(JsonFieldType.BOOLEAN)
-                        .description("마지막 페이지 여부"),
                     fieldWithPath("data.products").type(JsonFieldType.ARRAY)
                         .description("숙소 응답 데이터 배열"),
                     fieldWithPath("data.products[].productId").type(

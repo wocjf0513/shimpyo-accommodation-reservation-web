@@ -102,7 +102,6 @@ public class FavoriteRestControllerTest extends AbstractContainersSupport {
             // given
             FavoritesResponseDto favoritesResponseDto = FavoritesResponseDto.builder()
                 .pageCount(10)
-                .isLast(true)
                 .products(List.of(ProductResponse.builder()
                     .productId(1L)
                     .productName("OO 호텔")
@@ -130,7 +129,6 @@ public class FavoriteRestControllerTest extends AbstractContainersSupport {
                 .andExpect(jsonPath("$.message").isString())
                 .andExpect(jsonPath("$.data").isMap())
                 .andExpect(jsonPath("$.data.pageCount").isNumber())
-                .andExpect(jsonPath("$.data.isLast").isBoolean())
                 .andExpect(jsonPath("$.data.products[0].productId").isNumber())
                 .andExpect(jsonPath("$.data.products[0].productName").isString())
                 .andExpect(jsonPath("$.data.products[0].category").isString())

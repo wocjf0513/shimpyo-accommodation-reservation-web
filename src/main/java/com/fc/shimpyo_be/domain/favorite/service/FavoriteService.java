@@ -52,7 +52,6 @@ public class FavoriteService {
         }
         return FavoritesResponseDto.builder()
             .pageCount(favorites.getTotalPages())
-            .isLast(favorites.isLast())
             .products(productResponses)
             .build();
     }
