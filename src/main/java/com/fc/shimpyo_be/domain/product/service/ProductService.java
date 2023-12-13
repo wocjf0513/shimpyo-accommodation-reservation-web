@@ -1,8 +1,10 @@
 package com.fc.shimpyo_be.domain.product.service;
 
+import com.fc.shimpyo_be.domain.favorite.entity.Favorite;
 import com.fc.shimpyo_be.domain.product.dto.request.SearchKeywordRequest;
 import com.fc.shimpyo_be.domain.product.dto.response.PaginatedProductResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
+import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.exception.ProductNotFoundException;
 import com.fc.shimpyo_be.domain.product.repository.ProductCustomRepositoryImpl;
@@ -11,7 +13,9 @@ import com.fc.shimpyo_be.domain.product.util.ProductMapper;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
+import com.fc.shimpyo_be.global.util.SecurityUtil;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -34,6 +38,8 @@ public class ProductService {
 
     private final RedisTemplate<String, Object> restTemplate;
 
+    private final SecurityUtil securityUtil;
+
     public PaginatedProductResponse getProducts(final SearchKeywordRequest searchKeywordRequest,
         final Pageable pageable) {
 
@@ -43,7 +49,7 @@ public class ProductService {
 
         return PaginatedProductResponse.builder()
             .productResponses(
-                products.getContent().stream().map(ProductMapper::toProductResponse).toList())
+                getProductResponseSettingFavorites(products.getContent()))
             .pageCount(products.getTotalPages())
             .build();
     }
@@ -52,8 +58,10 @@ public class ProductService {
         final String endDate) {
         Product product = productRepository.findById(productId)
             .orElseThrow(ProductNotFoundException::new);
+        HashSet<Long> favoriteProductIds = getFavoriteProductIds(List.of(product));
         ProductDetailsResponse productDetailsResponse = ProductMapper.toProductDetailsResponse(
-            product);
+            product, favoriteProductIds.contains(product.getId()));
+
         productDetailsResponse.rooms().forEach(
             roomResponse -> roomResponse.setRemaining(
                 countAvailableForReservationUsingRoomCode(roomResponse.getRoomCode(), startDate,
@@ -61,7 +69,8 @@ public class ProductService {
         return productDetailsResponse;
     }
 
-    public long countAvailableForReservationUsingRoomCode(final Long roomCode, final String startDate,
+    public long countAvailableForReservationUsingRoomCode(final Long roomCode,
+        final String startDate,
         final String endDate) {
         AtomicLong remaining = new AtomicLong();
         List<Room> rooms = Optional.of(roomRepository.findByCode(roomCode)).orElseThrow();
@@ -91,6 +100,32 @@ public class ProductService {
         }
 
         return true;
+    }
+
+    private List<ProductResponse> getProductResponseSettingFavorites(List<Product> products) {
+
+        HashSet<Long> favoriteProductIds = getFavoriteProductIds(products);
+
+        return products.stream().map(product -> ProductMapper.toProductResponse(product,
+            favoriteProductIds.contains(product.getId()))).toList();
+
+    }
+
+    private HashSet<Long> getFavoriteProductIds(List<Product> products) {
+        Long userId = securityUtil.getNullableCurrentMemberId();
+        HashSet<Long> favoriteProductId = new HashSet<>();
+        if (userId != null) {
+            for (Product product : products) {
+                for (Favorite favorite : product.getFavorites()) {
+                    if (favorite.getMember().getId().equals(userId)) {
+                        favoriteProductId.add(product.getId());
+                        break;
+                    }
+                }
+            }
+        }
+
+        return favoriteProductId;
     }
 
 

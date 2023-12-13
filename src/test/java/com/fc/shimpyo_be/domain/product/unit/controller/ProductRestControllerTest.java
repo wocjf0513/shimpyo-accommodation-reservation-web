@@ -41,7 +41,7 @@ class ProductRestControllerTest {
     void getAllProducts() {
         //given
         List<ProductResponse> productResponses = new ArrayList<>();
-        productResponses.add(ProductMapper.toProductResponse(ProductFactory.createTestProduct()));
+        productResponses.add(ProductMapper.toProductResponse(ProductFactory.createTestProduct(),false));
         PaginatedProductResponse paginatedProductResponse = PaginatedProductResponse.builder()
             .productResponses(productResponses)
             .pageCount(1)
@@ -67,7 +67,7 @@ class ProductRestControllerTest {
     void getProductDetails() {
         //given
         Product product = ProductFactory.createTestProduct();
-        ProductDetailsResponse expectedResult = ProductMapper.toProductDetailsResponse(product);
+        ProductDetailsResponse expectedResult = ProductMapper.toProductDetailsResponse(product,false);
         doReturn(expectedResult).when(productService)
             .getProductDetails(1L, "2024-12-27", "2024-12-28");
         //when

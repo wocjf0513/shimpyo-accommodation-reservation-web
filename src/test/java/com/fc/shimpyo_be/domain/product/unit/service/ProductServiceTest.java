@@ -19,8 +19,10 @@ import com.fc.shimpyo_be.domain.product.service.ProductService;
 import com.fc.shimpyo_be.domain.product.util.ProductMapper;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomResponse;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.global.util.SecurityUtil;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +37,9 @@ import org.springframework.data.domain.Pageable;
 class ProductServiceTest {
 
     @Mock
+    private SecurityUtil securityUtil;
+
+    @Mock
     private ProductRepository productRepository;
 
     @Mock
@@ -44,6 +49,10 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
+    @BeforeEach
+    void init() {
+        given(securityUtil.getNullableCurrentMemberId()).willReturn(null);
+    }
 
     @Test
     void getProducts() {
@@ -64,14 +73,15 @@ class ProductServiceTest {
 
         //then
         assertThat(result.productResponses()).usingRecursiveAssertion().isEqualTo(
-            productPage.getContent().stream().map(ProductMapper::toProductResponse).toList());
+            productPage.getContent().stream()
+                .map(product -> ProductMapper.toProductResponse(product, false)).toList());
     }
 
     @Test
     void getProductDetails() {
         //given
         Product product = ProductFactory.createTestProduct();
-        Room room = ProductFactory.createTestRoom(product,0L);
+        Room room = ProductFactory.createTestRoom(product, 0L);
         product.getRooms().add(room);
         given(productRepository.findById(product.getId())).willReturn(Optional.ofNullable(product));
         doReturn(1L).when(
@@ -83,7 +93,8 @@ class ProductServiceTest {
             "2023-11-27", "2023-11-28");
         //then
         for (int i = 0; i < result.rooms().size(); i++) {
-            RoomResponse roomResponse = ProductMapper.toProductDetailsResponse(product).rooms()
+            RoomResponse roomResponse = ProductMapper.toProductDetailsResponse(product, false)
+                .rooms()
                 .get(i);
             roomResponse.setRemaining(1L);
             assertThat(result.rooms().get(i)).usingRecursiveComparison()

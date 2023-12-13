@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.product.entity;
 
+import com.fc.shimpyo_be.domain.favorite.entity.Favorite;
 import com.fc.shimpyo_be.domain.product.util.CategoryConverter;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import jakarta.persistence.CascadeType;
@@ -59,12 +60,14 @@ public class Product {
     private List<ProductImage> photoUrls = new ArrayList<>();
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms = new ArrayList<>();
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Favorite> favorites = new ArrayList<>();
 
 
     @Builder
     public Product(Long id, String name, Address address, Category category, String description,
         float starAvg, String thumbnail, ProductOption productOption, Amenity amenity,
-        List<ProductImage> photoUrls, List<Room> rooms) {
+        List<ProductImage> photoUrls, List<Room> rooms, List<Favorite> favorites) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -76,6 +79,7 @@ public class Product {
         this.amenity = amenity;
         this.photoUrls = photoUrls;
         this.rooms = rooms;
+        this.favorites = favorites;
     }
 
     public void updateStarAvg(float starAvg) {
