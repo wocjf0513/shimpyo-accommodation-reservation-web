@@ -64,14 +64,15 @@ class ProductServiceTest {
 
         //then
         assertThat(result.productResponses()).usingRecursiveAssertion().isEqualTo(
-            productPage.getContent().stream().map(ProductMapper::toProductResponse).toList());
+            productPage.getContent().stream()
+                .map(product -> ProductMapper.toProductResponse(product, false)).toList());
     }
 
     @Test
     void getProductDetails() {
         //given
         Product product = ProductFactory.createTestProduct();
-        Room room = ProductFactory.createTestRoom(product,0L);
+        Room room = ProductFactory.createTestRoom(product, 0L);
         product.getRooms().add(room);
         given(productRepository.findById(product.getId())).willReturn(Optional.ofNullable(product));
         doReturn(1L).when(
@@ -83,7 +84,8 @@ class ProductServiceTest {
             "2023-11-27", "2023-11-28");
         //then
         for (int i = 0; i < result.rooms().size(); i++) {
-            RoomResponse roomResponse = ProductMapper.toProductDetailsResponse(product).rooms()
+            RoomResponse roomResponse = ProductMapper.toProductDetailsResponse(product, false)
+                .rooms()
                 .get(i);
             roomResponse.setRemaining(1L);
             assertThat(result.rooms().get(i)).usingRecursiveComparison()

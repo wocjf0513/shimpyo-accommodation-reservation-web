@@ -48,7 +48,7 @@ public class FavoriteService {
         Member member = memberService.getMemberById(memberId);
         Page<Favorite> favorites = favoriteRepository.findAllByMemberId(member.getId(), pageable);
         for (Favorite favorite : favorites) {
-            productResponses.add(ProductMapper.toProductResponse(favorite.getProduct()));
+            productResponses.add(ProductMapper.toProductResponse(favorite.getProduct(),true));
         }
         return FavoritesResponseDto.builder()
             .pageCount(favorites.getTotalPages())

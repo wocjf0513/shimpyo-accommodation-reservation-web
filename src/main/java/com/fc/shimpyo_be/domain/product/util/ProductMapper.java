@@ -19,13 +19,7 @@ import java.util.List;
 public class ProductMapper {
 
 
-    public static ProductResponse toProductResponse(Product product) {
-
-        List<Room> rooms = product.getRooms();
-        long price = rooms.isEmpty() ? 0 : rooms.stream().map(PricePickerByDateUtil::getPrice)
-            .min((o1, o2) -> Math.toIntExact(
-                o1 - o2)).orElseThrow();
-        price = price == 0 ? 100000 : price;
+    public static ProductResponse toProductResponse(Product product, boolean isFavorite) {
 
         return ProductResponse.builder().productId(product.getId()).productName(product.getName())
             .address(
@@ -33,23 +27,16 @@ public class ProductMapper {
             .category(product.getCategory().getName())
             .image(product.getThumbnail())
             .starAvg(product.getStarAvg())
-            .price(price)
+            .price(getPrice(product))
             .capacity(product.getRooms().isEmpty()
                 ? 0 : Long.valueOf(
                 product.getRooms().stream().map(Room::getCapacity).min((o1, o2) -> o2 - o1)
                     .orElseThrow()))
-            .favorites(false)
+            .favorites(isFavorite)
             .build();
     }
 
-    public static ProductDetailsResponse toProductDetailsResponse(Product product) {
-
-        List<String> images = new ArrayList<>();
-        images.add(product.getThumbnail());
-
-        if (product.getPhotoUrls() != null) {
-            images.addAll(product.getPhotoUrls().stream().map(ProductImage::getPhotoUrl).toList());
-        }
+    public static ProductDetailsResponse toProductDetailsResponse(Product product, boolean isFavorite) {
 
         return ProductDetailsResponse.builder()
             .productId(product.getId())
@@ -60,8 +47,8 @@ public class ProductMapper {
             .productAmenityResponse(toProductAmenityResponse(product.getAmenity()))
             .starAvg(product.getStarAvg())
             .productOptionResponse(toProductOptionResponse(product.getProductOption()))
-            .favorites(false)
-            .images(images)
+            .favorites(isFavorite)
+            .images(getImage(product))
             .rooms(product.getRooms().stream().map(RoomMapper::toRoomResponse).distinct().toList())
             .build();
     }
@@ -100,6 +87,26 @@ public class ProductMapper {
             .infoCenter(productOption.getInfoCenter())
             .foodPlace(productOption.getFoodPlace())
             .build();
+    }
+
+    private static long getPrice(Product product) {
+        List<Room> rooms = product.getRooms();
+        long price = rooms.isEmpty() ? 0 : rooms.stream().map(PricePickerByDateUtil::getPrice)
+            .min((o1, o2) -> Math.toIntExact(
+                o1 - o2)).orElseThrow();
+
+        return price == 0 ? 100000 : price;
+    }
+
+    private static List<String> getImage(Product product) {
+        List<String> images = new ArrayList<>();
+        images.add(product.getThumbnail());
+
+        if (product.getPhotoUrls() != null) {
+            images.addAll(product.getPhotoUrls().stream().map(ProductImage::getPhotoUrl).toList());
+        }
+
+        return images;
     }
 
 }

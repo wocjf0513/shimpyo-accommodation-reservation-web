@@ -15,4 +15,13 @@ public class SecurityUtil {
         }
         return Long.parseLong(authentication.getName());
     }
+
+    public Long getNullableCurrentMemberId() {
+        final Authentication authentication = SecurityContextHolder.getContext()
+            .getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            return null;
+        }
+        return Long.parseLong(authentication.getName());
+    }
 }

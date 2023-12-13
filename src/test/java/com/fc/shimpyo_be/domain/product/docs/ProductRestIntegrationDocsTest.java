@@ -1,14 +1,22 @@
 package com.fc.shimpyo_be.domain.product.docs;
 
+import static org.junit.matchers.JUnitMatchers.everyItem;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fc.shimpyo_be.config.RestDocsSupport;
+import com.fc.shimpyo_be.domain.favorite.entity.Favorite;
+import com.fc.shimpyo_be.domain.favorite.repository.FavoriteRepository;
+import com.fc.shimpyo_be.domain.member.entity.Authority;
+import com.fc.shimpyo_be.domain.member.entity.Member;
+import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.entity.ProductImage;
 import com.fc.shimpyo_be.domain.product.factory.ProductFactory;
@@ -16,10 +24,12 @@ import com.fc.shimpyo_be.domain.product.repository.ProductImageRepository;
 import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
+import com.fc.shimpyo_be.global.util.SecurityUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.restdocs.payload.JsonFieldType;
@@ -44,6 +54,15 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
 
     @Autowired
     private RedisTemplate<String, Object> restTemplate;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @MockBean
+    private SecurityUtil securityUtil;
 
     @DisplayName("숙소 저장 후, 검색 조회 및 페이징할 수 있다.")
     @Test
@@ -299,6 +318,35 @@ class ProductRestIntegrationDocsTest extends RestDocsSupport {
                     fieldWithPath("data").type(JsonFieldType.NULL).description("응답 데이터")
                 )
             ));
+    }
+
+    @Test
+    @DisplayName("전체 조회에서 즐겨찾기 여부를 볼 수 있다.")
+    void isAvailableGetFavoriteInGetProducts() throws Exception {
+        //given
+        given(securityUtil.getNullableCurrentMemberId()).willReturn(1L);
+        Product product = productRepository.save(ProductFactory.createTestProduct());
+        Room room = roomRepository.save(ProductFactory.createTestRoom(product, 0L));
+        Member member = Member.builder()
+            .email("test@mail.com")
+            .name("test")
+            .password("$10$ygrAExVYmFTkZn2d0.Pk3Ot5CNZwIBjZH5f.WW0AnUq4w4PtBi9Nm")
+            .photoUrl(
+                "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI")
+            .authority(Authority.ROLE_USER)
+            .build();
+        memberRepository.save(member);
+        Favorite favorite = Favorite.builder().product(product).member(member).build();
+        favoriteRepository.save(favorite);
+
+        // when
+        ResultActions getProductAction = mockMvc.perform(
+            get("/api/products"));
+
+        //then
+        getProductAction
+            .andDo(MockMvcResultHandlers.print()).andExpect(status().isOk()).andExpect(jsonPath("$.data.productResponses[0].favorites").value(true));
+
     }
 
 
