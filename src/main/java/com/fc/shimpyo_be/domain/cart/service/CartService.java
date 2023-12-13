@@ -45,10 +45,7 @@ public class CartService {
         List<Cart> carts = cartRepository.findByMemberId(
             securityUtil.getCurrentMemberId()).orElseThrow();
 
-        return carts.stream().map(this::getCartResponse).filter(
-            cartResponse ->
-                productService.countAvailableForReservationUsingRoomCode(cartResponse.getRoomCode(),
-                    cartResponse.getStartDate(), cartResponse.getEndDate()) > 0).toList();
+        return carts.stream().map(this::getCartResponse).toList();
     }
 
     @Transactional
