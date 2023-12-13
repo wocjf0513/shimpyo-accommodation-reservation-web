@@ -66,7 +66,7 @@ public class CartRestServiceTest {
     public static void initTest() {
         //given
         Product product = ProductFactory.createTestProduct();
-        room = ProductFactory.createTestRoom(product,0l);
+        room = ProductFactory.createTestRoom(product, 0l);
         member = Member.builder().id(1L).email("wocjf0513@naver.com").photoUrl("hello,world.jpg")
             .name("심재철").password("1234").authority(Authority.ROLE_USER).build();
         cart = CartFactory.createCartTest(room, member);
@@ -81,10 +81,6 @@ public class CartRestServiceTest {
         List<CartResponse> expectedCartResponses = carts.stream()
             .map(cartEntity -> CartMapper.toCartResponse(cartEntity, room))
             .toList();
-        doReturn(1L).when(productService)
-            .countAvailableForReservationUsingRoomCode(cart.getRoomCode(),
-                DateTimeUtil.toString(cart.getStartDate()),
-                DateTimeUtil.toString(cart.getEndDate()));
         given(roomRepository.findByCode(cart.getRoomCode())).willReturn(List.of(room));
         given(cartRepository.findByMemberId(1L)).willReturn(Optional.of(carts));
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
@@ -104,7 +100,8 @@ public class CartRestServiceTest {
         Cart expectedCart = CartMapper.toCart(cartCreateRequest, member);
         CartResponse expectedCartResponse = CartMapper.toCartResponse(expectedCart, room);
         given(cartRepository.save(any())).willReturn(expectedCart);
-        given(cartCustomRepository.countByRoomCodeAndMemberIdContainsDate(any(), anyLong())).willReturn(0L);
+        given(cartCustomRepository.countByRoomCodeAndMemberIdContainsDate(any(),
+            anyLong())).willReturn(0L);
         given(securityUtil.getCurrentMemberId()).willReturn(member.getId());
         given(roomRepository.findByCode(cartCreateRequest.roomCode())).willReturn(List.of(room));
         given(memberRepository.findById(member.getId())).willReturn(Optional.ofNullable(member));
