@@ -34,9 +34,9 @@ public class AuthRestControllerDocsTest extends RestDocsSupport {
     private final ConstraintDescriptions signUpDescriptions = new ConstraintDescriptions(
         SignUpRequestDto.class);
     private final ConstraintDescriptions signInDescriptions = new ConstraintDescriptions(
-        SignUpRequestDto.class);
+        SignInRequestDto.class);
     private final ConstraintDescriptions refreshDescriptions = new ConstraintDescriptions(
-        SignUpRequestDto.class);
+        RefreshRequestDto.class);
 
     @Test
     @DisplayName("signUp()은 회원 가입 할 수 있다.")
