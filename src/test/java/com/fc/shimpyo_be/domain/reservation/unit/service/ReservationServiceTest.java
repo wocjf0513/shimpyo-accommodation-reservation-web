@@ -19,6 +19,7 @@ import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.entity.RoomOption;
 import com.fc.shimpyo_be.domain.room.entity.RoomPrice;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,13 +28,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 @Slf4j
 @Import(TestDBCleanerConfig.class)
@@ -191,8 +194,16 @@ public class ReservationServiceTest extends AbstractContainersSupport {
             ), PayMethod.CREDIT_CARD, 350000
         );
 
+        Map<Long, List<String>> map = new HashMap<>();
+        for (ReservationProductRequestDto reservationProduct : requestDto.reservationProducts()) {
+            map.put(
+                reservationProduct.roomId(),
+                getKeyList(reservationProduct.roomId(), reservationProduct.startDate(), reservationProduct.endDate())
+            );
+        }
+
         //when
-        SaveReservationResponseDto result = reservationService.saveReservation(memberId, requestDto);
+        SaveReservationResponseDto result = reservationService.saveReservation(memberId, requestDto, map);
 
         //then
         assertThat(result.reservationId()).isNotNull();
@@ -219,8 +230,16 @@ public class ReservationServiceTest extends AbstractContainersSupport {
             ), PayMethod.CREDIT_CARD, 350000
         );
 
+        Map<Long, List<String>> map = new HashMap<>();
+        for (ReservationProductRequestDto reservationProduct : requestDto.reservationProducts()) {
+            map.put(
+                reservationProduct.roomId(),
+                getKeyList(reservationProduct.roomId(), reservationProduct.startDate(), reservationProduct.endDate())
+            );
+        }
+
         //when & then
-        assertThatThrownBy(() -> reservationService.saveReservation(memberId, requestDto))
+        assertThatThrownBy(() -> reservationService.saveReservation(memberId, requestDto, map))
             .isInstanceOf(MemberNotFoundException.class);
     }
 
@@ -244,8 +263,29 @@ public class ReservationServiceTest extends AbstractContainersSupport {
             ), PayMethod.CREDIT_CARD, 350000
         );
 
+        Map<Long, List<String>> map = new HashMap<>();
+        for (ReservationProductRequestDto reservationProduct : requestDto.reservationProducts()) {
+            map.put(
+                reservationProduct.roomId(),
+                getKeyList(reservationProduct.roomId(), reservationProduct.startDate(), reservationProduct.endDate())
+            );
+        }
+
         //when & then
-        assertThatThrownBy(() -> reservationService.saveReservation(memberId, requestDto))
+        assertThatThrownBy(() -> reservationService.saveReservation(memberId, requestDto, map))
             .isInstanceOf(RoomNotFoundException.class);
+    }
+
+    private List<String> getKeyList(Long roomId, String startDate, String endDate) {
+        List<String> keyList = new ArrayList<>();
+
+        LocalDate targetDate = DateTimeUtil.toLocalDate(startDate);
+        LocalDate maxDate = DateTimeUtil.toLocalDate(endDate);
+        while (targetDate.isBefore(maxDate)) {
+            keyList.add("roomId:" + roomId + ":" + targetDate);
+            targetDate = targetDate.plusDays(1);
+        }
+
+        return keyList;
     }
 }
