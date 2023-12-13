@@ -11,13 +11,13 @@ public class ReserveNotAvailableException extends RuntimeException {
     private ValidateReservationResultResponseDto data;
 
     public ReserveNotAvailableException() {
-        super(ErrorCode.UNAVAILABLE_ROOMS.getSimpleMessage());
-        this.errorCode = ErrorCode.UNAVAILABLE_ROOMS;
+        super(ErrorCode.RESERVATION_VALIDATION_FAIL.getSimpleMessage());
+        this.errorCode = ErrorCode.RESERVATION_VALIDATION_FAIL;
     }
 
     public ReserveNotAvailableException(ValidateReservationResultResponseDto data) {
-        super(ErrorCode.UNAVAILABLE_ROOMS.getSimpleMessage());
-        this.errorCode = ErrorCode.UNAVAILABLE_ROOMS;
+        super(ErrorCode.RESERVATION_VALIDATION_FAIL.getSimpleMessage());
+        this.errorCode = ErrorCode.RESERVATION_VALIDATION_FAIL;
         this.data = data;
     }
 }
