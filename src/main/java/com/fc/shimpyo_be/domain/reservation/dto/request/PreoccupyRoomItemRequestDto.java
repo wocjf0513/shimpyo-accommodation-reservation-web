@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
-import static com.fc.shimpyo_be.domain.reservation.util.constant.ReservationValidationConstants.*;
+import static com.fc.shimpyo_be.domain.reservation.constant.ReservationValidationConstants.*;
 
 @Builder
 public record PreoccupyRoomItemRequestDto(

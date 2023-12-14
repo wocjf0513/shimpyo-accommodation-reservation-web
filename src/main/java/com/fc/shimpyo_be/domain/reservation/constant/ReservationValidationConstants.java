@@ -1,4 +1,4 @@
-package com.fc.shimpyo_be.domain.reservation.util.constant;
+package com.fc.shimpyo_be.domain.reservation.constant;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

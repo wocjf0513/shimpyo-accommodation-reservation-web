@@ -6,7 +6,7 @@ import lombok.Builder;
 
 import java.util.List;
 
-import static com.fc.shimpyo_be.domain.reservation.util.constant.ReservationValidationConstants.*;
+import static com.fc.shimpyo_be.domain.reservation.constant.ReservationValidationConstants.*;
 
 @Builder
 public record ReleaseRoomsRequestDto(
