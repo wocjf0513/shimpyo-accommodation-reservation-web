@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.reservation.service;
 
+import com.fc.shimpyo_be.domain.cart.service.CartService;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.service.MemberService;
 import com.fc.shimpyo_be.domain.product.exception.RoomNotFoundException;
@@ -41,6 +42,7 @@ public class ReservationService {
     private final ReservationProductRepository reservationProductRepository;
     private final MemberService memberService;
     private final RoomRepository roomRepository;
+    private final CartService cartService;
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String REDIS_ROOM_KEY_FORMAT = "roomId:%d:%s";
 
@@ -59,6 +61,11 @@ public class ReservationService {
 
             Room room = roomRepository.findById(reservationProductDto.roomId())
                 .orElseThrow(RoomNotFoundException::new);
+
+            // 장바구니 아이템 삭제
+            if (reservationProductDto.cartId() > 0) {
+                cartService.deleteCart(member.getId(), reservationProductDto.cartId());
+            }
 
             reservationProducts.add(
                 ReservationProduct.builder()
@@ -84,7 +91,7 @@ public class ReservationService {
                 .build()
         );
 
-        return ReservationMapper.from(reservation);
+        return ReservationMapper.toSaveReservationResponseDto(reservation);
     }
 
     @Transactional(readOnly = true)
@@ -95,7 +102,7 @@ public class ReservationService {
 
         return reservationProductRepository
             .findAllInReservationIds(reservationIds, pageable)
-            .map(ReservationMapper::from);
+            .map(ReservationMapper::toReservationInfoResponseDto);
     }
 
     public ValidateReservationResultDto validate(Long memberId, List<ReservationProductRequestDto> reservationProducts) {
