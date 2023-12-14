@@ -2,14 +2,14 @@ package com.fc.shimpyo_be.domain.member.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignInRequestDto {
 
     @NotBlank(message = "이메일을 입력하세요.")
@@ -19,12 +19,12 @@ public class SignInRequestDto {
     private String password;
 
     @Builder
-    public SignInRequestDto(String email, String password) {
+    private SignInRequestDto(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
-    public UsernamePasswordAuthenticationToken toAuthentication(){
+    public UsernamePasswordAuthenticationToken toAuthentication() {
         return new UsernamePasswordAuthenticationToken(this.email, this.password);
     }
 }

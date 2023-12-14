@@ -22,7 +22,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -70,8 +69,7 @@ public class OpenApiService {
     @Transactional
     public void getData(int pageSize, int pageNum) throws JSONException {
         try {
-            JSONArray stayArr = getAccommodation(pageSize, pageNum).getJSONObject("items")
-                .getJSONArray("item");
+            JSONArray stayArr = getItems(getAccommodation(pageSize, pageNum));
 
             for (int j = 0; j < stayArr.length(); j++) {
                 try {
@@ -97,11 +95,10 @@ public class OpenApiService {
                     saveRooms(product, introItem, rooms);
                 } catch (InvalidDataException e) {
                     log.error(e.getMessage());
-                    log.info("다음 숙소를 조회합니다.");
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
+            log.error("[OpenAPI] " + e.getMessage());
             throw new OpenApiException();
         }
     }
@@ -128,11 +125,7 @@ public class OpenApiService {
             .build(true).toUri();
         ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET,
             httpEntity, String.class);
-        log.info("숙박 정보 조회");
-        log.info(response.toString());
-        return new JSONObject(response.getBody())
-            .getJSONObject("response")
-            .getJSONObject("body");
+        return getBody(response.getBody());
     }
 
     private JSONObject getCommon(long contentId) throws JSONException {
@@ -148,10 +141,7 @@ public class OpenApiService {
             .build(true).toUri();
         ResponseEntity<String> commonResponse = restTemplate.exchange(uri, HttpMethod.GET,
             httpEntity, String.class);
-        log.info(contentId + "번 데이터 공통 정보 조회" + commonResponse.getBody());
-        return new JSONObject(commonResponse.getBody())
-            .getJSONObject("response")
-            .getJSONObject("body");
+        return getBody(commonResponse.getBody());
     }
 
     private JSONObject getIntro(long contentId) throws JSONException {
@@ -162,10 +152,7 @@ public class OpenApiService {
             .build(true).toUri();
         ResponseEntity<String> introResponse = restTemplate.exchange(uri, HttpMethod.GET,
             httpEntity, String.class);
-        log.info(contentId + "번 데이터 소개 정보 조회" + introResponse.getBody());
-        return new JSONObject(introResponse.getBody())
-            .getJSONObject("response")
-            .getJSONObject("body");
+        return getBody(introResponse.getBody());
     }
 
     private JSONObject getInfo(long contentId) throws JSONException {
@@ -176,10 +163,7 @@ public class OpenApiService {
             .build(true).toUri();
         ResponseEntity<String> infoResponse = restTemplate.exchange(uri, HttpMethod.GET,
             httpEntity, String.class);
-        log.info(contentId + "번 데이터 반복 정보 조회" + infoResponse.getBody());
-        return new JSONObject(infoResponse.getBody())
-            .getJSONObject("response")
-            .getJSONObject("body");
+        return getBody(infoResponse.getBody());
     }
 
     private JSONObject getImages(long contentId) throws JSONException {
@@ -191,14 +175,15 @@ public class OpenApiService {
             .build(true).toUri();
         ResponseEntity<String> imageResponse = restTemplate.exchange(uri, HttpMethod.GET,
             httpEntity, String.class);
-        log.info(contentId + "번 데이터 이미지 정보 조회" + imageResponse.getBody());
-        return new JSONObject(imageResponse.getBody())
-            .getJSONObject("response")
-            .getJSONObject("body");
+        return getBody(imageResponse.getBody());
     }
 
     private JSONArray getItems(JSONObject jsonObject) {
         return jsonObject.getJSONObject("items").getJSONArray("item");
+    }
+
+    private JSONObject getBody(String source) {
+        return new JSONObject(source).getJSONObject("response").getJSONObject("body");
     }
 
     private boolean hasRoom(JSONArray info) throws JSONException {
@@ -234,7 +219,6 @@ public class OpenApiService {
             .sports(intro.get("sports").equals("1"))
             .seminar(intro.get("seminar").equals("1"))
             .build();
-
         Product product = Product.builder()
             .name(base.getString("title"))
             .address(
@@ -257,7 +241,6 @@ public class OpenApiService {
     }
 
     private void saveProductImages(Product product, JSONArray images) {
-        List<ProductImage> productImages = new ArrayList<>();
         for (int k = 0; k < images.length(); k++) {
             productImageRepository.save(ProductImage.builder()
                 .product(product)
@@ -274,13 +257,11 @@ public class OpenApiService {
             }
             if (Integer.parseInt(roomJson.getString("roomcount")) != 0) {
                 for (int j = 0; j < Integer.parseInt(roomJson.getString("roomcount")); j++) {
-                    System.out.println(intro.toString());
                     String[] stringCheckIn = intro.getString("checkintime").split(":|;|시");
                     String[] stringCheckOut = intro.getString("checkouttime").split(":|;|시");
                     LocalTime checkIn = getTimeFromString(stringCheckIn);
                     LocalTime checkOut = getTimeFromString(stringCheckOut);
 
-                    System.out.println(roomJson);
                     RoomPrice roomPrice = RoomPrice.builder()
                         .offWeekDaysMinFee(Integer.parseInt(
                             roomJson.getString("roomoffseasonminfee1")))

@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.domain.favorite.dto.FavoriteResponseDto;
 import com.fc.shimpyo_be.domain.favorite.dto.FavoritesResponseDto;
@@ -49,8 +48,6 @@ public class FavoriteRestControllerTest extends AbstractContainersSupport {
     @MockBean
     SecurityUtil securityUtil;
 
-    ObjectMapper objectMapper = new ObjectMapper();
-
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders
@@ -75,8 +72,8 @@ public class FavoriteRestControllerTest extends AbstractContainersSupport {
                 .build();
 
             given(securityUtil.getCurrentMemberId()).willReturn(1L);
-            given(favoriteService.register(any(Long.TYPE), any(Long.TYPE))).willReturn(
-                favoriteResponseDto);
+            given(favoriteService.register(any(Long.TYPE), any(Long.TYPE)))
+                .willReturn(favoriteResponseDto);
 
             // when then
             mockMvc.perform(post("/api/favorites/{productId}", 1L))
@@ -117,8 +114,8 @@ public class FavoriteRestControllerTest extends AbstractContainersSupport {
                 .build();
 
             given(securityUtil.getCurrentMemberId()).willReturn(1L);
-            given(favoriteService.getFavorites(any(Long.TYPE), any(Pageable.class))).willReturn(
-                favoritesResponseDto);
+            given(favoriteService.getFavorites(any(Long.TYPE), any(Pageable.class)))
+                .willReturn(favoritesResponseDto);
 
             // when then
             mockMvc.perform(get("/api/favorites")
@@ -158,8 +155,8 @@ public class FavoriteRestControllerTest extends AbstractContainersSupport {
                 .build();
 
             given(securityUtil.getCurrentMemberId()).willReturn(1L);
-            given(favoriteService.delete(any(Long.TYPE), any(Long.TYPE))).willReturn(
-                favoriteResponseDto);
+            given(favoriteService.delete(any(Long.TYPE), any(Long.TYPE)))
+                .willReturn(favoriteResponseDto);
 
             // when then
             mockMvc.perform(delete("/api/favorites/{productId}", 1L))

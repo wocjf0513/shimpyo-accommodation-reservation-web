@@ -57,7 +57,7 @@ public class AuthRestControllerDocsTest extends RestDocsSupport {
 
         given(authService.signUp(any(SignUpRequestDto.class))).willReturn(memberResponseDto);
 
-        // when
+        // when then
         mockMvc.perform(post("/api/auth/signup")
                 .content(objectMapper.writeValueAsString(signUpRequestDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -118,7 +118,7 @@ public class AuthRestControllerDocsTest extends RestDocsSupport {
 
         given(authService.signIn(any(SignInRequestDto.class))).willReturn(signInResponseDto);
 
-        // when
+        // when then
         mockMvc.perform(post("/api/auth/signin")
                 .content(objectMapper.writeValueAsString(signInRequestDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -187,7 +187,7 @@ public class AuthRestControllerDocsTest extends RestDocsSupport {
 
         given(authService.refresh(any(RefreshRequestDto.class))).willReturn(signInResponseDto);
 
-        // when
+        // when then
         mockMvc.perform(post("/api/auth/refresh")
                 .content(objectMapper.writeValueAsString(refreshRequestDto))
                 .contentType(MediaType.APPLICATION_JSON))

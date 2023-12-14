@@ -1,18 +1,19 @@
 package com.fc.shimpyo_be.domain.member.dto.response;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignInResponseDto {
 
     private MemberResponseDto member;
     private TokenResponseDto token;
 
     @Builder
-    public SignInResponseDto(MemberResponseDto member, TokenResponseDto token) {
+    private SignInResponseDto(MemberResponseDto member, TokenResponseDto token) {
         this.member = member;
         this.token = token;
     }
