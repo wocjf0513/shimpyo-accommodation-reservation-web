@@ -1,12 +1,13 @@
 package com.fc.shimpyo_be.domain.member.dto.response;
 
 import com.fc.shimpyo_be.domain.member.entity.Member;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberResponseDto {
 
     private Long memberId;
@@ -15,7 +16,7 @@ public class MemberResponseDto {
     private String photoUrl;
 
     @Builder
-    public MemberResponseDto(Long memberId, String email, String name, String photoUrl) {
+    private MemberResponseDto(Long memberId, String email, String name, String photoUrl) {
         this.memberId = memberId;
         this.email = email;
         this.name = name;

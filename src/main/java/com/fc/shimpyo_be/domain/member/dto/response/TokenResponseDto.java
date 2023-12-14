@@ -1,11 +1,12 @@
 package com.fc.shimpyo_be.domain.member.dto.response;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TokenResponseDto {
 
     private String grantType;
@@ -14,7 +15,7 @@ public class TokenResponseDto {
     private String refreshToken;
 
     @Builder
-    public TokenResponseDto(String grantType, String accessToken, long accessTokenExpiresIn,
+    private TokenResponseDto(String grantType, String accessToken, long accessTokenExpiresIn,
         String refreshToken) {
         this.grantType = grantType;
         this.accessToken = accessToken;

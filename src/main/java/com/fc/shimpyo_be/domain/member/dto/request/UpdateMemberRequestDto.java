@@ -1,11 +1,12 @@
 package com.fc.shimpyo_be.domain.member.dto.request;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdateMemberRequestDto {
 
     private String password;
@@ -13,7 +14,7 @@ public class UpdateMemberRequestDto {
     private String photoUrl;
 
     @Builder
-    public UpdateMemberRequestDto(String password, String passwordConfirm, String photoUrl) {
+    private UpdateMemberRequestDto(String password, String passwordConfirm, String photoUrl) {
         this.password = password;
         this.passwordConfirm = passwordConfirm;
         this.photoUrl = photoUrl;

@@ -5,13 +5,14 @@ import com.fc.shimpyo_be.domain.member.entity.Member;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SignUpRequestDto {
 
     @NotBlank(message = "이메일을 입력하세요.")
@@ -26,7 +27,7 @@ public class SignUpRequestDto {
     private String passwordConfirm;
 
     @Builder
-    public SignUpRequestDto(String email, String name, String password, String passwordConfirm) {
+    private SignUpRequestDto(String email, String name, String password, String passwordConfirm) {
         this.email = email;
         this.name = name;
         this.password = password;
