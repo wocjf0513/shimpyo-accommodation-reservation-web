@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record ValidatePreoccupyRoomResponseDto(
+    Long cartId,
     Long roomCode,
     String startDate,
     String endDate,

@@ -118,7 +118,7 @@ public class StarServiceTest {
                 .checkOut(LocalTime.of(12, 0))
                 .build()
             )
-            .endDate(LocalDate.of(2023, 12, 10))
+            .endDate(LocalDate.now().minusDays(7))
             .build();
 
         reservationProductBeforeCheckOut = ReservationProduct.builder()

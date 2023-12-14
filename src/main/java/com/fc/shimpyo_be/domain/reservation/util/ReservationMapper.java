@@ -14,7 +14,7 @@ import java.util.List;
 
 public class ReservationMapper {
 
-    public static ReservationInfoResponseDto from(ReservationProduct reservationProduct) {
+    public static ReservationInfoResponseDto toReservationInfoResponseDto(ReservationProduct reservationProduct) {
         Reservation reservation = reservationProduct.getReservation();
         Room room = reservationProduct.getRoom();
         Product product = room.getProduct();
@@ -39,7 +39,7 @@ public class ReservationMapper {
             .build();
     }
 
-    public static SaveReservationResponseDto from(Reservation reservation) {
+    public static SaveReservationResponseDto toSaveReservationResponseDto(Reservation reservation) {
         List<ReservationProductResponseDto> reservationProductDtos = new ArrayList<>();
         for (ReservationProduct reservationProduct : reservation.getReservationProducts()) {
 

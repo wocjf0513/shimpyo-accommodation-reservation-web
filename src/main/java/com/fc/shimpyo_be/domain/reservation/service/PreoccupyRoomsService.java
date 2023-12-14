@@ -1,8 +1,8 @@
 package com.fc.shimpyo_be.domain.reservation.service;
 
 import com.fc.shimpyo_be.domain.reservation.dto.CheckAvailableRoomsResultDto;
-import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomItemRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ValidatePreoccupyRoomResponseDto;
 import com.fc.shimpyo_be.domain.room.service.RoomService;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -23,7 +24,7 @@ public class PreoccupyRoomsService {
 
     private final RoomService roomService;
     private final RedisTemplate<String, Object> redisTemplate;
-    private static final String REDIS_KEY_FORMAT = "roomId:%d:%s";
+    private static final String PREOCCUPY_REDIS_KEY_FORMAT = "roomId:%d:%s";
     private static final String CHECK_DUPLICATE_FORMAT = "%d:%s:%s";
 
     public CheckAvailableRoomsResultDto checkAvailable(Long memberId, PreoccupyRoomsRequestDto request) {
@@ -40,6 +41,7 @@ public class PreoccupyRoomsService {
 
             LocalDate startDate = DateTimeUtil.toLocalDate(room.startDate());
             LocalDate endDate = DateTimeUtil.toLocalDate(room.endDate());
+            Long cartId = room.cartId();
             Long roomCode = room.roomCode();
 
             List<Long> roomIds = roomService.getRoomIdsByCode(roomCode);
@@ -55,7 +57,7 @@ public class PreoccupyRoomsService {
                 LocalDate targetDate = startDate;
                 while(targetDate.isBefore(endDate)) {
 
-                    String key = String.format(REDIS_KEY_FORMAT, roomId, targetDate);
+                    String key = String.format(PREOCCUPY_REDIS_KEY_FORMAT, roomId, targetDate);
                     Object value = opsForValue.get(key);
 
                     log.info("roomId: {}, targetDate: {}, value: {}", roomId, targetDate, value);
@@ -77,6 +79,7 @@ public class PreoccupyRoomsService {
 
                     roomResults.add(
                         ValidatePreoccupyRoomResponseDto.builder()
+                            .cartId(cartId)
                             .roomCode(roomCode)
                             .startDate(DateTimeUtil.toString(startDate))
                             .endDate(DateTimeUtil.toString(endDate))
@@ -95,6 +98,7 @@ public class PreoccupyRoomsService {
 
                 roomResults.add(
                     ValidatePreoccupyRoomResponseDto.builder()
+                        .cartId(cartId)
                         .roomCode(roomCode)
                         .startDate(DateTimeUtil.toString(startDate))
                         .endDate(DateTimeUtil.toString(endDate))
@@ -120,17 +124,17 @@ public class PreoccupyRoomsService {
             Map<String, String> map = preoccupyMap.get(roomResult.roomId());
             opsForValue.multiSet(map);
 
-            Date expireDate = convertLocalDateToDate(DateTimeUtil.toLocalDate(roomResult.endDate()));
+            Date expireDate = convertLocalDateTimeToDate(LocalDateTime.now().plusMinutes(35));
             for (String key : map.keySet()) {
                 redisTemplate.expireAt(key, expireDate);
             }
         }
     }
 
-    private Date convertLocalDateToDate(LocalDate localDate) {
+    private Date convertLocalDateTimeToDate(LocalDateTime dateTime) {
         return Date.from(
-            localDate
-                .atStartOfDay(ZoneId.systemDefault())
+            dateTime
+                .atZone(ZoneId.systemDefault())
                 .toInstant()
         );
     }

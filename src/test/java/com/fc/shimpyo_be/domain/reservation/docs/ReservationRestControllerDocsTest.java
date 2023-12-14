@@ -84,6 +84,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
             .reservationProducts(
                 List.of(
                     ReservationProductRequestDto.builder()
+                        .cartId(2L)
                         .roomId(1L)
                         .startDate("2023-11-20")
                         .endDate("2023-11-23")
@@ -92,6 +93,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         .price(300000)
                         .build(),
                     ReservationProductRequestDto.builder()
+                        .cartId(7L)
                         .roomId(2L)
                         .startDate("2023-12-10")
                         .endDate("2023-12-12")
@@ -159,6 +161,9 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("reservationProducts").type(JsonFieldType.ARRAY).description("예약할 객실 숙소 리스트")
                             .attributes(key("constraints").value(
                                 saveReservationDescriptions.descriptionsForProperty("reservationProducts"))),
+                        fieldWithPath("reservationProducts[].cartId").type(JsonFieldType.NUMBER).description("장바구니 식별자")
+                            .attributes(key("constraints").value(
+                                reservationProductDescriptions.descriptionsForProperty("cartId"))),
                         fieldWithPath("reservationProducts[].roomId").type(JsonFieldType.NUMBER).description("예약할 객실 식별자")
                             .attributes(key("constraints").value(
                                 reservationProductDescriptions.descriptionsForProperty("roomId"))),
@@ -319,10 +324,10 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                 .rooms(
                     List.of(
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomCode(1001L).startDate("2023-12-23").endDate("2023-12-25")
+                            .cartId(1L).roomCode(1001L).startDate("2023-12-23").endDate("2023-12-25")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomCode(1002L).startDate("2023-11-11").endDate("2023-11-14")
+                            .cartId(2L).roomCode(1002L).startDate("2023-11-11").endDate("2023-11-14")
                             .build()
                     )
                 )
@@ -334,12 +339,14 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                 .roomResults(
                     List.of(
                         ValidatePreoccupyRoomResponseDto.builder()
+                            .cartId(1L)
                             .roomCode(1001L)
                             .startDate("2023-12-23")
                             .endDate("2023-12-25")
                             .roomId(1L)
                             .build(),
                         ValidatePreoccupyRoomResponseDto.builder()
+                            .cartId(2L)
                             .roomCode(1002L)
                             .startDate("2023-11-11")
                             .endDate("2023-11-14")
@@ -364,6 +371,9 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("rooms").type(JsonFieldType.ARRAY).description("예약할 객실 리스트")
                             .attributes(key("constraints").value(
                                 preoccupyRoomsDescriptions.descriptionsForProperty("rooms"))),
+                        fieldWithPath("rooms[].cartId").type(JsonFieldType.NUMBER).description("장바구니 식별자")
+                            .attributes(key("constraints").value(
+                                preoccupyRoomItemDescriptions.descriptionsForProperty("cartId"))),
                         fieldWithPath("rooms[].roomCode").type(JsonFieldType.NUMBER).description("예약할 객실 코드")
                             .attributes(key("constraints").value(
                                 preoccupyRoomItemDescriptions.descriptionsForProperty("roomCode"))),
@@ -378,6 +388,7 @@ public class ReservationRestControllerDocsTest extends RestDocsSupport {
                         fieldWithPath("data").type(JsonFieldType.OBJECT).description("응답 데이터"),
                         fieldWithPath("data.isAvailable").type(JsonFieldType.BOOLEAN).description("예약 선점 가능 여부"),
                         fieldWithPath("data.roomResults").type(JsonFieldType.ARRAY).description("객실별 예약 선점 가능 검증 결과 리스트"),
+                        fieldWithPath("data.roomResults[].cartId").type(JsonFieldType.NUMBER).description("장바구니 식별자"),
                         fieldWithPath("data.roomResults[].roomCode").type(JsonFieldType.NUMBER).description("객실 코드"),
                         fieldWithPath("data.roomResults[].startDate").type(JsonFieldType.STRING).description("숙박 시작일"),
                         fieldWithPath("data.roomResults[].endDate").type(JsonFieldType.STRING).description("숙박 마지막일"),

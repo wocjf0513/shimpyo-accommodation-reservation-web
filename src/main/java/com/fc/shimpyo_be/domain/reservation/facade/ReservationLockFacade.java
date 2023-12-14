@@ -1,5 +1,6 @@
 package com.fc.shimpyo_be.domain.reservation.facade;
 
+import com.fc.shimpyo_be.domain.reservation.dto.ValidateReservationResultDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ValidateReservationResultResponseDto;
@@ -34,7 +35,7 @@ public class ReservationLockFacade {
                 throw new RedissonLockFailException();
             }
 
-            ValidateReservationResultResponseDto resultDto = reservationService.validate(memberId, request.reservationProducts());
+            ValidateReservationResultDto resultDto = reservationService.validate(memberId, request.reservationProducts());
 
             if(!resultDto.isAvailable()) {
                 log.debug("[{}][validate rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, false, resultDto.unavailableIds());
@@ -46,9 +47,10 @@ public class ReservationLockFacade {
                         .build()
                 );
             }
+
             log.debug("[{}][validate rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, true, resultDto.unavailableIds());
 
-            return reservationService.saveReservation(memberId, request);
+            return reservationService.saveReservation(memberId, request, resultDto.confirmMap());
 
         } catch (InterruptedException exception) {
             log.error("exception : {}, message : {}", exception.getClass().getSimpleName(), exception.getMessage());
