@@ -6,6 +6,7 @@ import com.fc.shimpyo_be.domain.cart.dto.response.CartResponse;
 import com.fc.shimpyo_be.domain.cart.entity.Cart;
 import com.fc.shimpyo_be.domain.cart.exception.CartNotDeleteException;
 import com.fc.shimpyo_be.domain.cart.exception.CartNotFoundException;
+import com.fc.shimpyo_be.domain.cart.repository.CartCustomRepositoryImpl;
 import com.fc.shimpyo_be.domain.cart.repository.CartRepository;
 import com.fc.shimpyo_be.domain.cart.util.CartMapper;
 import com.fc.shimpyo_be.domain.member.entity.Member;
@@ -38,14 +39,13 @@ public class CartService {
 
     private final ProductService productService;
 
+    private final CartCustomRepositoryImpl cartCustomRepository;
+
     public List<CartResponse> getCarts() {
         List<Cart> carts = cartRepository.findByMemberId(
             securityUtil.getCurrentMemberId()).orElseThrow();
 
-        return carts.stream().map(this::getCartResponse).filter(
-                cartResponse ->
-                    productService.countAvailableForReservationUsingRoomCode(cartResponse.getRoomCode(),
-                        cartResponse.getStartDate(), cartResponse.getEndDate()) > 0).toList();
+        return carts.stream().map(this::getCartResponse).toList();
     }
 
     @Transactional
@@ -60,7 +60,8 @@ public class CartService {
             cartCreateRequest.endDate());
 
         if (countAvailableForReservation <= 0
-            || cartRepository.countByRoomCode(cartCreateRequest.roomCode()) + 1
+            || cartCustomRepository.countByRoomCodeAndMemberIdContainsDate(
+            cartCreateRequest, member.getId()) + 1
             > countAvailableForReservation) {
             throw new RoomNotReserveException();
         }
