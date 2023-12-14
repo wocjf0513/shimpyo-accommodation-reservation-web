@@ -32,6 +32,9 @@ public class ReservationRestController {
     private final PreoccupyRoomsLockFacade preoccupyRoomsLockFacade;
     private final ReservationLockFacade reservationLockFacade;
     private final SecurityUtil securityUtil;
+    private static final Integer PAGE_SIZE = 10;
+    private static final Integer PAGE_NUM = 0;
+    private static final String PAGE_SORT_BY = "id";
 
     @PostMapping
     public ResponseEntity<ResponseDto<SaveReservationResponseDto>> saveReservation(
@@ -51,7 +54,7 @@ public class ReservationRestController {
 
     @GetMapping
     public ResponseEntity<ResponseDto<Page<ReservationInfoResponseDto>>> getReservationList(
-        @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+        @PageableDefault(size = PAGE_SIZE, page = PAGE_NUM, sort = PAGE_SORT_BY, direction = Sort.Direction.DESC) Pageable pageable
     ) {
 
         return ResponseEntity
