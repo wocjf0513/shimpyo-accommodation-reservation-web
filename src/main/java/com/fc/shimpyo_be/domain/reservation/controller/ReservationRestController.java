@@ -36,7 +36,6 @@ public class ReservationRestController {
     public ResponseEntity<ResponseDto<SaveReservationResponseDto>> saveReservation(
         @Valid @RequestBody SaveReservationRequestDto request
     ) {
-        log.debug("[api][POST] /api/reservations");
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -53,7 +52,6 @@ public class ReservationRestController {
     public ResponseEntity<ResponseDto<Page<?>>> getReservationList(
         @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        log.debug("[api][GET] /api/reservations");
 
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -70,7 +68,6 @@ public class ReservationRestController {
     public ResponseEntity<ResponseDto<ValidatePreoccupyResultResponseDto>> checkAvailableAndPreoccupy(
         @Valid @RequestBody PreoccupyRoomsRequestDto request
     ) {
-        log.debug("[api][POST] /api/reservations/preoccupy");
 
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -87,7 +84,6 @@ public class ReservationRestController {
     public ResponseEntity<ResponseDto<Void>> releaseRooms(
         @Valid @RequestBody ReleaseRoomsRequestDto request
     ) {
-        log.debug("[api][POST] /api/reservations/release");
 
         reservationService.releaseRooms(securityUtil.getCurrentMemberId(), request);
 

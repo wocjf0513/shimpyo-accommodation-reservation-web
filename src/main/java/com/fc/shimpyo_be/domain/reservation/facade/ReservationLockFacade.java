@@ -28,7 +28,7 @@ public class ReservationLockFacade {
         String currentWorker = Thread.currentThread().getName();
 
         try {
-            boolean isLocked = lock.tryLock(2, 4, TimeUnit.SECONDS);
+            boolean isLocked = lock.tryLock(3, 5, TimeUnit.SECONDS);
 
             if(!isLocked) {
                 log.error("[{}] 예약 lock 획득 실패", currentWorker);
@@ -38,8 +38,6 @@ public class ReservationLockFacade {
             ValidateReservationResultDto resultDto = reservationService.validate(memberId, request.reservationProducts());
 
             if(!resultDto.isAvailable()) {
-                log.debug("[{}][validate rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, false, resultDto.unavailableIds());
-
                 throw new ReserveNotAvailableException(
                     ValidateReservationResultResponseDto.builder()
                         .isAvailable(false)
@@ -47,8 +45,6 @@ public class ReservationLockFacade {
                         .build()
                 );
             }
-
-            log.debug("[{}][validate rooms result] isAvailable = {}, unavailableIds = {}", currentWorker, true, resultDto.unavailableIds());
 
             return reservationService.saveReservation(memberId, request, resultDto.confirmMap());
 
