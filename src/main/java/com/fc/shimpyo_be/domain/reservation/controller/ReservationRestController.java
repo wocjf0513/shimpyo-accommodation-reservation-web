@@ -3,6 +3,7 @@ package com.fc.shimpyo_be.domain.reservation.controller;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ValidatePreoccupyResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
@@ -49,7 +50,7 @@ public class ReservationRestController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<Page<?>>> getReservationList(
+    public ResponseEntity<ResponseDto<Page<ReservationInfoResponseDto>>> getReservationList(
         @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
     ) {
 
