@@ -41,6 +41,7 @@ public class PreoccupyRoomsService {
 
             LocalDate startDate = DateTimeUtil.toLocalDate(room.startDate());
             LocalDate endDate = DateTimeUtil.toLocalDate(room.endDate());
+            Long cartId = room.cartId();
             Long roomCode = room.roomCode();
 
             List<Long> roomIds = roomService.getRoomIdsByCode(roomCode);
@@ -78,6 +79,7 @@ public class PreoccupyRoomsService {
 
                     roomResults.add(
                         ValidatePreoccupyRoomResponseDto.builder()
+                            .cartId(cartId)
                             .roomCode(roomCode)
                             .startDate(DateTimeUtil.toString(startDate))
                             .endDate(DateTimeUtil.toString(endDate))
@@ -96,6 +98,7 @@ public class PreoccupyRoomsService {
 
                 roomResults.add(
                     ValidatePreoccupyRoomResponseDto.builder()
+                        .cartId(cartId)
                         .roomCode(roomCode)
                         .startDate(DateTimeUtil.toString(startDate))
                         .endDate(DateTimeUtil.toString(endDate))
