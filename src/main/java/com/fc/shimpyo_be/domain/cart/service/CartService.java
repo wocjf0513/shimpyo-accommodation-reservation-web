@@ -81,6 +81,18 @@ public class CartService {
         return CartMapper.toCartDeleteResponse(cart);
     }
 
+    @Transactional
+    public CartDeleteResponse deleteCart(final Long memberId, final Long cartId) {
+        Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new);
+
+        if (!cart.getMember().getId().equals(memberId)) {
+            throw new CartNotDeleteException();
+        }
+        cartRepository.deleteById(cart.getId());
+
+        return CartMapper.toCartDeleteResponse(cart);
+    }
+
     private CartResponse getCartResponse(final Cart cart) {
         List<Room> rooms = Optional.of(roomRepository.findByCode(cart.getRoomCode()))
             .orElseThrow();
