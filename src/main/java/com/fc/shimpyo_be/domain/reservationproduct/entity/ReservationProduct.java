@@ -45,7 +45,7 @@ public class ReservationProduct extends BaseTimeEntity {
     private String visitorPhone;
 
     @Builder
-    public ReservationProduct(
+    private ReservationProduct(
         Long id,
         Reservation reservation,
         Room room,
