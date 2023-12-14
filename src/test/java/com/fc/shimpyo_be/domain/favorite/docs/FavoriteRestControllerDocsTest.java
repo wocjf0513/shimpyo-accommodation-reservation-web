@@ -46,8 +46,8 @@ public class FavoriteRestControllerDocsTest extends RestDocsSupport {
             .build();
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
-        given(favoriteService.register(any(Long.TYPE), any(Long.TYPE))).willReturn(
-            favoriteResponseDto);
+        given(favoriteService.register(any(Long.TYPE), any(Long.TYPE)))
+            .willReturn(favoriteResponseDto);
 
         // when then
         mockMvc.perform(post("/api/favorites/{productId}", 1L))
@@ -141,8 +141,8 @@ public class FavoriteRestControllerDocsTest extends RestDocsSupport {
             .build();
 
         given(securityUtil.getCurrentMemberId()).willReturn(1L);
-        given(favoriteService.delete(any(Long.TYPE), any(Long.TYPE))).willReturn(
-            favoriteResponseDto);
+        given(favoriteService.delete(any(Long.TYPE), any(Long.TYPE)))
+            .willReturn(favoriteResponseDto);
 
         // when then
         mockMvc.perform(delete("/api/favorites/{productId}", 1L))
