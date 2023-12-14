@@ -1,4 +1,4 @@
-package com.fc.shimpyo_be.domain.product.exception;
+package com.fc.shimpyo_be.domain.room.exception;
 
 import com.fc.shimpyo_be.global.exception.ApplicationException;
 import com.fc.shimpyo_be.global.exception.ErrorCode;
