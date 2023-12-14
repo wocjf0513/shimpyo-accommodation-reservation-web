@@ -1,12 +1,13 @@
 package com.fc.shimpyo_be.domain.favorite.dto;
 
 import com.fc.shimpyo_be.domain.favorite.entity.Favorite;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FavoriteResponseDto {
 
     private Long favoriteId;
@@ -14,7 +15,7 @@ public class FavoriteResponseDto {
     private Long productId;
 
     @Builder
-    public FavoriteResponseDto(Long favoriteId, Long memberId, Long productId) {
+    private FavoriteResponseDto(Long favoriteId, Long memberId, Long productId) {
         this.favoriteId = favoriteId;
         this.memberId = memberId;
         this.productId = productId;
