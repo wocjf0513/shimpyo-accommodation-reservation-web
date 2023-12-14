@@ -205,46 +205,46 @@ class ReservationLockFacadeTest extends AbstractContainersSupport {
 
         SaveReservationRequestDto request1 = new SaveReservationRequestDto(
             List.of(
-                new ReservationProductRequestDto(2L, "2023-11-20", "2023-11-23",
+                new ReservationProductRequestDto(1L, 2L, "2023-11-20", "2023-11-23",
                     "visitor1", "010-1111-1111", 100000),
-                new ReservationProductRequestDto(3L, "2023-11-24", "2023-11-26",
+                new ReservationProductRequestDto(2L, 3L, "2023-11-24", "2023-11-26",
                     "visitor2", "010-2222-2222", 150000)
             ), PayMethod.KAKAO_PAY, 250000
         );
 
         SaveReservationRequestDto request2 = new SaveReservationRequestDto(
-            List.of(new ReservationProductRequestDto(4L, "2023-10-10", "2023-10-14",
+            List.of(new ReservationProductRequestDto(3L, 4L, "2023-10-10", "2023-10-14",
                 "visitor3", "010-3333-3333", 125000)),
             PayMethod.CREDIT_CARD, 125000
         );
 
         SaveReservationRequestDto request3 = new SaveReservationRequestDto(
             List.of(
-                new ReservationProductRequestDto(2L, "2023-11-10", "2023-11-14",
+                new ReservationProductRequestDto(4L, 2L, "2023-11-10", "2023-11-14",
                     "visitor", "010-1111-1111", 90000),
-                new ReservationProductRequestDto(5L, "2023-10-17", "2023-10-20",
+                new ReservationProductRequestDto(5L, 5L, "2023-10-17", "2023-10-20",
                     "visitor", "010-1111-1111", 110000),
-                new ReservationProductRequestDto(3L, "2023-10-10", "2023-10-14",
+                new ReservationProductRequestDto(6L, 3L, "2023-10-10", "2023-10-14",
                     "visitor", "010-1111-1111", 100000)
             ), PayMethod.NAVER_PAY, 300000
         );
 
         SaveReservationRequestDto request4 = new SaveReservationRequestDto(
             List.of(
-                new ReservationProductRequestDto(4L, "2023-10-05", "2023-10-07",
+                new ReservationProductRequestDto(7L, 4L, "2023-10-05", "2023-10-07",
                     "visitor", "010-1111-1111", 125000),
-                new ReservationProductRequestDto(5L, "2023-10-10", "2023-10-14",
+                new ReservationProductRequestDto(8L, 5L, "2023-10-10", "2023-10-14",
                     "visitor", "010-1111-1111", 125000)
                 ), PayMethod.KAKAO_PAY, 250000
         );
 
         SaveReservationRequestDto request5 = new SaveReservationRequestDto(
             List.of(
-                new ReservationProductRequestDto(1L, "2023-10-10", "2023-10-14",
+                new ReservationProductRequestDto(9L, 1L, "2023-10-10", "2023-10-14",
                     "visitor4", "010-4444-4444", 150000),
-                new ReservationProductRequestDto(2L, "2023-12-11", "2023-12-15",
+                new ReservationProductRequestDto(10L, 2L, "2023-12-11", "2023-12-15",
                     "visitor4", "010-4444-4444", 150000),
-                new ReservationProductRequestDto(4L, "2023-11-11", "2023-11-14",
+                new ReservationProductRequestDto(11L, 4L, "2023-11-11", "2023-11-14",
                     "visitor4", "010-4444-4444", 100000)
                 ), PayMethod.PAYPAL, 400000
         );

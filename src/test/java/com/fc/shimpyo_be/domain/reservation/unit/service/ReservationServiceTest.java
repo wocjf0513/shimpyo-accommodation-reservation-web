@@ -3,6 +3,8 @@ package com.fc.shimpyo_be.domain.reservation.unit.service;
 import com.fc.shimpyo_be.config.AbstractContainersSupport;
 import com.fc.shimpyo_be.config.DatabaseCleanUp;
 import com.fc.shimpyo_be.config.TestDBCleanerConfig;
+import com.fc.shimpyo_be.domain.cart.entity.Cart;
+import com.fc.shimpyo_be.domain.cart.repository.CartRepository;
 import com.fc.shimpyo_be.domain.member.entity.Authority;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.exception.MemberNotFoundException;
@@ -56,13 +58,22 @@ public class ReservationServiceTest extends AbstractContainersSupport {
     private RoomRepository roomRepository;
 
     @Autowired
+    private CartRepository cartRepository;
+
+    @Autowired
     private DatabaseCleanUp databaseCleanUp;
 
     private Member member;
 
     private final String[] tableNameArray = {
-        "member", "product", "room", "product_option", "address", "room_option", "amenity"
+        "member", "product", "room", "product_option", "address", "room_option", "amenity", "cart"
     };
+
+    private LocalDate startDate1 = LocalDate.now().plusDays(1);
+    private LocalDate endDate1 = startDate1.plusDays(2);
+
+    private LocalDate startDate2 = LocalDate.now().plusMonths(2);
+    private LocalDate endDate2 = startDate2.plusDays(3);
 
     @BeforeEach
     void setUp() {
@@ -134,6 +145,7 @@ public class ReservationServiceTest extends AbstractContainersSupport {
             rooms.add(
                 roomRepository.save(
                     Room.builder()
+                        .code(1000 + i)
                         .product(products.get(i - 1))
                         .name(roomName)
                         .description(roomName + " 설명")
@@ -171,6 +183,26 @@ public class ReservationServiceTest extends AbstractContainersSupport {
                 )
             );
         }
+
+        cartRepository.save(
+            Cart.builder()
+                .member(member)
+                .roomCode(rooms.get(0).getCode())
+                .startDate(startDate1)
+                .endDate(endDate1)
+                .price(150000L)
+                .build()
+        );
+
+        cartRepository.save(
+            Cart.builder()
+                .member(member)
+                .roomCode(rooms.get(1).getCode())
+                .startDate(startDate2)
+                .endDate(endDate2)
+                .price(200000L)
+                .build()
+        );
     }
 
     @DisplayName("정상적으로 예약을 저장할 수 있다.")
@@ -185,10 +217,10 @@ public class ReservationServiceTest extends AbstractContainersSupport {
             = new SaveReservationRequestDto(
             List.of(
                 new ReservationProductRequestDto(
-                    roomId1, "2023-11-20", "2023-11-23",
+                    1L, roomId1, startDate1.toString(), endDate1.toString(),
                     "visitor1", "010-1111-1111", 150000),
                 new ReservationProductRequestDto(
-                    roomId2, "2023-11-26", "2023-11-30",
+                    2L, roomId2, startDate2.toString(), endDate2.toString(),
                     "visitor1", "010-1111-1111", 200000
                 )
             ), PayMethod.CREDIT_CARD, 350000
@@ -208,6 +240,42 @@ public class ReservationServiceTest extends AbstractContainersSupport {
         //then
         assertThat(result.reservationId()).isNotNull();
         assertThat(result.reservationProducts()).hasSize(2);
+        assertThat(cartRepository.findById(1L)).isNotPresent();
+        assertThat(cartRepository.findById(2L)).isNotPresent();
+    }
+
+    @DisplayName("예약 저장시 장바구니 식별자가 -1인 경우는 장바구니 아이템을 삭제하지 않는다.")
+    @Test
+    void saveReservation_cart_delete_filter_test() {
+        //given
+        long memberId = member.getId();
+        long roomId1 = 1L;
+        long cartId1 = -1L;
+
+        SaveReservationRequestDto requestDto
+            = new SaveReservationRequestDto(
+            List.of(
+                new ReservationProductRequestDto(
+                    cartId1, roomId1, startDate1.toString(), endDate1.toString(),
+                    "visitor1", "010-1111-1111", 150000)
+            ), PayMethod.CREDIT_CARD, 150000
+        );
+
+        Map<Long, List<String>> map = new HashMap<>();
+        for (ReservationProductRequestDto reservationProduct : requestDto.reservationProducts()) {
+            map.put(
+                reservationProduct.roomId(),
+                getKeyList(reservationProduct.roomId(), reservationProduct.startDate(), reservationProduct.endDate())
+            );
+        }
+
+        //when
+        SaveReservationResponseDto result = reservationService.saveReservation(memberId, requestDto, map);
+
+        //then
+        assertThat(result.reservationId()).isNotNull();
+        assertThat(result.reservationProducts()).hasSize(1);
+        assertThat(cartRepository.findAll()).hasSize(2);
     }
 
     @DisplayName("회원이 존재하지 않으면 예약을 저장할 수 없다.")
@@ -222,11 +290,12 @@ public class ReservationServiceTest extends AbstractContainersSupport {
             = new SaveReservationRequestDto(
             List.of(
                 new ReservationProductRequestDto(
-                    roomId1, "2023-11-20", "2023-11-23",
+                    1L, roomId1, startDate1.toString(), endDate1.toString(),
                     "visitor1", "010-1111-1111", 150000),
                 new ReservationProductRequestDto(
-                    roomId2, "2023-11-18", "2023-11-20",
-                    "visitor2", "010-2222-2222", 200000)
+                    2L, roomId2, startDate2.toString(), endDate2.toString(),
+                    "visitor1", "010-1111-1111", 200000
+                )
             ), PayMethod.CREDIT_CARD, 350000
         );
 
@@ -255,11 +324,12 @@ public class ReservationServiceTest extends AbstractContainersSupport {
             = new SaveReservationRequestDto(
             List.of(
                 new ReservationProductRequestDto(
-                    roomId1, "2023-11-20", "2023-11-23",
+                    1L, roomId1, startDate1.toString(), endDate1.toString(),
                     "visitor1", "010-1111-1111", 150000),
                 new ReservationProductRequestDto(
-                    roomId2, "2023-11-18", "2023-11-20",
-                    "visitor2", "010-2222-2222", 200000)
+                    2L, roomId2, startDate2.toString(), endDate2.toString(),
+                    "visitor1", "010-1111-1111", 200000
+                )
             ), PayMethod.CREDIT_CARD, 350000
         );
 

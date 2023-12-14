@@ -83,6 +83,7 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
             .reservationProducts(
                 List.of(
                     ReservationProductRequestDto.builder()
+                        .cartId(1L)
                         .roomId(1L)
                         .startDate("2023-11-20")
                         .endDate("2023-11-23")
@@ -91,6 +92,7 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                         .price(300000)
                         .build(),
                     ReservationProductRequestDto.builder()
+                        .cartId(2L)
                         .roomId(3L)
                         .startDate("2023-12-10")
                         .endDate("2023-12-12")
@@ -218,11 +220,13 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                 .rooms(
                     List.of(
                         PreoccupyRoomItemRequestDto.builder()
+                            .cartId(1L)
                             .roomCode(1001L)
                             .startDate("2023-12-23")
                             .endDate("2023-12-25")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
+                            .cartId(2L)
                             .roomCode(1003L)
                             .startDate("2023-11-11")
                             .endDate("2023-11-14")
@@ -237,12 +241,14 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                 .roomResults(
                     List.of(
                         ValidatePreoccupyRoomResponseDto.builder()
+                            .cartId(1L)
                             .roomCode(1001L)
                             .startDate("2023-12-23")
                             .endDate("2023-12-25")
                             .roomId(1L)
                             .build(),
                         ValidatePreoccupyRoomResponseDto.builder()
+                            .cartId(2L)
                             .roomCode(1003L)
                             .startDate("2023-11-11")
                             .endDate("2023-11-14")
@@ -279,16 +285,16 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                 .rooms(
                     List.of(
                         PreoccupyRoomItemRequestDto.builder()
-                            .startDate("2023-12-23").endDate("2023-12-25")
+                            .cartId(1L).roomCode(1001L).startDate("2023-12-23").endDate("2023-12-25")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomCode(1002L).startDate("2023-11-11").endDate("2023-11-14")
+                            .cartId(2L).roomCode(1002L).startDate("2023-11-11").endDate("2023-11-14")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomCode(1003L).startDate("2023-11-11").endDate("2023-11-14")
+                            .cartId(3L).roomCode(1003L).startDate("2023-11-11").endDate("2023-11-14")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomCode(1004L).startDate("2023-11-16").endDate("2023-11-18")
+                            .cartId(4L).roomCode(1004L).startDate("2023-11-16").endDate("2023-11-18")
                             .build()
                     )
                 )
@@ -319,13 +325,13 @@ public class ReservationRestControllerTest extends AbstractContainersSupport {
                 .rooms(
                     List.of(
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomCode(1001L).startDate("202-12-23").endDate("2023-12-25")
+                            .cartId(1L).roomCode(1001L).startDate("202-12-23").endDate("2023-12-25")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomCode(1002L).startDate("2023-11-11").endDate("2023-11-14")
+                            .cartId(2L).roomCode(1002L).startDate("2023-11-11").endDate("2023-11-14")
                             .build(),
                         PreoccupyRoomItemRequestDto.builder()
-                            .roomCode(1003L).startDate("2023-11-11").endDate("2023-11-14")
+                            .cartId(3L).roomCode(1003L).startDate("2023-11-11").endDate("2023-11-14")
                             .build()
                     )
                 )
