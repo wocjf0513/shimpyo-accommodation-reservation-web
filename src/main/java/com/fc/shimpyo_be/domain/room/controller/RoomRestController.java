@@ -31,7 +31,6 @@ public class RoomRestController {
         @RequestParam @Size(min = 1, max = 3, message = "최소 1개, 최대 3개의 객실 식별자 정보가 필요합니다.")
         List<@Min(value = 1, message = "객실 식별자는 최소 1 이상이어야 합니다.") Long> roomIds
     ) {
-        log.debug("GET /api/rooms, roomIds : {}", roomIds);
 
         return ResponseEntity
             .status(HttpStatus.OK)

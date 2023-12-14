@@ -19,7 +19,6 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public List<RoomWithProductResponseDto> getRoomsWithProductInfo(List<Long> roomIds) {
-        log.debug("{} ::: {}", getClass().getSimpleName(), "getRoomsWithProductInfo");
 
         return roomRepository.findAllInIdsWithProductAndPrice(roomIds)
             .stream()
@@ -29,7 +28,6 @@ public class RoomService {
 
     @Transactional(readOnly = true)
     public List<Long> getRoomIdsByCode(Long roomCode) {
-        log.debug("{} ::: {}", getClass().getSimpleName(), "getRoomIdListByRoomCode");
 
         return roomRepository.findIdsByCode(roomCode);
     }
