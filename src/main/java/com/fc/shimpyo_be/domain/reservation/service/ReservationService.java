@@ -16,8 +16,7 @@ import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProduc
 import com.fc.shimpyo_be.domain.reservationproduct.entity.ReservationProduct;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
-import com.fc.shimpyo_be.domain.room.exception.RoomNotFoundException;
-import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
+import com.fc.shimpyo_be.domain.room.service.RoomService;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +40,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ReservationProductRepository reservationProductRepository;
     private final MemberService memberService;
-    private final RoomRepository roomRepository;
+    private final RoomService roomService;
     private final CartService cartService;
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String REDIS_ROOM_KEY_FORMAT = "roomId:%d:%s";
@@ -58,8 +57,7 @@ public class ReservationService {
         List<ReservationProduct> reservationProducts = new ArrayList<>();
         for (ReservationProductRequestDto reservationProductDto : request.reservationProducts()) {
 
-            Room room = roomRepository.findById(reservationProductDto.roomId())
-                .orElseThrow(RoomNotFoundException::new);
+            Room room = roomService.getRoomById(reservationProductDto.roomId());
 
             // 장바구니 아이템 삭제
             if (reservationProductDto.cartId() > 0) {
