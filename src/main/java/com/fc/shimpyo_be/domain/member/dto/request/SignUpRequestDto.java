@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SignUpRequestDto {
 
     private final String emailRegexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    private final String passwordRegexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$#^()!%*?&])[A-Za-z\\d@$!#^()%*?&]{8,30}$";
     private final int nameMin = 2;
     private final int nameMax = 30;
 
@@ -26,8 +27,10 @@ public class SignUpRequestDto {
     @Size(min = nameMin, max = nameMax, message = "이름은 최소 2자 이상 최대 30자 이내로 입력하세요.")
     private String name;
     @NotBlank(message = "비밀번호를 입력하세요.")
+    @Pattern(regexp = passwordRegexp)
     private String password;
     @NotBlank(message = "비밀번호 확인을 입력하세요.")
+    @Pattern(regexp = passwordRegexp)
     private String passwordConfirm;
 
     @Builder
