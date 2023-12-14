@@ -1,9 +1,12 @@
 package com.fc.shimpyo_be.domain.reservationproduct.dto.request;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
+
+import static com.fc.shimpyo_be.domain.reservationproduct.constant.ReservationProductValidationConstants.*;
 
 @Builder
 public record ReservationProductRequestDto(
@@ -11,13 +14,16 @@ public record ReservationProductRequestDto(
     Long cartId,
     @NotNull
     Long roomId,
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "올바른 날짜 형식이 아닙니다.(yyyy-MM-dd 형식으로 입력하세요.)")
+    @Pattern(regexp = DATE_REGEX, message = DATE_PATTERN_MESSAGE)
     String startDate,
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "올바른 날짜 형식이 아닙니다.(yyyy-MM-dd 형식으로 입력하세요.)")
+    @Pattern(regexp = DATE_REGEX, message = DATE_PATTERN_MESSAGE)
     String endDate,
+    @NotBlank
     String visitorName,
+    @NotBlank
+    @Pattern(regexp = PHONE_NUMBER_REGEX, message = PHONE_NUMBER_PATTERN_MESSAGE)
     String visitorPhone,
-    @Min(value = 0, message = "객실 이용 금액은 0원 이상부터 가능합니다.")
+    @Min(value = PRICE_MIN_VALUE, message = PRICE_MIN_MESSAGE)
     Integer price
 ) {
 }
