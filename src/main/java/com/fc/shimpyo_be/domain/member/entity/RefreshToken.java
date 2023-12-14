@@ -20,7 +20,7 @@ public class RefreshToken {
     private String token;
 
     @Builder
-    public RefreshToken(Long id, String token) {
+    private RefreshToken(Long id, String token) {
         this.id = id;
         this.token = token;
     }
