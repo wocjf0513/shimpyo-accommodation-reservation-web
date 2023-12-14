@@ -23,7 +23,6 @@ public class ReservationProductRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto<Void>> cancel(@PathVariable Long id) {
-        log.info("[api][DELETE] /api/reservation-products");
 
         reservationProductService.cancel(id, securityUtil.getCurrentMemberId());
 
