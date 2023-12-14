@@ -94,9 +94,7 @@ public class OpenApiService {
                     saveProductImages(product, images);
                     saveRooms(product, introItem, rooms);
                 } catch (InvalidDataException e) {
-                    log.debug("[OpenAPI] " + stayArr);
                     log.error(e.getMessage());
-                    log.info("[OpenAPI] 다음 숙소를 조회합니다.");
                 }
             }
         } catch (Exception e) {
