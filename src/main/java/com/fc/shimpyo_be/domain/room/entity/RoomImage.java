@@ -36,7 +36,7 @@ public class RoomImage {
     private String description;
 
     @Builder
-    public RoomImage(Long id, Room room, String photoUrl, String description) {
+    private RoomImage(Long id, Room room, String photoUrl, String description) {
         this.id = id;
         this.room = room;
         this.photoUrl = photoUrl;
