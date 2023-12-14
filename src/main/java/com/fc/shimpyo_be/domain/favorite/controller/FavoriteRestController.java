@@ -26,8 +26,8 @@ public class FavoriteRestController {
 
     private final FavoriteService favoriteService;
     private final SecurityUtil securityUtil;
-    private final int size = 10;
-    private final int page = 0;
+    private static final int DEFAULT_SIZE = 10;
+    private static final int DEFAULT_PAGE = 0;
 
     @PostMapping("/{productId}")
     public ResponseEntity<ResponseDto<FavoriteResponseDto>> register(@PathVariable long productId) {
@@ -38,7 +38,7 @@ public class FavoriteRestController {
 
     @GetMapping
     public ResponseEntity<ResponseDto<FavoritesResponseDto>> getFavorites(
-        @PageableConstraint(Favorite.class) @PageableDefault(size = size, page = page) Pageable pageable) {
+        @PageableConstraint(Favorite.class) @PageableDefault(size = DEFAULT_SIZE, page = DEFAULT_PAGE) Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(ResponseDto.res(HttpStatus.OK, favoriteService.getFavorites(
                 securityUtil.getCurrentMemberId(), pageable), "성공적으로 즐겨찾기 목록을 조회했습니다."));
