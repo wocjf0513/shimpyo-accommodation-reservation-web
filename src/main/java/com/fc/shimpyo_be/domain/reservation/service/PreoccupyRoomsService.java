@@ -60,7 +60,6 @@ public class PreoccupyRoomsService {
                     String key = String.format(PREOCCUPY_REDIS_KEY_FORMAT, roomId, targetDate);
                     Object value = opsForValue.get(key);
 
-                    log.info("roomId: {}, targetDate: {}, value: {}", roomId, targetDate, value);
                     if(Objects.nonNull(value)) {
                         dateCheck = false;
                         preoccupyMap.remove(roomId);

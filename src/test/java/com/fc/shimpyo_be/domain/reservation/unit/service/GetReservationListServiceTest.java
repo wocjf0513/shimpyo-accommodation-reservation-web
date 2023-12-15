@@ -80,8 +80,107 @@ public class GetReservationListServiceTest extends AbstractContainersSupport {
                 .build()
         );
 
+        List<Product> products = getProductTestDataList(3);
+        List<Room> rooms = getRoomTestDataList(5, products);
+
+        Reservation reservation1 = reservationRepository.save(
+            Reservation.builder()
+                .reservationProducts(
+                    List.of(
+                        getReservationProduct(
+                            rooms.get(0),
+                            LocalDate.of(2023, 11, 10),
+                            LocalDate.of(2023, 11, 12),
+                            200000
+                        ),
+                        getReservationProduct(
+                            rooms.get(1),
+                            LocalDate.of(2023, 11, 20),
+                            LocalDate.of(2023, 11, 22),
+                            200000
+                        )
+                    )
+                )
+                .member(member)
+                .payMethod(PayMethod.CREDIT_CARD)
+                .totalPrice(400000)
+                .build()
+        );
+
+        Reservation reservation2 = reservationRepository.save(
+            Reservation.builder()
+                .reservationProducts(
+                    List.of(
+                        getReservationProduct(
+                            rooms.get(2),
+                            LocalDate.of(2023, 12, 4),
+                            LocalDate.of(2023, 12, 7),
+                            300000
+                        )
+                    )
+                )
+                .totalPrice(300000)
+                .payMethod(PayMethod.KAKAO_PAY)
+                .member(member)
+                .build()
+        );
+
+        Reservation reservation3 = reservationRepository.save(
+            Reservation.builder()
+                .reservationProducts(
+                    List.of(
+                        getReservationProduct(
+                            rooms.get(1),
+                            LocalDate.of(2023, 12, 15),
+                            LocalDate.of(2023, 12, 18),
+                            360000
+                        ),
+                        getReservationProduct(
+                            rooms.get(2),
+                            LocalDate.of(2024, 1, 10),
+                            LocalDate.of(2024, 1, 12),
+                            240000
+                        )
+                    )
+                )
+                .member(member)
+                .payMethod(PayMethod.CREDIT_CARD)
+                .totalPrice(600000)
+                .build()
+        );
+    }
+
+    @DisplayName("전체 주문 목록을 정상적으로 페이징 조회할 수 있다.")
+    @Test
+    void getReservationInfoList_test() {
+        //given
+        long memberId = member.getId();
+        PageRequest pageRequest = PageRequest.of(0, 2);
+
+        //when
+        Page<ReservationInfoResponseDto> result = reservationService.getReservationInfoList(memberId, pageRequest);
+
+        //then
+        assertThat(result.getTotalElements()).isEqualTo(5);
+        assertThat(result.getTotalPages()).isEqualTo(3);
+        log.info("{}", result.getContent().get(0));
+    }
+
+    private ReservationProduct getReservationProduct(Room room, LocalDate startDate, LocalDate endDate, int price) {
+        return ReservationProduct.builder()
+            .room(room)
+            .startDate(startDate)
+            .endDate(endDate)
+            .visitorName("방문자명")
+            .visitorPhone("010-1111-1111")
+            .price(price)
+            .build();
+    }
+
+    private List<Product> getProductTestDataList(int size) {
         List<Product> products = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
+
+        for (int i = 1; i <= size; i++) {
             String productName = "호텔" + i;
             float starAvg = ThreadLocalRandom.current().nextFloat(0, 5);
             String infoCenter = String.format("02-1234-%d%d%d%d", i, i, i, i);
@@ -130,13 +229,18 @@ public class GetReservationListServiceTest extends AbstractContainersSupport {
             );
         }
 
+        return products;
+    }
+
+    private List<Room> getRoomTestDataList(int size, List<Product> products) {
         List<Room> rooms = new ArrayList<>();
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 1; i <= size; i++) {
             String roomName = "객실" + i;
             rooms.add(
                 roomRepository.save(
                     Room.builder()
-                        .product(products.get((i - 1) % 3))
+                        .code(1000 + i)
+                        .product(products.get((i - 1) % products.size()))
                         .name(roomName)
                         .description(roomName + " 설명")
                         .standard(2)
@@ -174,96 +278,6 @@ public class GetReservationListServiceTest extends AbstractContainersSupport {
             );
         }
 
-        Reservation reservation1 = reservationRepository.save(
-            Reservation.builder()
-                .reservationProducts(
-                    List.of(
-                        ReservationProduct.builder()
-                            .room(rooms.get(0))
-                            .startDate(LocalDate.of(2023, 11, 10))
-                            .endDate(LocalDate.of(2023, 11, 12))
-                            .visitorName("방문자명")
-                            .visitorPhone("010-1111-1111")
-                            .price(200000)
-                            .build(),
-                        ReservationProduct.builder()
-                            .room(rooms.get(1))
-                            .startDate(LocalDate.of(2023, 11, 20))
-                            .endDate(LocalDate.of(2023, 11, 22))
-                            .visitorName("방문자명")
-                            .visitorPhone("010-1111-1111")
-                            .price(200000)
-                            .build()
-                    )
-                )
-                .member(member)
-                .payMethod(PayMethod.CREDIT_CARD)
-                .totalPrice(400000)
-                .build()
-        );
-
-        Reservation reservation2 = reservationRepository.save(
-            Reservation.builder()
-                .reservationProducts(
-                    List.of(
-                        ReservationProduct.builder()
-                            .room(rooms.get(2))
-                            .startDate(LocalDate.of(2023, 12, 4))
-                            .endDate(LocalDate.of(2023, 12, 7))
-                            .visitorName("방문자명")
-                            .visitorPhone("010-1111-1111")
-                            .price(300000)
-                            .build()
-                    )
-                )
-                .totalPrice(300000)
-                .payMethod(PayMethod.KAKAO_PAY)
-                .member(member)
-                .build()
-        );
-
-        Reservation reservation3 = reservationRepository.save(
-            Reservation.builder()
-                .reservationProducts(
-                    List.of(
-                        ReservationProduct.builder()
-                            .room(rooms.get(1))
-                            .startDate(LocalDate.of(2023, 12, 15))
-                            .endDate(LocalDate.of(2023, 12, 18))
-                            .visitorName("방문자명")
-                            .visitorPhone("010-1111-1111")
-                            .price(360000)
-                            .build(),
-                        ReservationProduct.builder()
-                            .room(rooms.get(2))
-                            .startDate(LocalDate.of(2024, 1, 10))
-                            .endDate(LocalDate.of(2024, 1, 12))
-                            .visitorName("방문자명")
-                            .visitorPhone("010-1111-1111")
-                            .price(240000)
-                            .build()
-                    )
-                )
-                .member(member)
-                .payMethod(PayMethod.CREDIT_CARD)
-                .totalPrice(600000)
-                .build()
-        );
-    }
-
-    @DisplayName("전체 주문 목록을 정상적으로 페이징 조회할 수 있다.")
-    @Test
-    void getReservationInfoList_test() {
-        //given
-        long memberId = member.getId();
-        PageRequest pageRequest = PageRequest.of(0, 2);
-
-        //when
-        Page<ReservationInfoResponseDto> result = reservationService.getReservationInfoList(memberId, pageRequest);
-
-        //then
-        assertThat(result.getTotalElements()).isEqualTo(5);
-        assertThat(result.getTotalPages()).isEqualTo(3);
-        log.info("{}", result.getContent().get(0));
+        return rooms;
     }
 }
