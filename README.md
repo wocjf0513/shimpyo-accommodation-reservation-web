@@ -165,7 +165,8 @@
 
 ### 🔗 배포 링크
 
-https://43.202.234.108.nip.io
+- BE: https://43.202.234.108.nip.io/
+- FE: https://shimpyo.netlify.app/
 
 ### 🪄 실행 가이드
 
