@@ -231,6 +231,10 @@ gradle build
 gradle bootJar
 ```
 
+5. 테스트 계정
+- EMAIL: test@mail.com
+- PW: qwer1234!!
+
 ---
 
 ## 2. 설정
