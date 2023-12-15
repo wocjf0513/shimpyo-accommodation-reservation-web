@@ -3,7 +3,6 @@ package com.fc.shimpyo_be.domain.reservation.service;
 import com.fc.shimpyo_be.domain.cart.service.CartService;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.service.MemberService;
-import com.fc.shimpyo_be.domain.product.exception.RoomNotFoundException;
 import com.fc.shimpyo_be.domain.reservation.dto.ValidateReservationResultDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomItemRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomsRequestDto;
@@ -12,12 +11,12 @@ import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponse
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
 import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
 import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
-import com.fc.shimpyo_be.domain.reservation.util.ReservationMapper;
+import com.fc.shimpyo_be.domain.reservation.util.mapper.ReservationMapper;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
 import com.fc.shimpyo_be.domain.reservationproduct.entity.ReservationProduct;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
-import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
+import com.fc.shimpyo_be.domain.room.service.RoomService;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +40,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ReservationProductRepository reservationProductRepository;
     private final MemberService memberService;
-    private final RoomRepository roomRepository;
+    private final RoomService roomService;
     private final CartService cartService;
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String REDIS_ROOM_KEY_FORMAT = "roomId:%d:%s";
@@ -50,7 +49,6 @@ public class ReservationService {
     public SaveReservationResponseDto saveReservation(
         Long memberId, SaveReservationRequestDto request, Map<Long, List<String>> reservationMap
     ) {
-        log.debug("{} ::: {}", getClass().getSimpleName(), "saveReservation");
 
         // 회원 엔티티 조회
         Member member = memberService.getMemberById(memberId);
@@ -59,8 +57,7 @@ public class ReservationService {
         List<ReservationProduct> reservationProducts = new ArrayList<>();
         for (ReservationProductRequestDto reservationProductDto : request.reservationProducts()) {
 
-            Room room = roomRepository.findById(reservationProductDto.roomId())
-                .orElseThrow(RoomNotFoundException::new);
+            Room room = roomService.getRoomById(reservationProductDto.roomId());
 
             // 장바구니 아이템 삭제
             if (reservationProductDto.cartId() > 0) {
@@ -96,7 +93,6 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public Page<ReservationInfoResponseDto> getReservationInfoList(Long memberId, Pageable pageable) {
-        log.debug("{} ::: {}", getClass().getSimpleName(), "getReservationInfoList");
 
         List<Long> reservationIds = reservationRepository.findIdsByMemberId(memberId);
 
@@ -106,7 +102,6 @@ public class ReservationService {
     }
 
     public ValidateReservationResultDto validate(Long memberId, List<ReservationProductRequestDto> reservationProducts) {
-        log.debug("{} ::: {}", getClass().getSimpleName(), "validate");
 
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
 
@@ -155,7 +150,6 @@ public class ReservationService {
     }
 
     public void releaseRooms(Long memberId, ReleaseRoomsRequestDto request) {
-        log.debug("{} ::: {}", getClass().getSimpleName(), "releaseRooms");
 
         String memberIdValue = String.valueOf(memberId);
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
@@ -180,7 +174,6 @@ public class ReservationService {
     }
 
     private void confirmReservationProduct(List<String> reservationKeys, String endDate) {
-        log.debug("{} ::: {}", getClass().getSimpleName(), "confirmReservationProduct");
 
         Date expireDate = convertLocalDateToDate(DateTimeUtil.toLocalDate(endDate));
         for (String key : reservationKeys) {

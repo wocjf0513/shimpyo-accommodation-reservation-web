@@ -38,7 +38,6 @@ public class PreoccupyRoomsLockFacade {
             CheckAvailableRoomsResultDto resultDto = preoccupyRoomsService.checkAvailable(memberId, request);
 
             if(!resultDto.isAvailable()) {
-                log.debug("[{}][check available rooms result] isAvailable = {}, results = {}", currentWorker, false, resultDto.roomResults());
                 throw new PreoccupyNotAvailableException(
                     ValidatePreoccupyResultResponseDto.builder()
                         .isAvailable(false)
@@ -47,8 +46,6 @@ public class PreoccupyRoomsLockFacade {
                 );
             }
 
-            log.debug("[{}][check available rooms result] isAvailable = {}, results = {}", currentWorker, true, resultDto.roomResults());
-            log.debug("[{}][check available rooms result] preoccupyMap = {}", currentWorker, resultDto.preoccupyMap());
             preoccupyRoomsService.preoccupy(resultDto);
 
             return ValidatePreoccupyResultResponseDto.builder()

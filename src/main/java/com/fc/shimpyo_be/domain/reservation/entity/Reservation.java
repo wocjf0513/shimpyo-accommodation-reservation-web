@@ -39,7 +39,7 @@ public class Reservation extends BaseTimeEntity {
     private List<ReservationProduct> reservationProducts = new ArrayList<>();
 
     @Builder
-    public Reservation(
+    private Reservation(
         Long id,
         Member member,
         PayMethod payMethod,

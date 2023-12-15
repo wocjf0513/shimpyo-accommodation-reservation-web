@@ -1,4 +1,4 @@
-package com.fc.shimpyo_be.domain.reservation.util;
+package com.fc.shimpyo_be.domain.reservation.util.mapper;
 
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;

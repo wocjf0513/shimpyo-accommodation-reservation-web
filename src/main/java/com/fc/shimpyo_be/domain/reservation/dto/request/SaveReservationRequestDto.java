@@ -10,14 +10,16 @@ import lombok.Builder;
 
 import java.util.List;
 
+import static com.fc.shimpyo_be.domain.reservation.constant.ReservationValidationConstants.*;
+
 @Builder
 public record SaveReservationRequestDto(
     @Valid
-    @Size(min = 1, max = 3, message = "최소 1개, 최대 3개의 객실 예약이 가능합니다.")
+    @Size(min = RESERVATION_REQ_MIN_SIZE, max = RESERVATION_REQ_MAX_SIZE, message = RESERVATION_REQ_SIZE_MESSAGE)
     List<ReservationProductRequestDto> reservationProducts,
-    @NotNull(message = "null 일 수 없습니다. 정해진 결제 수단에서 선택하세요.")
+    @NotNull(message = PAYMETHOD_NOTNULL_MESSAGE)
     PayMethod payMethod,
-    @Min(value = 0, message = "총 결제 금액은 음수일 수 없습니다.")
+    @Min(value = TOTAL_PRICE_MIN_VALUE, message = TOTAL_PRICE_MIN_MESSAGE)
     Integer totalPrice
 ) {
 }

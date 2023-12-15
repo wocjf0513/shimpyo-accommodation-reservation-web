@@ -1,6 +1,8 @@
 package com.fc.shimpyo_be.domain.room.service;
 
+import com.fc.shimpyo_be.domain.room.exception.RoomNotFoundException;
 import com.fc.shimpyo_be.domain.room.dto.response.RoomWithProductResponseDto;
+import com.fc.shimpyo_be.domain.room.entity.Room;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
 import com.fc.shimpyo_be.domain.room.util.RoomMapper;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +34,11 @@ public class RoomService {
         log.debug("{} ::: {}", getClass().getSimpleName(), "getRoomIdListByRoomCode");
 
         return roomRepository.findIdsByCode(roomCode);
+    }
+
+    @Transactional(readOnly = true)
+    public Room getRoomById(Long id) {
+        return roomRepository.findById(id)
+            .orElseThrow(RoomNotFoundException::new);
     }
 }
