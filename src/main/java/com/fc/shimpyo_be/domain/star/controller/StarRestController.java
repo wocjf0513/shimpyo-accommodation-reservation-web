@@ -23,7 +23,6 @@ public class StarRestController {
 
     @PostMapping
     public ResponseEntity<ResponseDto<StarResponseDto>> register(@Valid @RequestBody StarRegisterRequestDto request) {
-        log.debug("[api][POST] /api/stars");
 
         return ResponseEntity
             .status(HttpStatus.CREATED)

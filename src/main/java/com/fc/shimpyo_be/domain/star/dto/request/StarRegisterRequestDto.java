@@ -5,14 +5,17 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 
+import static com.fc.shimpyo_be.domain.star.constant.StarValidationConstants.*;
+
 public record StarRegisterRequestDto(
     @NotNull
     Long reservationProductId,
-    @NotNull(message = "별점 등록 대상 숙소 아이디는 필수값입니다.")
+    @NotNull(message = STAR_PRODUCTID_NOTNULL_MESSAGE)
     Long productId,
-    @DecimalMax(value = "5.0", message = "별점은 최대 5.0점을 초과할 수 없습니다.")
-    @DecimalMin(value = "0.0", message = "별점은 최소 0.0점 미만일 수 없습니다.")
-    @Digits(integer = 1, fraction = 1, message = "별점은 정수 1자리, 소수점 1자리까지만 가능합니다.")
+    @DecimalMax(value = SCORE_DECIMAL_MAX_VALUE, message = SCORE_DECIMAL_MAX_MESSAGE)
+    @DecimalMin(value = SCORE_DECIMAL_MIN_VALUE, message = SCORE_DECIMAL_MIN_MESSAGE)
+    @Digits(integer = SCORE_DIGITS_INTEGER_VALUE, fraction = SCORE_DIGITS_FRACTION_VALUE,
+        message = SCORE_DIGITS_MESSAGE)
     float score
 ) {
 }

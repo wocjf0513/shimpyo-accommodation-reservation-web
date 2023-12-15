@@ -38,7 +38,7 @@ public class Star {
     private float score;
 
     @Builder
-    public Star(Long id, Member member, Product product, float score) {
+    private Star(Long id, Member member, Product product, float score) {
         this.id = id;
         this.member = member;
         this.product = product;

@@ -35,29 +35,21 @@ public class StarService {
 
     @Transactional
     public StarResponseDto register(Long memberId, StarRegisterRequestDto request) {
-        log.debug("{} ::: {}", getClass().getSimpleName(), "register");
 
-        // 회원 조회
         Member member = memberService.getMemberById(memberId);
 
-        // 예약 숙소 조회
         ReservationProduct reservationProduct = reservationProductRepository.findByIdWithRoom(request.reservationProductId())
             .orElseThrow(ReservationProductNotFoundException::new);
 
-        // 별점 등록 가능 기간인지 검증
         validateRegisterDate(LocalDateTime.now(), reservationProduct.getEndDate(), reservationProduct.getRoom().getCheckOut());
 
-        // 숙소 조회
         Product product = productRepository.findById(request.productId())
             .orElseThrow(ProductNotFoundException::new);
 
-        // 별점 총 수 카운트
         long total = starRepository.countByProduct(product);
 
-        // 별점 평균 업데이트
         product.updateStarAvg(calculateStarAvg(product.getStarAvg(), total, request.score()));
 
-        // 별점 등록
         return new StarResponseDto(
           starRepository.save(
               Star.builder()
