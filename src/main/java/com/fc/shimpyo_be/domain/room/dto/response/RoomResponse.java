@@ -22,7 +22,7 @@ public class RoomResponse {
     private Long remaining;
 
     @Builder
-    public RoomResponse(Long roomCode, String roomName, Long price, String description,
+    private RoomResponse(Long roomCode, String roomName, Long price, String description,
         Long standard,
         Long capacity, String checkIn, String checkOut, Long remaining,
         RoomOptionResponse roomOptionResponse,
