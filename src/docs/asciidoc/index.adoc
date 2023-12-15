@@ -11,9 +11,19 @@
 
 === link:member/member-api.html[회원 API, window=blank]
 
-=== link:product/product-api.html[상품 API, window=blank]
+=== link:product/product-api.html[숙소 API, window=blank]
+
+=== link:room/room-api.html[객실 API, window=blank]
 
 === link:cart/cart-api.html[장바구니 API, window=blank]
+
+=== link:reservationproduct/reservation-product-api.html[예약 상품 API, window=blank]
+
+=== link:reservation/reservation-api.html[예약 API, window=blank]
+
+=== link:star/star-api.html[별점 API, window=blank]
+
+=== link:favorite/favorite-api.html[즐겨찾기 API, window=blank]
 
 
 == API Common Response

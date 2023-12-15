@@ -1,0 +1,25 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+
+= Room REST API Docs
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+
+[[Get-Rooms-With-Product-Info]]
+== 숙박 정보를 포함한 객실 정보 리스트 조회
+
+숙박 정보를 포함한 객실 정보 리스트 조회 API 입니다. (주문 페이지에서 필요한 조회)
+
+=== HttpRequest
+
+include::{snippets}/room-rest-controller-docs-test/get-rooms-with-product-info/http-request.adoc[]
+include::{snippets}/room-rest-controller-docs-test/get-rooms-with-product-info/query-parameters.adoc[]
+
+=== HttpResponse
+
+include::{snippets}/room-rest-controller-docs-test/get-rooms-with-product-info/http-response.adoc[]
+include::{snippets}/room-rest-controller-docs-test/get-rooms-with-product-info/response-fields.adoc[]
