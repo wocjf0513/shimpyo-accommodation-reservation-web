@@ -8,9 +8,9 @@ public class ReservationValidationConstants {
 
     // regex
     public static final String DATE_REGEX = "^\\d{4}-\\d{2}-\\d{2}$";
-    public static final Integer RESERVATION_REQ_MIN_SIZE = 1;
-    public static final Integer RESERVATION_REQ_MAX_SIZE = 3;
-    public static final Integer TOTAL_PRICE_MIN_VALUE = 0;
+    public static final int RESERVATION_REQ_MIN_SIZE = 1;
+    public static final int RESERVATION_REQ_MAX_SIZE = 3;
+    public static final int TOTAL_PRICE_MIN_VALUE = 0;
 
     // validation message
     public static final String DATE_PATTERN_MESSAGE = "올바른 날짜 형식이 아닙니다.(yyyy-MM-dd 형식으로 입력하세요.)";

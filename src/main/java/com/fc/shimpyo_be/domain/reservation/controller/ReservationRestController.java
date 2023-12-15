@@ -32,8 +32,8 @@ public class ReservationRestController {
     private final PreoccupyRoomsLockFacade preoccupyRoomsLockFacade;
     private final ReservationLockFacade reservationLockFacade;
     private final SecurityUtil securityUtil;
-    private static final Integer PAGE_SIZE = 10;
-    private static final Integer PAGE_NUM = 0;
+    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_NUM = 0;
     private static final String PAGE_SORT_BY = "id";
 
     @PostMapping
