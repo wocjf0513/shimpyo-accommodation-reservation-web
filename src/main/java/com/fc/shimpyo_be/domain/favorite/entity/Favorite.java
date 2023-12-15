@@ -30,7 +30,7 @@ public class Favorite {
     private Product product;
 
     @Builder
-    public Favorite(Long id, Member member, Product product) {
+    private Favorite(Long id, Member member, Product product) {
         this.id = id;
         this.member = member;
         this.product = product;

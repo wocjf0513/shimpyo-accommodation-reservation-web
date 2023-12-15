@@ -3,7 +3,9 @@ package com.fc.shimpyo_be.domain.reservation.controller;
 import com.fc.shimpyo_be.domain.reservation.dto.request.PreoccupyRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
+import com.fc.shimpyo_be.domain.reservation.dto.response.ValidatePreoccupyResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.facade.PreoccupyRoomsLockFacade;
 import com.fc.shimpyo_be.domain.reservation.facade.ReservationLockFacade;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
@@ -30,12 +32,14 @@ public class ReservationRestController {
     private final PreoccupyRoomsLockFacade preoccupyRoomsLockFacade;
     private final ReservationLockFacade reservationLockFacade;
     private final SecurityUtil securityUtil;
+    private static final int PAGE_SIZE = 10;
+    private static final int PAGE_NUM = 0;
+    private static final String PAGE_SORT_BY = "id";
 
     @PostMapping
     public ResponseEntity<ResponseDto<SaveReservationResponseDto>> saveReservation(
         @Valid @RequestBody SaveReservationRequestDto request
     ) {
-        log.info("[api][POST] /api/reservations");
 
         return ResponseEntity
             .status(HttpStatus.CREATED)
@@ -49,10 +53,9 @@ public class ReservationRestController {
     }
 
     @GetMapping
-    public ResponseEntity<ResponseDto<Page<?>>> getReservationList(
-        @PageableDefault(size = 10, page = 0, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+    public ResponseEntity<ResponseDto<Page<ReservationInfoResponseDto>>> getReservationList(
+        @PageableDefault(size = PAGE_SIZE, page = PAGE_NUM, sort = PAGE_SORT_BY, direction = Sort.Direction.DESC) Pageable pageable
     ) {
-        log.info("[api][GET] /api/reservations");
 
         return ResponseEntity
             .status(HttpStatus.OK)
@@ -66,17 +69,18 @@ public class ReservationRestController {
     }
 
     @PostMapping("/preoccupy")
-    public ResponseEntity<ResponseDto<Void>> checkAvailableAndPreoccupy(
+    public ResponseEntity<ResponseDto<ValidatePreoccupyResultResponseDto>> checkAvailableAndPreoccupy(
         @Valid @RequestBody PreoccupyRoomsRequestDto request
     ) {
-        log.info("[api][POST] /api/reservations/preoccupy");
-
-        preoccupyRoomsLockFacade.checkAvailableAndPreoccupy(securityUtil.getCurrentMemberId(), request);
 
         return ResponseEntity
             .status(HttpStatus.OK)
             .body(
-                ResponseDto.res(HttpStatus.OK, "예약 가능 유효성 검사와 객실 선점이 정상적으로 완료되었습니다.")
+                ResponseDto.res(
+                    HttpStatus.OK,
+                    preoccupyRoomsLockFacade.checkAvailableAndPreoccupy(securityUtil.getCurrentMemberId(), request),
+                    "예약 가능 유효성 검사와 객실 선점이 정상적으로 완료되었습니다."
+                )
             );
     }
 
@@ -84,7 +88,6 @@ public class ReservationRestController {
     public ResponseEntity<ResponseDto<Void>> releaseRooms(
         @Valid @RequestBody ReleaseRoomsRequestDto request
     ) {
-        log.info("[api][POST] /api/reservations/release");
 
         reservationService.releaseRooms(securityUtil.getCurrentMemberId(), request);
 

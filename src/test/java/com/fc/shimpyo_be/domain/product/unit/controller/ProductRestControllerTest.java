@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doReturn;
 
 import com.fc.shimpyo_be.domain.product.controller.ProductRestController;
 import com.fc.shimpyo_be.domain.product.dto.request.SearchKeywordRequest;
+import com.fc.shimpyo_be.domain.product.dto.response.PaginatedProductResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductDetailsResponse;
 import com.fc.shimpyo_be.domain.product.dto.response.ProductResponse;
 import com.fc.shimpyo_be.domain.product.entity.Category;
@@ -40,17 +41,25 @@ class ProductRestControllerTest {
     void getAllProducts() {
         //given
         List<ProductResponse> productResponses = new ArrayList<>();
-        productResponses.add(ProductMapper.toProductResponse(ProductFactory.createTestProduct()));
+        productResponses.add(ProductMapper.toProductResponse(ProductFactory.createTestProduct(),false));
+        PaginatedProductResponse paginatedProductResponse = PaginatedProductResponse.builder()
+            .productResponses(productResponses)
+            .pageCount(1)
+            .build();
+
         SearchKeywordRequest searchKeywordRequest = SearchKeywordRequest.builder()
+            .address("")
+            .productName("")
+            .capacity(0L)
             .category(Category.MOTEL.getName()).build();
         Pageable pageable = Pageable.ofSize(10);
-        doReturn(productResponses).when(productService).getProducts(searchKeywordRequest, pageable);
-        ResponseEntity<ResponseDto<List<ProductResponse>>> result = productRestController.getProducts(
+            doReturn(paginatedProductResponse).when(productService).getProducts(searchKeywordRequest, pageable);
+        ResponseEntity<ResponseDto<PaginatedProductResponse>> result = productRestController.getProducts(
             searchKeywordRequest.productName(), searchKeywordRequest.address(),
-            searchKeywordRequest.category(), pageable);
+            searchKeywordRequest.category().get(0).getName(),searchKeywordRequest.capacity(), pageable);
         //then
         assertEquals(result.getStatusCode(), HttpStatus.OK);
-        assertThat(result.getBody().getData()).usingRecursiveComparison()
+        assertThat(result.getBody().getData().productResponses()).usingRecursiveComparison()
             .isEqualTo(productResponses);
     }
 
@@ -58,7 +67,7 @@ class ProductRestControllerTest {
     void getProductDetails() {
         //given
         Product product = ProductFactory.createTestProduct();
-        ProductDetailsResponse expectedResult = ProductMapper.toProductDetailsResponse(product);
+        ProductDetailsResponse expectedResult = ProductMapper.toProductDetailsResponse(product,false);
         doReturn(expectedResult).when(productService)
             .getProductDetails(1L, "2024-12-27", "2024-12-28");
         //when

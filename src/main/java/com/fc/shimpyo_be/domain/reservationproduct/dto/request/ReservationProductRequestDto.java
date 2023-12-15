@@ -4,29 +4,26 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
+import static com.fc.shimpyo_be.domain.reservationproduct.constant.ReservationProductValidationConstants.*;
+
+@Builder
 public record ReservationProductRequestDto(
     @NotNull
+    Long cartId,
+    @NotNull
     Long roomId,
-    @NotBlank
-    String productName,
-    @NotBlank
-    String roomName,
-    @NotNull
-    Integer standard,
-    @NotNull
-    Integer max,
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "올바른 날짜 형식이 아닙니다.(yyyy-MM-dd 형식으로 입력하세요.)")
+    @Pattern(regexp = DATE_REGEX, message = DATE_PATTERN_MESSAGE)
     String startDate,
-    @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "올바른 날짜 형식이 아닙니다.(yyyy-MM-dd 형식으로 입력하세요.)")
+    @Pattern(regexp = DATE_REGEX, message = DATE_PATTERN_MESSAGE)
     String endDate,
-    @Pattern(regexp = "^\\d{2}:\\d{2}$", message = "올바른 시간 형식이 아닙니다.(HH:mm 형식으로 입력하세요.)")
-    String checkIn,
-    @Pattern(regexp = "^\\d{2}:\\d{2}$", message = "올바른 시간 형식이 아닙니다.(HH:mm 형식으로 입력하세요.)")
-    String checkOut,
+    @NotBlank
     String visitorName,
+    @NotBlank
+    @Pattern(regexp = PHONE_NUMBER_REGEX, message = PHONE_NUMBER_PATTERN_MESSAGE)
     String visitorPhone,
-    @Min(value = 0, message = "객실 이용 금액은 음수일 수 없습니다.")
+    @Min(value = PRICE_MIN_VALUE, message = PRICE_MIN_MESSAGE)
     Integer price
 ) {
 }

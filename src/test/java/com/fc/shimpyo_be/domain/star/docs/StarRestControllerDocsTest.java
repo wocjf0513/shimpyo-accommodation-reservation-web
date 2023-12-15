@@ -60,7 +60,7 @@ public class StarRestControllerDocsTest extends RestDocsSupport {
                     requestFields(
                         fieldWithPath("reservationProductId").type(JsonFieldType.NUMBER).description("별점 등록 대상 예약 상품 식별자")
                             .attributes(key("constraints").value(
-                                starRegisterDescriptions.descriptionsForProperty("productId"))),
+                                starRegisterDescriptions.descriptionsForProperty("reservationProductId"))),
                         fieldWithPath("productId").type(JsonFieldType.NUMBER).description("별점 등록 대상 숙소 식별자")
                             .attributes(key("constraints").value(
                                 starRegisterDescriptions.descriptionsForProperty("productId"))),

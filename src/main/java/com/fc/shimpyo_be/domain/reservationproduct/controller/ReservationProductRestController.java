@@ -23,12 +23,11 @@ public class ReservationProductRestController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseDto<Void>> cancel(@PathVariable Long id) {
-        log.info("[api][DELETE] /api/reservation-products");
 
         reservationProductService.cancel(id, securityUtil.getCurrentMemberId());
 
         return ResponseEntity
             .status(HttpStatus.OK)
-            .body(ResponseDto.res(HttpStatus.OK, "예약 상품이 정상적으로 취소 처리되었습니다."));
+            .body(ResponseDto.res(HttpStatus.OK, "예약 숙소이 정상적으로 취소 처리되었습니다."));
     }
 }

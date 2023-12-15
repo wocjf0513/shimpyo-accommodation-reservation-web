@@ -1,25 +1,22 @@
 package com.fc.shimpyo_be.domain.reservation.service;
 
+import com.fc.shimpyo_be.domain.cart.service.CartService;
 import com.fc.shimpyo_be.domain.member.entity.Member;
-import com.fc.shimpyo_be.domain.member.exception.MemberNotFoundException;
-import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
-import com.fc.shimpyo_be.domain.product.entity.Product;
-import com.fc.shimpyo_be.domain.product.exception.RoomNotFoundException;
+import com.fc.shimpyo_be.domain.member.service.MemberService;
+import com.fc.shimpyo_be.domain.reservation.dto.ValidateReservationResultDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomItemRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.ReleaseRoomsRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.ReservationInfoResponseDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
-import com.fc.shimpyo_be.domain.reservation.dto.response.ValidationResultResponseDto;
 import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
-import com.fc.shimpyo_be.domain.reservation.exception.InvalidRequestException;
 import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
+import com.fc.shimpyo_be.domain.reservation.util.mapper.ReservationMapper;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
 import com.fc.shimpyo_be.domain.reservationproduct.entity.ReservationProduct;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
-import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
-import com.fc.shimpyo_be.global.exception.ErrorCode;
+import com.fc.shimpyo_be.domain.room.service.RoomService;
 import com.fc.shimpyo_be.global.util.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.time.ZoneId;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,24 +39,30 @@ public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final ReservationProductRepository reservationProductRepository;
-    private final MemberRepository memberRepository;
-    private final RoomRepository roomRepository;
+    private final MemberService memberService;
+    private final RoomService roomService;
+    private final CartService cartService;
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String REDIS_ROOM_KEY_FORMAT = "roomId:%d:%s";
 
     @Transactional
-    public SaveReservationResponseDto saveReservation(Long memberId, SaveReservationRequestDto request) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "saveReservation");
+    public SaveReservationResponseDto saveReservation(
+        Long memberId, SaveReservationRequestDto request, Map<Long, List<String>> reservationMap
+    ) {
 
         // 회원 엔티티 조회
-        Member member = memberRepository.findById(memberId)
-            .orElseThrow(MemberNotFoundException::new);
+        Member member = memberService.getMemberById(memberId);
 
-        // 객실 엔티티 조회 후, 예약 상품 리스트 생성
+        // 객실 엔티티 조회 후, 예약 숙소 리스트 생성
         List<ReservationProduct> reservationProducts = new ArrayList<>();
         for (ReservationProductRequestDto reservationProductDto : request.reservationProducts()) {
-            Room room = roomRepository.findById(reservationProductDto.roomId())
-                .orElseThrow(RoomNotFoundException::new);
+
+            Room room = roomService.getRoomById(reservationProductDto.roomId());
+
+            // 장바구니 아이템 삭제
+            if (reservationProductDto.cartId() > 0) {
+                cartService.deleteCart(member.getId(), reservationProductDto.cartId());
+            }
 
             reservationProducts.add(
                 ReservationProduct.builder()
@@ -74,95 +74,82 @@ public class ReservationService {
                     .price(reservationProductDto.price())
                     .build()
             );
+
+            confirmReservationProduct(reservationMap.get(room.getId()), reservationProductDto.endDate());
         }
 
         // 예약 저장
-        Long reservationId
-            = reservationRepository.save(
-                Reservation.builder()
-                    .member(member)
-                    .reservationProducts(reservationProducts)
-                    .payMethod(request.payMethod())
-                    .totalPrice(request.totalPrice())
-                    .build()).getId();
+        Reservation reservation = reservationRepository.save(
+            Reservation.builder()
+                .member(member)
+                .reservationProducts(reservationProducts)
+                .payMethod(request.payMethod())
+                .totalPrice(request.totalPrice())
+                .build()
+        );
 
-        return new SaveReservationResponseDto(reservationId, request);
+        return ReservationMapper.toSaveReservationResponseDto(reservation);
     }
 
     @Transactional(readOnly = true)
     public Page<ReservationInfoResponseDto> getReservationInfoList(Long memberId, Pageable pageable) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "getReservationInfoList");
 
         List<Long> reservationIds = reservationRepository.findIdsByMemberId(memberId);
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         return reservationProductRepository
             .findAllInReservationIds(reservationIds, pageable)
-            .map(
-                reservationProduct -> {
-                    Reservation reservation = reservationProduct.getReservation();
-                    Room room = reservationProduct.getRoom();
-                    Product product = room.getProduct();
-
-                    return new ReservationInfoResponseDto(
-                        reservation.getId(),
-                        reservationProduct.getId(),
-                        product.getId(),
-                        product.getName(),
-                        product.getThumbnail(),
-                        product.getAddress(),
-                        room.getId(),
-                        room.getName(),
-                        dateFormatter.format(reservationProduct.getStartDate()),
-                        dateFormatter.format(reservationProduct.getEndDate()),
-                        timeFormatter.format(room.getCheckIn()),
-                        timeFormatter.format(room.getCheckOut()),
-                        reservationProduct.getPrice(),
-                        reservation.getPayMethod().name()
-                    );
-                }
-            );
+            .map(ReservationMapper::toReservationInfoResponseDto);
     }
 
-    public ValidationResultResponseDto validate(Long memberId, List<ReservationProductRequestDto> reservationProducts) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "validate");
+    public ValidateReservationResultDto validate(Long memberId, List<ReservationProductRequestDto> reservationProducts) {
 
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
 
         boolean isValid = true;
         List<Long> invalidRoomIds = new ArrayList<>();
+        Map<Long, List<String>> confirmMap = new HashMap<>();
+        String memberIdValue = String.valueOf(memberId);
+
         for (ReservationProductRequestDto reservationProduct : reservationProducts) {
+
             LocalDate targetDate = DateTimeUtil.toLocalDate(reservationProduct.startDate());
             LocalDate endDate = DateTimeUtil.toLocalDate(reservationProduct.endDate());
-
+            Long roomId = reservationProduct.roomId();
             List<String> keys = new LinkedList<>();
-            while(targetDate.isBefore(endDate)) {
-                keys.add(String.format(REDIS_ROOM_KEY_FORMAT, reservationProduct.roomId(), targetDate));
+
+            while (targetDate.isBefore(endDate)) {
+                keys.add(String.format(REDIS_ROOM_KEY_FORMAT, roomId, targetDate));
+
                 targetDate = targetDate.plusDays(1);
             }
 
-            List<Object> values = opsForValue.multiGet(keys);
-            String memberIdValue = String.valueOf(memberId);
+            confirmMap.put(roomId, keys);
 
-            if(ObjectUtils.isEmpty(values)) {
-                throw new InvalidRequestException(ErrorCode.INVALID_RESERVATION_REQUEST);
+            List<Object> values = opsForValue.multiGet(keys);
+
+            if (ObjectUtils.isEmpty(values)) {
+                isValid = false;
+                invalidRoomIds.add(roomId);
+                continue;
             }
 
             for (Object value : values) {
-                if(!memberIdValue.equals(value)) {
+                if (Objects.isNull(value) || !memberIdValue.equals(value)) {
                     isValid = false;
-                    invalidRoomIds.add(Long.valueOf((String) value));
+                    invalidRoomIds.add(roomId);
                     break;
                 }
             }
         }
 
-        return new ValidationResultResponseDto(isValid, invalidRoomIds);
+        return ValidateReservationResultDto.builder()
+            .isAvailable(isValid)
+            .unavailableIds(invalidRoomIds)
+            .confirmMap(confirmMap)
+            .build();
     }
 
     public void releaseRooms(Long memberId, ReleaseRoomsRequestDto request) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "releaseRooms");
 
         String memberIdValue = String.valueOf(memberId);
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
@@ -184,5 +171,21 @@ public class ReservationService {
 
             redisTemplate.delete(deleteKeys);
         }
+    }
+
+    private void confirmReservationProduct(List<String> reservationKeys, String endDate) {
+
+        Date expireDate = convertLocalDateToDate(DateTimeUtil.toLocalDate(endDate));
+        for (String key : reservationKeys) {
+            redisTemplate.expireAt(key, expireDate);
+        }
+    }
+
+    private Date convertLocalDateToDate(LocalDate localDate) {
+        return Date.from(
+            localDate
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+        );
     }
 }

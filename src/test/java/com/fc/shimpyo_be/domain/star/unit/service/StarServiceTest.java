@@ -3,7 +3,8 @@ package com.fc.shimpyo_be.domain.star.unit.service;
 import com.fc.shimpyo_be.domain.member.entity.Authority;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.exception.MemberNotFoundException;
-import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
+import com.fc.shimpyo_be.domain.member.service.MemberService;
+import com.fc.shimpyo_be.domain.product.entity.Address;
 import com.fc.shimpyo_be.domain.product.entity.Category;
 import com.fc.shimpyo_be.domain.product.entity.Product;
 import com.fc.shimpyo_be.domain.product.exception.ProductNotFoundException;
@@ -13,10 +14,12 @@ import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
 import com.fc.shimpyo_be.domain.reservationproduct.entity.ReservationProduct;
 import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.domain.room.entity.RoomPrice;
 import com.fc.shimpyo_be.domain.star.dto.request.StarRegisterRequestDto;
 import com.fc.shimpyo_be.domain.star.dto.response.StarResponseDto;
 import com.fc.shimpyo_be.domain.star.entity.Star;
 import com.fc.shimpyo_be.domain.star.exception.CannotBeforeCheckOutException;
+import com.fc.shimpyo_be.domain.star.exception.ExpiredRegisterDateException;
 import com.fc.shimpyo_be.domain.star.repository.StarRepository;
 import com.fc.shimpyo_be.domain.star.service.StarService;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +34,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -49,7 +53,7 @@ public class StarServiceTest {
     private StarRepository starRepository;
 
     @Mock
-    private MemberRepository memberRepository;
+    private MemberService memberService;
 
     @Mock
     private ProductRepository productRepository;
@@ -63,7 +67,9 @@ public class StarServiceTest {
 
     private ReservationProduct reservationProduct;
 
-    private ReservationProduct reservationProduct2;
+    private ReservationProduct reservationProductBeforeCheckOut;
+
+    private ReservationProduct reservationProductExpiredToRegister;
 
     @BeforeEach
     void setUp() {
@@ -83,7 +89,12 @@ public class StarServiceTest {
             .category(Category.TOURIST_HOTEL)
             .thumbnail("thumbnail url")
             .starAvg(3.5f)
-            .address("숙소 주소")
+            .address(Address.builder()
+                .address("숙소 주소")
+                .detailAddress("숙소 상세 주소")
+                .mapX(1.0)
+                .mapY(1.0)
+                .build())
             .build();
 
         Reservation reservation = Reservation.builder()
@@ -96,26 +107,54 @@ public class StarServiceTest {
             .id(2L)
             .reservation(reservation)
             .room(Room.builder()
-                .price(50000)
+                .price(RoomPrice.builder()
+                    .offWeekDaysMinFee(50000)
+                    .offWeekendMinFee(60000)
+                    .peakWeekDaysMinFee(100000)
+                    .peakWeekendMinFee(110000)
+                    .build())
                 .description("객실정보")
                 .product(product)
                 .checkOut(LocalTime.of(12, 0))
                 .build()
             )
-            .endDate(LocalDate.of(2023, 11, 29))
+            .endDate(LocalDate.now().minusDays(7))
             .build();
 
-        reservationProduct2 = ReservationProduct.builder()
+        reservationProductBeforeCheckOut = ReservationProduct.builder()
             .id(3L)
             .reservation(reservation)
             .room(Room.builder()
-                .price(50000)
+                .price(RoomPrice.builder()
+                    .offWeekDaysMinFee(50000)
+                    .offWeekendMinFee(60000)
+                    .peakWeekDaysMinFee(100000)
+                    .peakWeekendMinFee(110000)
+                    .build())
                 .description("객실정보")
                 .product(product)
                 .checkOut(LocalTime.of(12, 0))
                 .build()
             )
-            .endDate(LocalDate.of(2100, 11, 29))
+            .endDate(LocalDate.now().plusDays(5))
+            .build();
+
+        reservationProductExpiredToRegister = ReservationProduct.builder()
+            .id(4L)
+            .reservation(reservation)
+            .room(Room.builder()
+                .price(RoomPrice.builder()
+                    .offWeekDaysMinFee(50000)
+                    .offWeekendMinFee(60000)
+                    .peakWeekDaysMinFee(100000)
+                    .peakWeekendMinFee(110000)
+                    .build())
+                .description("객실정보")
+                .product(product)
+                .checkOut(LocalTime.of(12, 0))
+                .build()
+            )
+            .endDate(LocalDate.now().minusDays(15))
             .build();
     }
 
@@ -127,8 +166,8 @@ public class StarServiceTest {
         StarRegisterRequestDto request
             = new StarRegisterRequestDto(reservationProduct.getId(), product.getId(), score);
 
-        given(memberRepository.findById(anyLong()))
-            .willReturn(Optional.of(member));
+        given(memberService.getMemberById(anyLong()))
+            .willReturn(member);
         given(productRepository.findById(anyLong()))
             .willReturn(Optional.of(product));
         given(reservationProductRepository.findByIdWithRoom(anyLong()))
@@ -150,7 +189,7 @@ public class StarServiceTest {
         assertThat(response).isNotNull();
         assertThat(response.score()).isEqualTo(score);
 
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberService, times(1)).getMemberById(anyLong());
         verify(productRepository, times(1)).findById(anyLong());
         verify(reservationProductRepository, times(1)).findByIdWithRoom(anyLong());
         verify(starRepository, times(1)).save(any(Star.class));
@@ -165,14 +204,14 @@ public class StarServiceTest {
         StarRegisterRequestDto request
             = new StarRegisterRequestDto(1L, product.getId(), score);
 
-        given(memberRepository.findById(anyLong()))
+        given(memberService.getMemberById(anyLong()))
             .willThrow(MemberNotFoundException.class);
 
         // when & then
         assertThatThrownBy(() -> starService.register(memberId, request))
             .isInstanceOf(MemberNotFoundException.class);
 
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberService, times(1)).getMemberById(anyLong());
         verify(productRepository, times(0)).findById(anyLong());
         verify(starRepository, times(0)).save(any(Star.class));
     }
@@ -187,8 +226,8 @@ public class StarServiceTest {
         StarRegisterRequestDto request
             = new StarRegisterRequestDto(1L, productId, score);
 
-        given(memberRepository.findById(anyLong()))
-            .willReturn(Optional.ofNullable(member));
+        given(memberService.getMemberById(anyLong()))
+            .willReturn(member);
         given(reservationProductRepository.findByIdWithRoom(anyLong()))
             .willReturn(Optional.ofNullable(reservationProduct));
         given(productRepository.findById(anyLong()))
@@ -198,7 +237,7 @@ public class StarServiceTest {
         assertThatThrownBy(() -> starService.register(memberId, request))
             .isInstanceOf(ProductNotFoundException.class);
 
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberService, times(1)).getMemberById(anyLong());
         verify(reservationProductRepository, times(1)).findByIdWithRoom(anyLong());
         verify(productRepository, times(1)).findById(anyLong());
         verify(starRepository, times(0)).save(any(Star.class));
@@ -212,18 +251,44 @@ public class StarServiceTest {
         long productId = 1000L;
         float score = 4F;
         StarRegisterRequestDto request
-            = new StarRegisterRequestDto(1L, productId, score);
+            = new StarRegisterRequestDto(reservationProductBeforeCheckOut.getId(), productId, score);
 
-        given(memberRepository.findById(anyLong()))
-            .willReturn(Optional.ofNullable(member));
+        given(memberService.getMemberById(anyLong()))
+            .willReturn(member);
         given(reservationProductRepository.findByIdWithRoom(anyLong()))
-            .willReturn(Optional.ofNullable(reservationProduct2));
+            .willReturn(Optional.ofNullable(reservationProductBeforeCheckOut));
 
         // when & then
         assertThatThrownBy(() -> starService.register(memberId, request))
             .isInstanceOf(CannotBeforeCheckOutException.class);
 
-        verify(memberRepository, times(1)).findById(anyLong());
+        verify(memberService, times(1)).getMemberById(anyLong());
+        verify(reservationProductRepository, times(1)).findByIdWithRoom(anyLong());
+        verify(productRepository, times(0)).findById(anyLong());
+        verify(starRepository, times(0)).save(any(Star.class));
+    }
+
+    @DisplayName("별점 등록일시가 체크아웃 일시 2주 이후일 경우 등록할 수 없다.")
+    @Test
+    void register_expiredRegisterDateException() {
+        // given
+        long memberId = member.getId();
+        long productId = 1000L;
+        float score = 4F;
+
+        StarRegisterRequestDto request
+            = new StarRegisterRequestDto(reservationProductExpiredToRegister.getId(), productId, score);
+
+        given(memberService.getMemberById(anyLong()))
+            .willReturn(member);
+        given(reservationProductRepository.findByIdWithRoom(anyLong()))
+            .willReturn(Optional.ofNullable(reservationProductExpiredToRegister));
+
+        // when & then
+        assertThatThrownBy(() -> starService.register(memberId, request))
+            .isInstanceOf(ExpiredRegisterDateException.class);
+
+        verify(memberService, times(1)).getMemberById(anyLong());
         verify(reservationProductRepository, times(1)).findByIdWithRoom(anyLong());
         verify(productRepository, times(0)).findById(anyLong());
         verify(starRepository, times(0)).save(any(Star.class));

@@ -1,13 +1,14 @@
 package com.fc.shimpyo_be.domain.reservationproduct.dto.response;
 
-import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
+import lombok.Builder;
 
+@Builder
 public record ReservationProductResponseDto(
-    Long roomId,
     String productName,
+    Long roomId,
     String roomName,
     Integer standard,
-    Integer max,
+    Integer capacity,
     String startDate,
     String endDate,
     String checkIn,
@@ -16,20 +17,4 @@ public record ReservationProductResponseDto(
     String visitorPhone,
     Integer price
 ) {
-    public ReservationProductResponseDto(ReservationProductRequestDto requestDto) {
-        this(
-            requestDto.roomId(),
-            requestDto.productName(),
-            requestDto.roomName(),
-            requestDto.standard(),
-            requestDto.max(),
-            requestDto.startDate(),
-            requestDto.endDate(),
-            requestDto.checkIn(),
-            requestDto.checkOut(),
-            requestDto.visitorName(),
-            requestDto.visitorPhone(),
-            requestDto.price()
-        );
-    }
 }

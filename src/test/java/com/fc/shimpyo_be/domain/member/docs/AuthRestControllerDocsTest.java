@@ -34,9 +34,9 @@ public class AuthRestControllerDocsTest extends RestDocsSupport {
     private final ConstraintDescriptions signUpDescriptions = new ConstraintDescriptions(
         SignUpRequestDto.class);
     private final ConstraintDescriptions signInDescriptions = new ConstraintDescriptions(
-        SignUpRequestDto.class);
+        SignInRequestDto.class);
     private final ConstraintDescriptions refreshDescriptions = new ConstraintDescriptions(
-        SignUpRequestDto.class);
+        RefreshRequestDto.class);
 
     @Test
     @DisplayName("signUp()은 회원 가입 할 수 있다.")
@@ -57,7 +57,7 @@ public class AuthRestControllerDocsTest extends RestDocsSupport {
 
         given(authService.signUp(any(SignUpRequestDto.class))).willReturn(memberResponseDto);
 
-        // when
+        // when then
         mockMvc.perform(post("/api/auth/signup")
                 .content(objectMapper.writeValueAsString(signUpRequestDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -118,7 +118,7 @@ public class AuthRestControllerDocsTest extends RestDocsSupport {
 
         given(authService.signIn(any(SignInRequestDto.class))).willReturn(signInResponseDto);
 
-        // when
+        // when then
         mockMvc.perform(post("/api/auth/signin")
                 .content(objectMapper.writeValueAsString(signInRequestDto))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -187,7 +187,7 @@ public class AuthRestControllerDocsTest extends RestDocsSupport {
 
         given(authService.refresh(any(RefreshRequestDto.class))).willReturn(signInResponseDto);
 
-        // when
+        // when then
         mockMvc.perform(post("/api/auth/refresh")
                 .content(objectMapper.writeValueAsString(refreshRequestDto))
                 .contentType(MediaType.APPLICATION_JSON))

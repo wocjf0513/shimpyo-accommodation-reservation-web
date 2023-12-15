@@ -1,209 +1,373 @@
 package com.fc.shimpyo_be.domain.reservation.unit.service;
 
+import com.fc.shimpyo_be.config.AbstractContainersSupport;
+import com.fc.shimpyo_be.config.DatabaseCleanUp;
+import com.fc.shimpyo_be.config.TestDBCleanerConfig;
+import com.fc.shimpyo_be.domain.cart.entity.Cart;
+import com.fc.shimpyo_be.domain.cart.repository.CartRepository;
 import com.fc.shimpyo_be.domain.member.entity.Authority;
 import com.fc.shimpyo_be.domain.member.entity.Member;
 import com.fc.shimpyo_be.domain.member.exception.MemberNotFoundException;
 import com.fc.shimpyo_be.domain.member.repository.MemberRepository;
-import com.fc.shimpyo_be.domain.product.exception.RoomNotFoundException;
+import com.fc.shimpyo_be.domain.product.entity.*;
+import com.fc.shimpyo_be.domain.room.exception.RoomNotFoundException;
+import com.fc.shimpyo_be.domain.product.repository.ProductRepository;
 import com.fc.shimpyo_be.domain.reservation.dto.request.SaveReservationRequestDto;
 import com.fc.shimpyo_be.domain.reservation.dto.response.SaveReservationResponseDto;
 import com.fc.shimpyo_be.domain.reservation.entity.PayMethod;
-import com.fc.shimpyo_be.domain.reservation.entity.Reservation;
-import com.fc.shimpyo_be.domain.reservation.repository.ReservationRepository;
 import com.fc.shimpyo_be.domain.reservation.service.ReservationService;
 import com.fc.shimpyo_be.domain.reservationproduct.dto.request.ReservationProductRequestDto;
-import com.fc.shimpyo_be.domain.reservationproduct.repository.ReservationProductRepository;
 import com.fc.shimpyo_be.domain.room.entity.Room;
+import com.fc.shimpyo_be.domain.room.entity.RoomOption;
+import com.fc.shimpyo_be.domain.room.entity.RoomPrice;
 import com.fc.shimpyo_be.domain.room.repository.RoomRepository;
+import com.fc.shimpyo_be.global.util.DateTimeUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
-public class ReservationServiceTest {
+@Slf4j
+@Import(TestDBCleanerConfig.class)
+@SpringBootTest
+public class ReservationServiceTest extends AbstractContainersSupport {
 
-    @InjectMocks
+    @Autowired
     private ReservationService reservationService;
 
-    @Mock
-    private ReservationRepository reservationRepository;
-
-    @Mock
-    private ReservationProductRepository reservationProductRepository;
-
-    @Mock
+    @Autowired
     private MemberRepository memberRepository;
 
-    @Mock
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
     private RoomRepository roomRepository;
 
-    @Mock
-    private RedisTemplate<String, Object> redisTemplate;
+    @Autowired
+    private CartRepository cartRepository;
 
-    private final Member member
-        = Member.builder()
-        .id(1L)
-        .name("member")
-        .password("password")
-        .authority(Authority.ROLE_USER)
-        .photoUrl("photoUrl")
-        .email("email")
-        .build();
+    @Autowired
+    private DatabaseCleanUp databaseCleanUp;
+
+    private Member member;
+
+    private final String[] tableNameArray = {
+        "member", "product", "room", "product_option", "address", "room_option", "amenity", "cart"
+    };
+
+    private LocalDate startDate1 = LocalDate.now().plusDays(1);
+    private LocalDate endDate1 = startDate1.plusDays(2);
+
+    private LocalDate startDate2 = LocalDate.now().plusMonths(2);
+    private LocalDate endDate2 = startDate2.plusDays(3);
+
+    @BeforeEach
+    void setUp() {
+        databaseCleanUp.cleanUp(tableNameArray);
+
+        member = memberRepository.save(
+            Member.builder()
+                .email("member@email.com")
+                .name("member")
+                .password("password")
+                .photoUrl("member photo url")
+                .authority(Authority.ROLE_USER)
+                .build()
+        );
+
+        List<Product> products = getProductTestDataList(3);
+        List<Room> rooms = getRoomTestDataList(3, products);
+
+        cartRepository.save(
+            Cart.builder()
+                .member(member)
+                .roomCode(rooms.get(0).getCode())
+                .startDate(startDate1)
+                .endDate(endDate1)
+                .price(150000L)
+                .build()
+        );
+
+        cartRepository.save(
+            Cart.builder()
+                .member(member)
+                .roomCode(rooms.get(1).getCode())
+                .startDate(startDate2)
+                .endDate(endDate2)
+                .price(200000L)
+                .build()
+        );
+    }
 
     @DisplayName("정상적으로 예약을 저장할 수 있다.")
     @Test
     void saveReservation_test() {
         //given
-        long memberId = 1L;
+        long memberId = member.getId();
         long roomId1 = 1L;
         long roomId2 = 2L;
-
-        Room room = Room.builder()
-            .id(1L)
-            .name("room1")
-            .description("description")
-            .price(50000)
-            .build();
 
         SaveReservationRequestDto requestDto
             = new SaveReservationRequestDto(
             List.of(
-                getReservationProductRequestData(
-                    roomId1, "2023-11-20", "2023-11-23",
+                new ReservationProductRequestDto(
+                    1L, roomId1, startDate1.toString(), endDate1.toString(),
                     "visitor1", "010-1111-1111", 150000),
-                getReservationProductRequestData(
-                    roomId2, "2023-11-18", "2023-11-20",
-                    "visitor2", "010-2222-2222", 200000)
+                new ReservationProductRequestDto(
+                    2L, roomId2, startDate2.toString(), endDate2.toString(),
+                    "visitor1", "010-1111-1111", 200000
+                )
             ), PayMethod.CREDIT_CARD, 350000
         );
 
-        Reservation reservation = Reservation.builder()
-            .id(1L)
-            .totalPrice(150000)
-            .payMethod(PayMethod.CREDIT_CARD)
-            .build();
-
-        given(memberRepository.findById(anyLong()))
-            .willReturn(Optional.of(member));
-        given(roomRepository.findById(anyLong()))
-            .willReturn(Optional.of(room));
-        given(reservationRepository.save(any(Reservation.class)))
-            .willReturn(reservation);
+        Map<Long, List<String>> map = new HashMap<>();
+        for (ReservationProductRequestDto reservationProduct : requestDto.reservationProducts()) {
+            map.put(
+                reservationProduct.roomId(),
+                getKeyList(reservationProduct.roomId(), reservationProduct.startDate(), reservationProduct.endDate())
+            );
+        }
 
         //when
-        SaveReservationResponseDto result = reservationService.saveReservation(memberId, requestDto);
+        SaveReservationResponseDto result = reservationService.saveReservation(memberId, requestDto, map);
 
         //then
         assertThat(result.reservationId()).isNotNull();
+        assertThat(result.reservationProducts()).hasSize(2);
+        assertThat(cartRepository.findById(1L)).isNotPresent();
+        assertThat(cartRepository.findById(2L)).isNotPresent();
+    }
 
-        verify(memberRepository, times(1)).findById(anyLong());
-        verify(roomRepository, times(2)).findById(anyLong());
-        verify(reservationRepository, times(1)).save(any(Reservation.class));
+    @DisplayName("예약 저장시 장바구니 식별자가 -1인 경우는 장바구니 아이템을 삭제하지 않는다.")
+    @Test
+    void saveReservation_cart_delete_filter_test() {
+        //given
+        long memberId = member.getId();
+        long roomId1 = 1L;
+        long cartId1 = -1L;
+
+        SaveReservationRequestDto requestDto
+            = new SaveReservationRequestDto(
+            List.of(
+                new ReservationProductRequestDto(
+                    cartId1, roomId1, startDate1.toString(), endDate1.toString(),
+                    "visitor1", "010-1111-1111", 150000)
+            ), PayMethod.CREDIT_CARD, 150000
+        );
+
+        Map<Long, List<String>> map = new HashMap<>();
+        for (ReservationProductRequestDto reservationProduct : requestDto.reservationProducts()) {
+            map.put(
+                reservationProduct.roomId(),
+                getKeyList(reservationProduct.roomId(), reservationProduct.startDate(), reservationProduct.endDate())
+            );
+        }
+
+        //when
+        SaveReservationResponseDto result = reservationService.saveReservation(memberId, requestDto, map);
+
+        //then
+        assertThat(result.reservationId()).isNotNull();
+        assertThat(result.reservationProducts()).hasSize(1);
+        assertThat(cartRepository.findAll()).hasSize(2);
     }
 
     @DisplayName("회원이 존재하지 않으면 예약을 저장할 수 없다.")
     @Test
     void saveReservation_memberNotFound_test() {
         //given
-        long memberId = 1L;
+        long memberId = 1000L;
         long roomId1 = 1L;
         long roomId2 = 2L;
 
         SaveReservationRequestDto requestDto
             = new SaveReservationRequestDto(
             List.of(
-                getReservationProductRequestData(
-                    roomId1, "2023-11-20", "2023-11-23",
+                new ReservationProductRequestDto(
+                    1L, roomId1, startDate1.toString(), endDate1.toString(),
                     "visitor1", "010-1111-1111", 150000),
-                getReservationProductRequestData(
-                    roomId2, "2023-11-18", "2023-11-20",
-                    "visitor2", "010-2222-2222", 200000)
+                new ReservationProductRequestDto(
+                    2L, roomId2, startDate2.toString(), endDate2.toString(),
+                    "visitor1", "010-1111-1111", 200000
+                )
             ), PayMethod.CREDIT_CARD, 350000
         );
 
-        willThrow(MemberNotFoundException.class)
-            .given(memberRepository).findById(anyLong());
+        Map<Long, List<String>> map = new HashMap<>();
+        for (ReservationProductRequestDto reservationProduct : requestDto.reservationProducts()) {
+            map.put(
+                reservationProduct.roomId(),
+                getKeyList(reservationProduct.roomId(), reservationProduct.startDate(), reservationProduct.endDate())
+            );
+        }
 
         //when & then
-        assertThatThrownBy(() -> reservationService.saveReservation(memberId, requestDto))
+        assertThatThrownBy(() -> reservationService.saveReservation(memberId, requestDto, map))
             .isInstanceOf(MemberNotFoundException.class);
-
-        verify(memberRepository, times(1)).findById(anyLong());
-        verify(roomRepository, times(0)).findById(anyLong());
-        verify(reservationRepository, times(0)).save(any(Reservation.class));
     }
 
     @DisplayName("객실 정보가 존재하지 않으면 예약을 저장할 수 없다.")
     @Test
     void saveReservation_roomNotFound_test() {
         //given
-        long memberId = 1L;
+        long memberId = member.getId();
         long roomId1 = 1L;
-        long roomId2 = 2L;
+        long roomId2 = 2000L;
 
         SaveReservationRequestDto requestDto
             = new SaveReservationRequestDto(
             List.of(
-                getReservationProductRequestData(
-                    roomId1, "2023-11-20", "2023-11-23",
+                new ReservationProductRequestDto(
+                    1L, roomId1, startDate1.toString(), endDate1.toString(),
                     "visitor1", "010-1111-1111", 150000),
-                getReservationProductRequestData(
-                    roomId2, "2023-11-18", "2023-11-20",
-                    "visitor2", "010-2222-2222", 200000)
+                new ReservationProductRequestDto(
+                    2L, roomId2, startDate2.toString(), endDate2.toString(),
+                    "visitor1", "010-1111-1111", 200000
+                )
             ), PayMethod.CREDIT_CARD, 350000
         );
 
-        given(memberRepository.findById(anyLong()))
-            .willReturn(Optional.of(member));
-        willThrow(RoomNotFoundException.class)
-            .given(roomRepository).findById(anyLong());
+        Map<Long, List<String>> map = new HashMap<>();
+        for (ReservationProductRequestDto reservationProduct : requestDto.reservationProducts()) {
+            map.put(
+                reservationProduct.roomId(),
+                getKeyList(reservationProduct.roomId(), reservationProduct.startDate(), reservationProduct.endDate())
+            );
+        }
 
         //when & then
-        assertThatThrownBy(() -> reservationService.saveReservation(memberId, requestDto))
+        assertThatThrownBy(() -> reservationService.saveReservation(memberId, requestDto, map))
             .isInstanceOf(RoomNotFoundException.class);
-
-        verify(memberRepository, times(1)).findById(anyLong());
-        verify(roomRepository, times(1)).findById(anyLong());
-        verify(reservationRepository, times(0)).save(any(Reservation.class));
     }
 
-    private ReservationProductRequestDto getReservationProductRequestData(
-        long roomId,
-        String startDate,
-        String endDate,
-        String visitorName,
-        String visitorPhone,
-        Integer price
-    ) {
-        String defaultValue = "DEFAULT_VALUE";
-        return new ReservationProductRequestDto(
-            roomId,
-            defaultValue,
-            defaultValue,
-            2,
-            4,
-            startDate,
-            endDate,
-            defaultValue,
-            defaultValue,
-            visitorName,
-            visitorPhone,
-            price
-        );
+    private List<String> getKeyList(Long roomId, String startDate, String endDate) {
+        List<String> keyList = new ArrayList<>();
+
+        LocalDate targetDate = DateTimeUtil.toLocalDate(startDate);
+        LocalDate maxDate = DateTimeUtil.toLocalDate(endDate);
+        while (targetDate.isBefore(maxDate)) {
+            keyList.add("roomId:" + roomId + ":" + targetDate);
+            targetDate = targetDate.plusDays(1);
+        }
+
+        return keyList;
+    }
+
+    private List<Product> getProductTestDataList(int size) {
+        List<Product> products = new ArrayList<>();
+
+        for (int i = 1; i <= size; i++) {
+            String productName = "호텔" + i;
+            float starAvg = ThreadLocalRandom.current().nextFloat(0, 5);
+            String infoCenter = String.format("02-1234-%d%d%d%d", i, i, i, i);
+            products.add(
+                productRepository.save(
+                    Product.builder()
+                        .name(productName)
+                        .thumbnail(productName + " 썸네일 url")
+                        .description(productName + " 설명")
+                        .starAvg(starAvg)
+                        .category(Category.TOURIST_HOTEL)
+                        .address(
+                            Address.builder()
+                                .address(productName + " 주소")
+                                .detailAddress(productName + " 상세 주소")
+                                .mapX(1.0)
+                                .mapY(1.5)
+                                .build()
+                        )
+                        .productOption(
+                            ProductOption.builder()
+                                .cooking(true)
+                                .foodPlace("음료 가능")
+                                .parking(true)
+                                .pickup(false)
+                                .infoCenter(infoCenter)
+                                .build()
+                        )
+                        .amenity(
+                            Amenity.builder()
+                                .barbecue(false)
+                                .beauty(true)
+                                .beverage(true)
+                                .fitness(true)
+                                .bicycle(false)
+                                .campfire(false)
+                                .karaoke(true)
+                                .publicBath(true)
+                                .publicPc(true)
+                                .seminar(false)
+                                .sports(false)
+                                .build()
+                        )
+                        .build()
+                )
+            );
+        }
+
+        return products;
+    }
+
+    private List<Room> getRoomTestDataList(int size, List<Product> products) {
+        List<Room> rooms = new ArrayList<>();
+        for (int i = 1; i <= size; i++) {
+            String roomName = "객실" + i;
+            rooms.add(
+                roomRepository.save(
+                    Room.builder()
+                        .code(1000 + i)
+                        .product(products.get((i - 1) % products.size()))
+                        .name(roomName)
+                        .description(roomName + " 설명")
+                        .standard(2)
+                        .capacity(4)
+                        .checkIn(LocalTime.of(14, 0))
+                        .checkOut(LocalTime.of(12, 0))
+                        .price(
+                            RoomPrice.builder()
+                                .offWeekDaysMinFee(75000)
+                                .offWeekendMinFee(85000)
+                                .peakWeekDaysMinFee(100000)
+                                .peakWeekendMinFee(120000)
+                                .build()
+                        )
+                        .roomOption(
+                            RoomOption.builder()
+                                .cooking(true)
+                                .airCondition(true)
+                                .bath(true)
+                                .bathFacility(true)
+                                .pc(false)
+                                .diningTable(true)
+                                .hairDryer(true)
+                                .homeTheater(false)
+                                .internet(true)
+                                .cable(false)
+                                .refrigerator(true)
+                                .sofa(true)
+                                .toiletries(true)
+                                .tv(true)
+                                .build()
+                        )
+                        .build()
+                )
+            );
+        }
+
+        return rooms;
     }
 }

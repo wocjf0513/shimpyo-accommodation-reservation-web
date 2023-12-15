@@ -2,7 +2,7 @@ ifndef::snippets[]
 :snippets: build/generated-snippets
 endif::[]
 
-= Member REST API Docs
+= Cart REST API Docs
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs

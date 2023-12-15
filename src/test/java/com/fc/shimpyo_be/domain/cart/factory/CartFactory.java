@@ -9,7 +9,7 @@ import java.time.LocalDate;
 public class CartFactory {
 
     public static Cart createCartTest(Room room, Member member) {
-        return Cart.builder().room(room).member(member).price(
+        return Cart.builder().roomCode(room.getCode()).member(member).price(
                     100000L
                 ).startDate(LocalDate.now().plusDays(1))
                 .endDate(LocalDate.now().plusDays(2)).build();

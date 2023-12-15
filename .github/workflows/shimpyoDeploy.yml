@@ -23,6 +23,7 @@ jobs:
 
       - name: Make application.properties
         run: |
+          echo "${{ secrets.DEFAULT_PROPERTIES }}" | base64 --decode > src/main/resources/application.yml
           echo "${{ secrets.LOCAL_PROPERTIES }}" | base64 --decode > src/main/resources/application-local.yml
           echo "${{ secrets.PROD_PROPERTIES }}" | base64 --decode > src/main/resources/application-prod.yml
           echo "${{ secrets.TEST_PROPERTIES }}" | base64 --decode > src/test/resources/application.yml

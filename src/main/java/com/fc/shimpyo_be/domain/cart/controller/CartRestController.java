@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/carts")
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CartRestController {
 
     private final CartService cartService;
@@ -36,10 +38,9 @@ public class CartRestController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<ResponseDto<CartResponse>> addCart(
         @Valid @RequestBody CartCreateRequest cartCreateRequest) {
-        log.debug("startDate: {}, endDate: {}, price: {}", cartCreateRequest.startDate(),
-            cartCreateRequest.endDate(), cartCreateRequest.price());
         if (DateTimeUtil.isNotValidDate(DateTimeUtil.toLocalDate(cartCreateRequest.startDate()),
             DateTimeUtil.toLocalDate(cartCreateRequest.endDate()))) {
             throw new InvalidDateException();
@@ -50,9 +51,9 @@ public class CartRestController {
     }
 
     @DeleteMapping("/{cartId}")
+    @Transactional
     public ResponseEntity<ResponseDto<CartDeleteResponse>> deleteCart(
         @PathVariable("cartId") Long cartId) {
-        log.debug("cartId: {}", cartId);
         return ResponseEntity.ok().body(
             ResponseDto.res(HttpStatus.OK, cartService.deleteCart(cartId), "장바구니를 성공적으로 삭제했습니다."));
     }
