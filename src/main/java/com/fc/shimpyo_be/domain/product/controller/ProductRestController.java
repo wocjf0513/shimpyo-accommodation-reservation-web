@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 @Validated
+@Transactional(readOnly = true)
 public class ProductRestController {
 
     private final ProductService productService;
@@ -43,7 +45,6 @@ public class ProductRestController {
         @RequestParam(required = false, defaultValue = "") String category,
         @RequestParam(required = false, defaultValue = "0") Long capacity,
         @PageableConstraint(Product.class) @PageableDefault(size = 10, page = 0) Pageable pageable) {
-        log.debug("productName: {}, address: {}, category: {}", productName, address, category);
         SearchKeywordRequest searchKeywordRequest = SearchKeywordRequest.builder()
             .productName(productName).address(address).category(category).capacity(capacity)
             .build();
@@ -57,7 +58,6 @@ public class ProductRestController {
         @PathVariable("productId") Long productId,
         @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
         @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
-        log.debug("productId: {}, startDate: {}, endDate: {}", productId, startDate, endDate);
         if (DateTimeUtil.isNotValidDate(DateTimeUtil.toLocalDate(startDate),
             DateTimeUtil.toLocalDate(endDate))) {
             throw new InvalidDateException();
@@ -72,7 +72,6 @@ public class ProductRestController {
         @PathVariable("roomId") Long roomId,
         @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String startDate,
         @RequestParam @Pattern(regexp = DateTimeUtil.LOCAL_DATE_REGEX_PATTERN, message = "잘못된 시간 형식입니다. (올바른 예시: 2023-10-25)") String endDate) {
-        log.debug("roomId: {}, startDate: {}, endDate: {}", roomId, startDate, endDate);
         if (DateTimeUtil.isNotValidDate(DateTimeUtil.toLocalDate(startDate),
             DateTimeUtil.toLocalDate(endDate))) {
             throw new InvalidDateException();

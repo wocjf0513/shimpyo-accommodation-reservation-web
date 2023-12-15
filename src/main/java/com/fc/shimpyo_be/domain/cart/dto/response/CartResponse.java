@@ -23,7 +23,7 @@ public class CartResponse {
     private final String checkOut;
 
     @Builder
-    public CartResponse(Long cartId, Long productId, String productName, String image,
+    private CartResponse(Long cartId, Long productId, String productName, String image,
         Long roomCode,
         String roomName, Long price, String description, Long standard, Long capacity,
         String startDate, String endDate, String checkIn, String checkOut) {
