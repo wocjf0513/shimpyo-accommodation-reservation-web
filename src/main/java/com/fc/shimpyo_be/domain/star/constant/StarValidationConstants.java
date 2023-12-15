@@ -9,8 +9,8 @@ public class StarValidationConstants {
     // validation constraint value
     public static final String SCORE_DECIMAL_MIN_VALUE = "0.0";
     public static final String SCORE_DECIMAL_MAX_VALUE = "5.0";
-    public static final Integer SCORE_DIGITS_INTEGER_VALUE = 1;
-    public static final Integer SCORE_DIGITS_FRACTION_VALUE = 1;
+    public static final int SCORE_DIGITS_INTEGER_VALUE = 1;
+    public static final int SCORE_DIGITS_FRACTION_VALUE = 1;
 
     // validation message
     public static final String STAR_PRODUCTID_NOTNULL_MESSAGE = "별점 등록 대상 숙소 아이디는 필수값입니다.";
