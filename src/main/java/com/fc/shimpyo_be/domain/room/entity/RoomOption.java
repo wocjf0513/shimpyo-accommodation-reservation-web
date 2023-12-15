@@ -64,7 +64,7 @@ public class RoomOption {
     private boolean hairDryer;
 
     @Builder
-    public RoomOption(Long id, boolean bathFacility, boolean bath, boolean homeTheater,
+    private RoomOption(Long id, boolean bathFacility, boolean bath, boolean homeTheater,
         boolean airCondition, boolean tv, boolean pc, boolean cable, boolean internet,
         boolean refrigerator, boolean toiletries, boolean sofa, boolean cooking, boolean diningTable,
         boolean hairDryer) {

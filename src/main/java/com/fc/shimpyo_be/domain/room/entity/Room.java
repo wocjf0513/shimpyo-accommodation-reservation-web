@@ -12,9 +12,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,7 +68,7 @@ public class Room {
     private List<RoomImage> roomImages = new ArrayList<>();
 
     @Builder
-    public Room(
+    private Room(
         Long id,
         Product product,
         long code,
