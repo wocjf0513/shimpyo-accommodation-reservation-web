@@ -19,7 +19,6 @@ public class ReservationProductService {
 
     @Transactional
     public void cancel(Long id, Long memberId) {
-        log.info("{} ::: {}", getClass().getSimpleName(), "cancel");
 
         ReservationProduct reservationProduct = reservationProductRepository.findByIdWithReservation(id)
             .orElseThrow(ReservationProductNotFoundException::new);

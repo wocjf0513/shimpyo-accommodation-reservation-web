@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.fc.shimpyo_be.domain.room.constant.RoomValidationConstants.*;
+
 @Slf4j
 @RequiredArgsConstructor
 @Validated
@@ -28,10 +30,9 @@ public class RoomRestController {
 
     @GetMapping
     public ResponseEntity<ResponseDto<RoomListWithProductInfoResponseDto>> getRoomsWithProductInfo(
-        @RequestParam @Size(min = 1, max = 3, message = "최소 1개, 최대 3개의 객실 식별자 정보가 필요합니다.")
-        List<@Min(value = 1, message = "객실 식별자는 최소 1 이상이어야 합니다.") Long> roomIds
+        @RequestParam @Size(min = ROOM_REQ_MIN_SIZE, max = ROOM_REQ_MAX_SIZE, message = ROOM_REQ_SIZE_MESSAGE)
+        List<@Min(value = ROOMID_MIN_VALUE, message = ROOMID_MIN_MESSAGE) Long> roomIds
     ) {
-        log.debug("GET /api/rooms, roomIds : {}", roomIds);
 
         return ResponseEntity
             .status(HttpStatus.OK)

@@ -34,7 +34,7 @@ public class RoomPrice {
     private int peakWeekendMinFee;
 
     @Builder
-    public RoomPrice(Long id, int offWeekDaysMinFee, int offWeekendMinFee, int peakWeekDaysMinFee,
+    private RoomPrice(Long id, int offWeekDaysMinFee, int offWeekendMinFee, int peakWeekDaysMinFee,
         int peakWeekendMinFee) {
         this.id = id;
         this.offWeekDaysMinFee = offWeekDaysMinFee;
